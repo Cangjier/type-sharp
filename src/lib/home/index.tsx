@@ -1,6 +1,11 @@
 import axios from "axios";
-import { forwardRef, useEffect, useState } from "react";
+import { Base64 } from "js-base64";
+import React, { forwardRef, useEffect, useState } from "react";
 import Markdown from "react-markdown";
+import rehypeHighlight from "rehype-highlight";
+import remarkGfm from 'remark-gfm'
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import { dark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
 export interface IHomeProps {
 }
@@ -9,7 +14,17 @@ export interface IHomeRef {
 
 }
 
+export interface ICodeProps {
+    className?: string;
+    node?: any;
+}
+
+export interface ICodeRef {
+
+}
+
 export const Home = forwardRef<IHomeRef, IHomeProps>((props, ref) => {
+
     const repoOwner = 'Cangjier'; // 仓库所有者的用户名  
     const repoName = 'type-sharp'; // 仓库名称  
     const branch = 'main'; // 分支名称，通常是 main 或 master  
@@ -38,9 +53,9 @@ await main();
         let func = async () => {
             try {
                 let response = await axios.get(url);
-                let downloadUrl = response.data.download_url;
-                response = await axios.get(downloadUrl);
-                setMarkdownSource(response.data);
+                let data = Base64.decode(response.data.content);
+                setMarkdownSource(data);
+                console.log(data);
             }
             catch {
             }
@@ -49,11 +64,39 @@ await main();
     });
     return <div style={{
         padding: '20px',
-        overflow: 'auto',
+        overflowY: 'auto',
         height: '100%',
-        width: '100%',
     }}>
-        <Markdown>
+        <Markdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeHighlight]} components={{
+            code({ node, className, children, ...props }) {
+                const hasLang = /language-(\w+)/.exec(className || '');
+                let items = (children as any[]).map(item => {
+                    if (typeof (item) === 'string') {
+                        return item;
+                    }
+                    else {
+                        return item.props.children;
+                    }
+                })
+                console.log(items);
+                return hasLang ? (
+                    <SyntaxHighlighter
+                        // style={dark}
+                        language={hasLang[1]}
+                        PreTag="div"
+                        className="codeStyle"
+                        showLineNumbers={true}
+                        useInlineStyles={true}
+                    >
+                        {items.join('')}
+                    </SyntaxHighlighter>
+                ) : (
+                    <code className={className} {...props}>
+                        {children}
+                    </code>
+                );
+            },
+        }}>
             {makrdownSource}
         </Markdown>
     </div>
