@@ -36,18 +36,25 @@ await main();
 `);
     useEffect(() => {
         let func = async () => {
-            try{
+            try {
                 let response = await axios.get(url);
                 let downloadUrl = response.data.download_url;
                 response = await axios.get(downloadUrl);
                 setMarkdownSource(response.data);
             }
-            catch{
+            catch {
             }
         }
         func();
     });
-    return <Markdown>
-        {makrdownSource}
-    </Markdown>
+    return <div style={{
+        padding: '20px',
+        overflow: 'auto',
+        height: '100%',
+        width: '100%',
+    }}>
+        <Markdown>
+            {makrdownSource}
+        </Markdown>
+    </div>
 })
