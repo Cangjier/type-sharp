@@ -1,7 +1,6 @@
 import axios from "axios";
 import { forwardRef, useEffect, useState } from "react";
 import Markdown from "react-markdown";
-import { Base64 } from "js-base64"; // Import the Base64 module from the appropriate library
 
 export interface IHomeProps {
 }
@@ -16,7 +15,25 @@ export const Home = forwardRef<IHomeRef, IHomeProps>((props, ref) => {
     const branch = 'main'; // 分支名称，通常是 main 或 master  
 
     const url = `https://api.github.com/repos/${repoOwner}/${repoName}/readme?ref=${branch}`;
-    const [makrdownSource, setMarkdownSource] = useState<string>("# Loading...");
+    const [makrdownSource, setMarkdownSource] = useState<string>(`# TypeSharp
+TypeSharp 是一个基于C#开发的TypeScript脚本引擎，可以在TypeScript中调用C#的方法和属性。
+\`\`\` typescript
+import { File } from '../System/IO/File.ts';
+import { Path } from '../System/IO/Path.ts';
+import { Directory } from '../System/IO/Directory.ts';
+import { Console } from '../System/Console.ts';
+let main = async () => {
+    Console.WriteLine('Hello, TypeSharp!');
+    let path = Path.Combine(Directory.GetCurrentDirectory(), 'test.txt');
+    await File.WriteAllTextAsync(path, 'Hello, TypeSharp!');
+    Console.WriteLine(await File.ReadAllTextAsync(path));
+};
+
+await main();
+\`\`\`
+
+你可以通过 [TypeSharp](https://github.com/Cangjier/type-sharp) 了解更多信息。
+`);
     useEffect(() => {
         let func = async () => {
             try{
@@ -25,9 +42,7 @@ export const Home = forwardRef<IHomeRef, IHomeProps>((props, ref) => {
                 response = await axios.get(downloadUrl);
                 setMarkdownSource(response.data);
             }
-            catch(e){
-                console.error(e);
-                setMarkdownSource("# Error loading README.md");
+            catch{
             }
         }
         func();
