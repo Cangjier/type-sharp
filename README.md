@@ -14,4 +14,4 @@ let main = async () => {
 
 await main();
 ```
-项目链接参考 [TypeSharp](https://github.com/Cangjier/type-sharp)
+你可以通过 [TypeSharp](https://github.com/Cangjier/type-sharp) 了解更多信息。
