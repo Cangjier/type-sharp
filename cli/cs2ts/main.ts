@@ -11,6 +11,7 @@ import { ConstructorInfo } from "./System/Reflection/ConstructorInfo";
 import { MemberInfo } from "./System/Reflection/MemberInfo";
 import { Console } from "./System/Console";
 import { Assembly } from "./System/Reflection/Assembly";
+import { UTF8Encoding } from "./System/Text/UTF8Encoding";
 const typeAlias = {
     "Int32": "number",
     "Int64": "number",
@@ -314,14 +315,9 @@ let exportTypeScript = (type: Type) => {
     }
     else return exportClass(type);
 };
-let main = () => {
-    console.log(`args:${args}`);
-    if (args.length != 1) {
-        console.log("Usage: typename-regex-string");
-        console.log("Example: ^System\\.IO\\.Path$*");
-        return;
-    }
-    let types = reflection.getTypes(args[0]);
+
+let exportTypesByTypeNameRegex = (typeNameRegex: string) => {
+    let types = reflection.getTypes(typeNameRegex);
     let index = 0;
     types.forEach(type => {
         console.log(`To Export ${type.FullName} (${index}/${types.length})`);
@@ -348,5 +344,61 @@ let main = () => {
         File.WriteAllText(Path.GetFullPath(type.FullName.replace(".", "/") + ".ts"), exportTypeScript(type));
     });
 };
+
+let exportTypesByFileImports = (path: string) => {
+    let lines = File.ReadAllLines(path, new UTF8Encoding(false));
+    // 遍历所有行，找到import的行，解析出"或者'包裹的路径
+    // 如果路径以.ts结尾，则先去除.ts
+    // 然后以./两个字符进行分割，并过滤掉空字符串，然后以\.进行连接
+    // 然后将结果保存到一个数组中
+    let importPaths = [] as string[];
+    lines.forEach((line) => {
+        if (line.startsWith("import")) {
+            let path = "";
+            if (line.includes("\"")) {
+                path = line.substring(line.indexOf("\"") + 1, line.lastIndexOf("\""));
+            }
+            else if (line.includes("'")) {
+                path = line.substring(line.indexOf("'") + 1, line.lastIndexOf("'"));
+            }
+            if (path.endsWith(".ts")) {
+                path = path.substring(0, path.length - 3);
+            }
+            importPaths.push(path.replace(".", "/").split("/").filter(p => p != "").join("/"));
+        }
+    });
+    console.log(importPaths);
+};
+
+let help = () => {
+    console.log("-".padEnd(48, "-"));
+    console.log("Usage: types [typename-regex-string]");
+    console.log("Example: types ^System\\.IO\\.Path$");
+    console.log("-".padEnd(48, "-"));
+    console.log("Usage: file [file-path]");
+    console.log("Example: file main.ts");
+    console.log("-".padEnd(48, "-"));
+};
+
+let main = () => {
+    console.log(`args:${args}`);
+    if (args.length < 2) {
+        help();
+        return;
+    }
+    let cmd = args[0];
+    if (cmd == "types") {
+        exportTypesByTypeNameRegex(args[1]);
+    }
+    else if (cmd == "file") {
+        exportTypesByFileImports(args[1]);
+    }
+    else {
+        console.log("Unknown command.");
+        help();
+    }
+};
+
+
 
 main();
