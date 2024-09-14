@@ -316,20 +316,8 @@ let exportTypeScript = (type: Type) => {
     else return exportClass(type);
 };
 
-let exportTypesByTypeNameRegex = (typeNameRegex: string) => {
-    let types = reflection.getTypes(typeNameRegex);
+let exportTypes = (types: Type[]) => {
     let index = 0;
-    types.forEach(type => {
-        console.log(`To Export ${type.FullName} (${index}/${types.length})`);
-    });
-    // 询问是否继续
-    console.log("Continue? (y/n)");
-    let isContinue = Console.ReadLine();
-    if (isContinue != "y") {
-        console.log("Canceled.");
-        return;
-    }
-    index = 0;
     types.forEach(type => {
         console.log(`Exporting ${type.FullName} (${index}/${types.length})`);
         index = index + 1;
@@ -345,6 +333,22 @@ let exportTypesByTypeNameRegex = (typeNameRegex: string) => {
     });
 };
 
+let exportTypesByTypeNameRegex = (typeNameRegex: string) => {
+    let types = reflection.getTypes(typeNameRegex);
+    let index = 0;
+    types.forEach(type => {
+        console.log(`To Export ${type.FullName} (${index}/${types.length})`);
+    });
+    // 询问是否继续
+    console.log("Continue? (y/n)");
+    let isContinue = Console.ReadLine();
+    if (isContinue != "y") {
+        console.log("Canceled.");
+        return;
+    }
+    exportTypes(types);
+};
+
 let exportTypesByFileImports = (path: string) => {
     let lines = File.ReadAllLines(path, new UTF8Encoding(false));
     // 遍历所有行，找到import的行，解析出"或者'包裹的路径
@@ -352,7 +356,7 @@ let exportTypesByFileImports = (path: string) => {
     // 然后以./两个字符进行分割，并过滤掉空字符串，然后以\.进行连接
     // 然后将结果保存到一个数组中
     let importPaths = [] as string[];
-    lines.forEach((line) => {
+    lines.forEach((line: string) => {
         if (line.startsWith("import")) {
             let path = "";
             if (line.includes("\"")) {
@@ -367,7 +371,28 @@ let exportTypesByFileImports = (path: string) => {
             importPaths.push(path.replace(".", "/").split("/").filter(p => p != "").join("/"));
         }
     });
-    console.log(importPaths);
+    for (let i = 0; i < importPaths.length; i++) {
+        let importPath = importPaths[i];
+        if (importPath == "context" || importPath == "reflection") {
+            importPath = `TypeSharp/System/${importPath}`;
+        }
+        importPaths[i] = `^${importPath.replace("/", "\\.")}$`;
+    }
+    let types = reflection.getTypes(importPaths.join("|"));
+    // 询问是否继续
+    console.log(`Export Directory: ${Directory.GetCurrentDirectory()}`);
+    let index = 0;
+    types.forEach(type => {
+        console.log(`To Export ${type.FullName} (${index++}/${types.length})`);
+    });
+    console.log("Continue? (y/n)");
+    let isContinue = Console.ReadLine();
+    if (isContinue != "y") {
+        console.log("Canceled.");
+        return;
+    }
+    console.log("Exporting...");
+    exportTypes(types);
 };
 
 let help = () => {
