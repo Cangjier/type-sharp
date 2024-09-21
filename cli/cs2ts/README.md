@@ -1,0 +1,2 @@
+# cs2ts
+将所有CSharp的class文件转换为TypeScript的interface文件，在ts开发时，通过import，即可享受vscode提供的智能提示。
