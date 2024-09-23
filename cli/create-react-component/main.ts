@@ -24,7 +24,6 @@ let main = () => {
     if (cmd(projectDirectory, `npm init -y`) != 0) {
         return -1;
     }
-    console.log(`npm install react react-dom typescript @types/react @types/react-dom webpack webpack-cli ts-loader @svgr/webpack url-loader file-loader --save-dev`);
     let packagePath = Path.Combine(projectDirectory, "package.json");
     let packageJson = Json.Load(packagePath);
     packageJson["author"] = "Demo";
@@ -43,8 +42,10 @@ let main = () => {
         "ts-loader",
         "@svgr/webpack",
         "url-loader",
-        "file-loader"
+        "file-loader",
+        "terser-webpack-plugin"
     ];
+    console.log(`npm install ${packages.join(" ")} --save-dev`);
     let installScript = `npm install ${packages.join(" ")} --save-dev`;
     if (cmd(projectDirectory, installScript) != 0) {
         return -1;
