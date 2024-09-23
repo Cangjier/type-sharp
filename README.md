@@ -14,4 +14,8 @@ let main = async () => {
 
 await main();
 ```
+# 使用
+wget -qO- https://raw.githubusercontent.com/Cangjier/type-sharp/main/install.sh | bash
+
+
 你可以通过 [TypeSharp](https://github.com/Cangjier/type-sharp) 了解更多信息。
