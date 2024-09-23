@@ -29,7 +29,12 @@ let main = () => {
     packageJson["author"] = "Demo";
     packageJson["scripts"] = {
         "build": "webpack --config webpack.config.js",
+        "prepublishOnly": "npm run build"
     };
+    packageJson["main"] = "build/index.js";
+    packageJson["files"] = [
+        "build"
+    ];
     packageJson.Save(packagePath);
     let packages = [
         "react",
