@@ -48,11 +48,11 @@ module.exports = {
         },
     },
     plugins: [
-        new JavaScriptObfuscator({
-            rotateStringArray: true, // 启用字符串混淆
-            stringArray: true, // 将字符串移到一个字符串数组中
-            stringArrayThreshold: 0.75, // 混淆75%的字符串
-        }, []), // 可以排除某些文件不被混淆
+        new WebpackObfuscator({
+            rotateStringArray: true, // 混淆字符串
+            stringArray: true, // 将字符串存入数组
+            stringArrayThreshold: 0.75, // 75%的字符串将被混淆
+        }, ['excluded_bundle.js']), // 可以排除某些文件不混淆
     ],
     mode: 'production',  // 设为'production'模式，启用优化
 };
