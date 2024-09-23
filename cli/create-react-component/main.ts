@@ -123,6 +123,9 @@ let main = () => {
     let indexTSXPath = Path.Combine(srcDirectory, "index.tsx");
     if (!File.Exists(indexTSXPath)) {
         File.WriteAllText(indexTSXPath, File.ReadAllText(Path.Combine(templateDirectory, "index.tsx"), utf8), utf8);
+        Directory.CreateDirectory(Path.Combine(srcDirectory, "lib"));
+        Directory.CreateDirectory(Path.Combine(srcDirectory, "demo"));
+        File.WriteAllText(Path.Combine(srcDirectory, "lib", "demo", "index.tsx"), File.ReadAllText(Path.Combine(templateDirectory, "demo.tsx"), utf8), utf8);
     }
     let gitignorePath = Path.Combine(projectDirectory, ".gitignore");
     if (!File.Exists(gitignorePath)) {
