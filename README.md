@@ -14,12 +14,25 @@ let main = async () => {
 
 await main();
 ```
-# 使用教程
+# 安装教程
 在Linux下可以通过以下脚本进行安装。
 ``` bash
 wget -qO- https://raw.githubusercontent.com/Cangjier/type-sharp/main/install.sh | bash
 ```
 注意的是，TypeSharp基于.Net8进行开发，因此在正式使用前，需要参考 [Linux安装.Net8](https://learn.microsoft.com/zh-cn/dotnet/core/install/linux-scripted-manual#scripted-install) 。
+
+# 使用教程
+## list
+```
+tsc list
+```
+该命令将会将仓库中cli中所有目录罗列。
+## run
+```
+tsc run ./main.ts
+tsc run create-react-component
+```
+该命令支持运行本地脚本，网络脚本，以及仓库中cli下的脚本。
 
 # 其他
 
