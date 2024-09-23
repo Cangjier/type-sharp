@@ -1,17 +1,26 @@
-import { exec, args, cmd } from "./context";
+import { args, cmd, script_path } from "./context";
 import { Path } from "./System/IO/Path"
 import { Json } from './TidyHPC/LiteJson/Json';
-import { Console } from './System/Console';
 import { File } from './System/IO/File';
 import { UTF8Encoding } from './System/Text/UTF8Encoding';
 import { Directory } from './System/IO/Directory';
 
 let main = () => {
+    console.log(`create-react-component`);
+    console.log(`script_path:${script_path}`);
+    let script_directory = Path.GetDirectoryName(script_path);
+    let templateDirectory = Path.Combine(script_directory, "template");
+    let utf8 = new UTF8Encoding(false);
     let projectDirectory = Path.GetFullPath(args[0]);
-
+    if (Directory.Exists(projectDirectory) == false) {
+        Directory.CreateDirectory(projectDirectory);
+    }
+    console.log(`Creating project in ${projectDirectory}`);
+    console.log(`npm init -y`);
     if (cmd(projectDirectory, `npm init -y`) != 0) {
         return -1;
     }
+    console.log(`npm install react react-dom typescript @types/react @types/react-dom webpack webpack-cli ts-loader @svgr/webpack url-loader file-loader --save-dev`);
     let packagePath = Path.Combine(projectDirectory, "package.json");
     let packageJson = Json.Load(packagePath);
     packageJson["author"] = "Demo";
@@ -36,6 +45,7 @@ let main = () => {
     if (cmd(projectDirectory, installScript) != 0) {
         return -1;
     }
+    console.log(`modify tsconfig.json`);
     let tsConfigPath = Path.Combine(projectDirectory, "tsconfig.json");
     let tsConfig = File.Exists(tsConfigPath) ?
         Json.Load(tsConfigPath) : {
@@ -80,85 +90,26 @@ let main = () => {
         };
     let compilerOptions = tsConfig["compilerOptions"];
     compilerOptions["jsx"] = "react-jsx";
-    compilerOptions["noImplicitReturns"]=false;
-    compilerOptions["noUnusedLocals"]=false;
-    compilerOptions["noUnusedParameters"]=false;
-    compilerOptions["esModuleInterop"]=true;
+    compilerOptions["noImplicitReturns"] = false;
+    compilerOptions["noUnusedLocals"] = false;
+    compilerOptions["noUnusedParameters"] = false;
+    compilerOptions["esModuleInterop"] = true;
     (tsConfig as Json).Save(tsConfigPath);
+    console.log(`create webpack.config.js`);
     let webpackConfigPath = Path.Combine(projectDirectory, "webpack.config.js");
-    File.WriteAllText(webpackConfigPath,`
-const path = require('path');
-const { svgxUse } = require('@svgr/webpack');
-
-module.exports = {
-    entry: './src/index.tsx',
-    output: {
-        path: path.resolve(__dirname, 'build'),
-        filename: 'index.js',
-        libraryTarget: 'umd',
-    },
-    resolve: {
-        extensions: ['.tsx', '.ts', '.js'],
-    },
-    module: {
-        rules: [
-            {
-                test: /\\.tsx?$/,
-                use: 'ts-loader',
-                exclude: /node_modules/,
-            },
-            {
-                test: /\\.svg$/,
-                use: [
-                    {
-                        loader: '@svgr/webpack',
-                        options: {
-                            titleProp: true, // 是否添加title属性到React组件中
-                            refProp: 'innerRef', // 指定转换的SVG组件的ref属性名
-                        },
-                    },
-                    'url-loader', // 或者使用'file-loader'，具体取决于你希望如何处理SVG文件
-                ],
-            },
-        ],
-    },
-    externals: {
-        react: {
-            root: 'React',
-            commonjs2: 'react',
-            commonjs: 'react',
-            amd: 'react',
-        },
-        'react-dom': {
-            root: 'ReactDOM',
-            commonjs2: 'react-dom',
-            commonjs: 'react-dom',
-            amd: 'react-dom',
-        },
-    },
-    mode: 'development'
-};`,new UTF8Encoding(false));
+    File.WriteAllText(webpackConfigPath, File.ReadAllText(Path.Combine(templateDirectory, "webpack.config.js"), utf8), utf8);
     let srcDirectory = Path.Combine(projectDirectory, "src");
     if (!Directory.Exists(srcDirectory)) {
         Directory.CreateDirectory(srcDirectory);
     }
+    console.log(`create src/type.d.ts`);
     let typeDTSPath = Path.Combine(srcDirectory, "type.d.ts");
-    File.WriteAllText(typeDTSPath,`
-declare module '*.svg' {  
-    import React = require('react');  
-
-    const src: string;  
-    const ReactComponent: React.FunctionComponent<React.SVGProps<SVGSVGElement>>;  
-
-    export default src;  
-    export { ReactComponent };
-}`,new UTF8Encoding(false));
+    File.WriteAllText(typeDTSPath, File.ReadAllText(Path.Combine(templateDirectory, "type.d.ts"), utf8), utf8);
+    console.log(`create src/index.tsx`);
     let indexTSXPath = Path.Combine(srcDirectory, "index.tsx");
-    File.WriteAllText(indexTSXPath,`
-        //enjoy
-        //npm run build -> 编译项目
-        //npm login -> 登录npm
-        //npm publish -> 发布项目`,new UTF8Encoding(false));
+    File.WriteAllText(indexTSXPath, File.ReadAllText(Path.Combine(templateDirectory, "index.tsx"), utf8), utf8);
+    console.log(`finished`);
+    return 0;
 };
 
 main();
