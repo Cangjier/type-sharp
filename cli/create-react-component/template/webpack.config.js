@@ -47,20 +47,12 @@ module.exports = {
             amd: 'react-dom',
         },
     },
-    optimization: {
-        minimize: true,  // 开启代码压缩和混淆
-        minimizer: [new TerserPlugin({
-            terserOptions: {
-                compress: {
-                    drop_console: true, // 可选：删除所有console.log
-                },
-                mangle: true, // 混淆变量名
-                format: {
-                    comments: false, // 删除所有注释
-                },
-            },
-            extractComments: false,  // 可选：不生成单独的注释文件
-        })],
-    },
+    plugins: [
+        new JavaScriptObfuscator({
+            rotateStringArray: true, // 启用字符串混淆
+            stringArray: true, // 将字符串移到一个字符串数组中
+            stringArrayThreshold: 0.75, // 混淆75%的字符串
+        }, []), // 可以排除某些文件不被混淆
+    ],
     mode: 'production',  // 设为'production'模式，启用优化
 };

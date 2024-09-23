@@ -48,7 +48,7 @@ let main = () => {
         "@svgr/webpack",
         "url-loader",
         "file-loader",
-        "terser-webpack-plugin"
+        "javascript-obfuscator-webpack-plugin"
     ];
     console.log(`npm install ${packages.join(" ")} --save-dev`);
     let installScript = `npm install ${packages.join(" ")} --save-dev`;
