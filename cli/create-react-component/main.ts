@@ -101,17 +101,28 @@ let main = () => {
     (tsConfig as Json).Save(tsConfigPath);
     console.log(`create webpack.config.js`);
     let webpackConfigPath = Path.Combine(projectDirectory, "webpack.config.js");
-    File.WriteAllText(webpackConfigPath, File.ReadAllText(Path.Combine(templateDirectory, "webpack.config.js"), utf8), utf8);
+    if (!File.Exists(webpackConfigPath)) {
+        File.WriteAllText(webpackConfigPath, File.ReadAllText(Path.Combine(templateDirectory, "webpack.config.js"), utf8), utf8);
+    }
     let srcDirectory = Path.Combine(projectDirectory, "src");
     if (!Directory.Exists(srcDirectory)) {
         Directory.CreateDirectory(srcDirectory);
     }
     console.log(`create src/type.d.ts`);
     let typeDTSPath = Path.Combine(srcDirectory, "type.d.ts");
-    File.WriteAllText(typeDTSPath, File.ReadAllText(Path.Combine(templateDirectory, "type.d.ts"), utf8), utf8);
+    if (!File.Exists(typeDTSPath)) {
+        File.WriteAllText(typeDTSPath, File.ReadAllText(Path.Combine(templateDirectory, "type.d.ts"), utf8), utf8);
+    }
     console.log(`create src/index.tsx`);
     let indexTSXPath = Path.Combine(srcDirectory, "index.tsx");
-    File.WriteAllText(indexTSXPath, File.ReadAllText(Path.Combine(templateDirectory, "index.tsx"), utf8), utf8);
+    if (!File.Exists(indexTSXPath)) {
+        File.WriteAllText(indexTSXPath, File.ReadAllText(Path.Combine(templateDirectory, "index.tsx"), utf8), utf8);
+    }
+    let gitignorePath = Path.Combine(projectDirectory, ".gitignore");
+    if (!File.Exists(gitignorePath)) {
+        console.log(`create .gitignore`);
+        File.WriteAllText(gitignorePath, File.ReadAllText(Path.Combine(templateDirectory, ".gitignore"), utf8), utf8);
+    }
     console.log(`finished`);
     return 0;
 };
