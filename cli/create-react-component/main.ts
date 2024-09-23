@@ -160,3 +160,5 @@ declare module '*.svg' {
         //npm login -> 登录npm
         //npm publish -> 发布项目`,new UTF8Encoding(false));
 };
+
+main();
