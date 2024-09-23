@@ -7,15 +7,19 @@ import { Directory } from './System/IO/Directory';
 
 let main = () => {
     console.log(`create-react-component`);
-    console.log(`script_path:${script_path}`);
+    console.log(`script_path : ${script_path}`);
+    if (script_path.startsWith("http")) {
+        console.log(`Please download script to local and run it.`);
+        return -1;
+    }
     let script_directory = Path.GetDirectoryName(script_path);
     let templateDirectory = Path.Combine(script_directory, "template");
     let utf8 = new UTF8Encoding(false);
-    let projectDirectory = Path.GetFullPath(args[0]);
+    let projectDirectory = args.length > 0 ? Path.GetFullPath(args[0]) : Directory.GetCurrentDirectory();
+    console.log(`working in : ${projectDirectory}`);
     if (Directory.Exists(projectDirectory) == false) {
         Directory.CreateDirectory(projectDirectory);
     }
-    console.log(`Creating project in ${projectDirectory}`);
     console.log(`npm init -y`);
     if (cmd(projectDirectory, `npm init -y`) != 0) {
         return -1;
