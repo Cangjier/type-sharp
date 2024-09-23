@@ -49,10 +49,17 @@ module.exports = {
     },
     plugins: [
         new WebpackObfuscator({
-            rotateStringArray: true, // 混淆字符串
-            stringArray: true, // 将字符串存入数组
-            stringArrayThreshold: 0.75, // 75%的字符串将被混淆
-        }, ['excluded_bundle.js']), // 可以排除某些文件不混淆
+            compact: true,
+            controlFlowFlattening: true,
+            controlFlowFlatteningThreshold: 0.75, // 控制流平坦化的概率
+            deadCodeInjection: true,
+            deadCodeInjectionThreshold: 0.4, // 注入无用代码的概率
+            stringArray: true,
+            stringArrayEncoding: ['rc4'],
+            rotateStringArray: true,
+            stringArrayThreshold: 0.8,
+            selfDefending: true
+        }, []),
     ],
     mode: 'production',  // 设为'production'模式，启用优化
 };
