@@ -407,16 +407,25 @@ let help = () => {
 
 let main = () => {
     console.log(`args:${args}`);
-    if (args.length < 2) {
-        help();
-        return;
+    if (args.length == 0) {
+        exportTypesByTypeNameRegex([
+            "(System\\.IO\\.(Path|Directory|File))",
+            "(System\\.Text\\.UTF8Encoding)",
+            "(TidyHPC\\.(LiteJson|LiteXml|Routers)\\..*)"
+        ].join("|"));
     }
-    let cmd = args[0];
-    if (cmd == "types") {
-        exportTypesByTypeNameRegex(args[1]);
-    }
-    else if (cmd == "file") {
-        exportTypesByFileImports(args[1]);
+    else if (args.length == 2) {
+        let cmd = args[0];
+        if (cmd == "types") {
+            exportTypesByTypeNameRegex(args[1]);
+        }
+        else if (cmd == "file") {
+            exportTypesByFileImports(args[1]);
+        }
+        else {
+            console.log("Unknown command.");
+            help();
+        }
     }
     else {
         console.log("Unknown command.");
