@@ -1,3 +1,3 @@
 import { exec } from "../.tsc/context";
-
-// exec(Envir);
+import {Environment} from "../.tsc/System/Environment";
+exec(Environment.ProcessPath,["run","cs2ts"]);
