@@ -33,6 +33,7 @@ const typeAlias = {
     "Action": "()=>void",
     "Array": "any[]",
     "Json": "any",
+    "Task":"Promise<void>"
 };
 
 let isValidTypeName = (typeFullName: string) => {
