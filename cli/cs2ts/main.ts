@@ -228,10 +228,10 @@ let exportMembers = (type: Type) => {
         }
         let parameters = memberCombine.parameters.map(p => {
             if (p.isParams) {
-                `...${p.Names.join("_or_")}: ${p.Types.join(" | ")}`
+                return `...${p.Names.join("_or_")}: ${p.Types.join(" | ")}`;
             }
             else {
-                `${p.Names.join("_or_")}?: ${p.Types.join(" | ")}`
+                return `${p.Names.join("_or_")}?: ${p.Types.join(" | ")}`;
             }
         }).join(", ");
         let returnTypes = memberCombine.returnTypes.join(" | ");
@@ -247,7 +247,14 @@ let exportMembers = (type: Type) => {
         if (memberCombine.isValid == false) {
             return;
         }
-        let parameters = memberCombine.parameters.map(p => `${p.Names.join("_or_")}?: ${p.Types.join(" | ")}`).join(", ");
+        let parameters = memberCombine.parameters.map(p => {
+            if (p.isParams) {
+                return `...${p.Names.join("_or_")}: ${p.Types.join(" | ")}`;
+            }
+            else {
+                return `${p.Names.join("_or_")}?: ${p.Types.join(" | ")}`;
+            }
+        }).join(", ");
         let returnTypes = memberCombine.returnTypes.join(" | ");
         lines.push(`export const ${key}:(${parameters}) => ${returnTypes} = 0 as any`);
     });

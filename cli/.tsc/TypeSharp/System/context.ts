@@ -26,6 +26,9 @@ export class context {
     public static cmd(workingDirectory?: string, commandLine?: string): number {
         return {} as any;
     }
+    public static startCmd(workingDirectory?: string, commandLine?: string): void {
+        return {} as any;
+    }
     public static parseFloat(value?: string): number {
         return {} as any;
     }

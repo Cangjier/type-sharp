@@ -1,4 +1,5 @@
 import { Type } from "../../System/Type";
+import { ParameterInfo } from "../../System/Reflection/ParameterInfo";
 export class reflection {
     public GetType(): Type {
         return {} as any;
@@ -16,6 +17,9 @@ export class reflection {
         return {} as any;
     }
     public static getTypes(regexString?: string): Type[] {
+        return {} as any;
+    }
+    public static isParams(parameter?: ParameterInfo): boolean {
         return {} as any;
     }
 }
