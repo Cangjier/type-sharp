@@ -87,7 +87,8 @@ let exportMembers = (type: Type) => {
         [key: string]: {
             parameters: {
                 Names: string[],
-                Types: string[]
+                Types: string[],
+                isParams: boolean
             }[],
             returnTypes: string[],
             isValid: boolean,
@@ -198,7 +199,7 @@ let exportMembers = (type: Type) => {
                         });
                     }
                     let memberParameter = memberCombine.parameters[i];
-                    memberParameter.isParams = parameter.IsParams;
+                    memberParameter.isParams = reflection.isParams(parameter);
                     let names = memberParameter.Names;
                     let types = memberParameter.Types;
                     if (names.includes(parameter.Name) == false) {
@@ -225,7 +226,14 @@ let exportMembers = (type: Type) => {
         if (memberCombine.isValid == false) {
             return;
         }
-        let parameters = memberCombine.parameters.map(p => `${p.Names.join("_or_")}?: ${p.Types.join(" | ")}`).join(", ");
+        let parameters = memberCombine.parameters.map(p => {
+            if (p.isParams) {
+                `...${p.Names.join("_or_")}: ${p.Types.join(" | ")}`
+            }
+            else {
+                `${p.Names.join("_or_")}?: ${p.Types.join(" | ")}`
+            }
+        }).join(", ");
         let returnTypes = memberCombine.returnTypes.join(" | ");
         if (memberCombine.isConstructor) {
         }
