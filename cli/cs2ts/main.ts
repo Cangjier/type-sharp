@@ -627,7 +627,7 @@ let main = () => {
             "(System\\.IO\\.(Path|Directory|File))",
             "(System\\.Text\\.UTF8Encoding)",
             "(TidyHPC\\.(LiteJson|LiteXml|Routers)\\..*)"
-        ].join("|"),"TypeSharp\\.System\\.context)");
+        ].join("|"),"TypeSharp\\.System\\.context");
     }
     else if (args.length == 2) {
         let cmd = args[0];
