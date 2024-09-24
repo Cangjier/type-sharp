@@ -625,7 +625,7 @@ let main = () => {
         exportInitialTypes([
             "(System\\.IO\\.(Path|Directory|File)$)",
             "(System\\.Text\\.UTF8Encoding$)",
-            "(System\\.(Console|Type)$)",
+            "(System\\.(Console|Type|Environment)$)",
             "(TidyHPC\\.(LiteJson|LiteXml|Routers)\\..*)",
             "(System\\.Reflection\\.(Assembly|ConstructorInfo|FieldInfo|MemberInfo|MemberTypes|MethodInfo)$)",
             "(TypeSharp\\.System\\..*)"

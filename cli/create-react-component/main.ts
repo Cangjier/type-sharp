@@ -1,9 +1,9 @@
-import { args, cmd, script_path } from "./context";
-import { Path } from "./System/IO/Path"
-import { Json } from './TidyHPC/LiteJson/Json';
-import { File } from './System/IO/File';
-import { UTF8Encoding } from './System/Text/UTF8Encoding';
-import { Directory } from './System/IO/Directory';
+import { args, cmd, script_path } from "../.tsc/context";
+import { Path } from "../.tsc/System/IO/Path"
+import { Json } from '../.tsc/TidyHPC/LiteJson/Json';
+import { File } from '../.tsc/System/IO/File';
+import { UTF8Encoding } from '../.tsc/System/Text/UTF8Encoding';
+import { Directory } from '../.tsc/System/IO/Directory';
 
 let main = () => {
     console.log(`create-react-component`);
