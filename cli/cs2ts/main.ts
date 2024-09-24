@@ -31,7 +31,7 @@ const typeAlias = {
     "Float": "number",
     "Action": "()=>void",
     "Array": "any[]",
-    "Json" : "any",
+    "Json": "any",
 };
 let getTypeAlias = (typeName: string) => {
     if (typeName.includes("`") || typeName.includes("&") || typeName.includes("*")) {
@@ -627,8 +627,10 @@ let main = () => {
         exportInitialTypes([
             "(System\\.IO\\.(Path|Directory|File))",
             "(System\\.Text\\.UTF8Encoding)",
-            "(TidyHPC\\.(LiteJson|LiteXml|Routers)\\..*)"
-        ].join("|"),"TypeSharp\\.System\\.context");
+            "(TidyHPC\\.(LiteJson|LiteXml|Routers)\\..*)",
+            "(System\\.Reflection\\.(Assembly|ConstructorInfo|FieldInfo|MemberInfo|MemberTypes|MethodInfo))",
+            "(TypeSharp\\.System\\..*)"
+        ].join("|"), "TypeSharp\\.System\\.context");
     }
     else if (args.length == 2) {
         let cmd = args[0];
