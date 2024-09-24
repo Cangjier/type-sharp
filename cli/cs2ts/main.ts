@@ -316,7 +316,7 @@ let exportTypeScript = (type: Type) => {
     else return exportClass(type);
 };
 
-let exportTypes = (types: Type[]) => {
+let exportTypes = (rootDirectory: string, types: Type[]) => {
     let index = 0;
     types.forEach(type => {
         console.log(`Exporting ${type.FullName} (${index}/${types.length})`);
@@ -324,12 +324,12 @@ let exportTypes = (types: Type[]) => {
         if (type.FullName.includes("+") || type.FullName.includes("`") || type.FullName.startsWith("__")) {
             return;
         }
-        let directory = Path.GetFullPath(type.FullName.replace(".", "/"));
+        let directory = Path.GetFullPath(type.FullName.replace(".", "/"), rootDirectory);
         directory = Path.GetDirectoryName(directory);
         if (Directory.Exists(directory) == false) {
             Directory.CreateDirectory(directory);
         }
-        File.WriteAllText(Path.GetFullPath(type.FullName.replace(".", "/") + ".ts"), exportTypeScript(type));
+        File.WriteAllText(Path.GetFullPath(type.FullName.replace(".", "/") + ".ts", rootDirectory), exportTypeScript(type));
     });
 };
 
@@ -346,7 +346,7 @@ let exportTypesByTypeNameRegex = (typeNameRegex: string) => {
         console.log("Canceled.");
         return;
     }
-    exportTypes(types);
+    exportTypes(Directory.GetCurrentDirectory(), types);
 };
 
 let exportTypesByFileImports = (path: string) => {
@@ -392,7 +392,7 @@ let exportTypesByFileImports = (path: string) => {
         return;
     }
     console.log("Exporting...");
-    exportTypes(types);
+    exportTypes(Path.GetDirectoryName(path), types);
 };
 
 let help = () => {
