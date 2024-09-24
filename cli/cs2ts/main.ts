@@ -571,20 +571,14 @@ let exportTypesByFileImports = (path: string) => {
 
 let exportInitialTypes = (typeNameRegex: string, membersTypeNameRegex: string) => {
     let rootDirectory = Directory.GetCurrentDirectory();
-    let types = reflection.getTypes(typeNameRegex);
-    let memberTypes = reflection.getTypes(membersTypeNameRegex);
+    let types = reflection.getTypes(typeNameRegex).filter(type => isValidTypeName(type.FullName));
+    let memberTypes = reflection.getTypes(membersTypeNameRegex).filter(type => isValidTypeName(type.FullName));
     let index = 0;
     let count = types.length + memberTypes.length;
-    types.forEach(type => {
-        if (isValidTypeName(type.FullName) == false) {
-            return;
-        }
+    types.filter(type => {
         console.log(`To Export ${type.FullName} (${index++}/${count})`);
     });
     memberTypes.forEach(type => {
-        if (isValidTypeName(type.FullName) == false) {
-            return;
-        }
         console.log(`To Export ${type.FullName} (${index++}/${count})`);
     });
     console.log("Continue? (y/n)");
@@ -596,9 +590,6 @@ let exportInitialTypes = (typeNameRegex: string, membersTypeNameRegex: string) =
     index = 0;
     types.forEach(type => {
         console.log(`Exporting ${type.FullName} (${index++}/${count})`);
-        if (isValidTypeName(type.FullName) == false) {
-            return;
-        }
         let directory = Path.GetFullPath(type.FullName.replace(".", "/"), rootDirectory);
         directory = Path.GetDirectoryName(directory);
         if (Directory.Exists(directory) == false) {
@@ -608,9 +599,6 @@ let exportInitialTypes = (typeNameRegex: string, membersTypeNameRegex: string) =
     });
     memberTypes.forEach(type => {
         console.log(`Exporting ${type.FullName} (${index++}/${count})`);
-        if (isValidTypeName(type.FullName) == false) {
-            return;
-        }
         let directory = Path.GetFullPath(type.FullName.replace(".", "/"), rootDirectory);
         let filename = Path.GetFileName(directory);
         directory = Path.GetDirectoryName(directory);
