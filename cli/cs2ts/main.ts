@@ -30,7 +30,8 @@ const typeAlias = {
     "Decimal": "number",
     "Float": "number",
     "Action": "()=>void",
-    "Array": "any[]"
+    "Array": "any[]",
+    "Json" : "any",
 };
 let getTypeAlias = (typeName: string) => {
     if (typeName.includes("`") || typeName.includes("&") || typeName.includes("*")) {
