@@ -73,6 +73,175 @@ let getTypeAlias = (typeName: string) => {
     }
 };
 
+let exportMembers = (type: Type) => {
+    let members = type.GetMembers();
+    let lines = [] as string[];
+    let toImport = [] as Type[];
+    let staticMemberCombines = {} as {
+        [key: string]: {
+            parameters: {
+                Names: string[],
+                Types: string[]
+            }[],
+            returnTypes: string[],
+            isValid: boolean,
+            isConstructor: boolean
+        }
+    };
+    let memberCombines = {} as {
+        [key: string]: {
+            parameters: {
+                Names: string[],
+                Types: string[]
+            }[],
+            returnTypes: string[],
+            isValid: boolean,
+            isConstructor: boolean
+        }
+    };
+    members.forEach(member => {
+        let types = [] as Type[];
+        if (member.MemberType == "Field") {
+            types.push((member as FieldInfo).FieldType);
+        }
+        else if (member.MemberType == "Method") {
+            types.push((member as MethodInfo).ReturnType);
+            (member as MethodInfo).GetParameters().forEach(p => {
+                types.push(p.ParameterType);
+            });
+        }
+        else if (member.MemberType == MemberTypes.Constructor) {
+            (member as ConstructorInfo).GetParameters().forEach(p => {
+                types.push(p.ParameterType);
+            });
+        }
+        let isValid = true as boolean;
+        types.forEach(itemType => {
+            let alias = getTypeAlias(itemType.Name);
+            if (alias.success == false) {
+                isValid = false;
+            }
+            else if (alias.containsAlias == false && type.Name != itemType.Name) {
+                if (toImport.includes(itemType)) return;
+                if (itemType.Name.includes("[")) return;
+                toImport.push(itemType);
+            }
+        });
+        if (isValid == false) {
+            return;
+        }
+
+        if (member.MemberType == "Field") {
+            lines.push(`export const ${member.Name}: ${getTypeAlias((member as FieldInfo).FieldType.Name).data} = 0 as any;`);
+        }
+        else if (member.MemberType == "Method") {
+            let method = member as MethodInfo;
+            if (member.Name.startsWith("get_")) {
+                return;
+            }
+            else if (member.Name.startsWith("set_")) {
+                return;
+            }
+            else {
+                let method = member as MethodInfo;
+                let memberCombine = {} as {
+                    parameters: {
+                        Names: string[],
+                        Types: string[]
+                    }[],
+                    returnTypes: string[],
+                    isValid: boolean,
+                    isConstructor: boolean
+                };
+                if (method.IsStatic) {
+                    if ((staticMemberCombines[member.Name] != null && staticMemberCombines[member.Name] != undefined) == false) {
+                        staticMemberCombines[member.Name] = {
+                            parameters: [],
+                            returnTypes: [],
+                            isValid: false,
+                            isConstructor: false
+                        };
+                    }
+                    memberCombine = staticMemberCombines[member.Name];
+                }
+                else {
+                    if ((memberCombines[member.Name] != null && memberCombines[member.Name] != undefined) == false) {
+                        memberCombines[member.Name] = {
+                            parameters: [],
+                            returnTypes: [],
+                            isValid: false,
+                            isConstructor: false
+                        };
+                    }
+                    memberCombine = memberCombines[member.Name];
+                }
+
+                memberCombine.isValid = true;
+                memberCombine.isConstructor = false;
+
+                let parameters = method.GetParameters();
+                for (let i = 0; i < parameters.length; i++) {
+                    let parameter = parameters[i];
+                    if (memberCombine.parameters.length <= i) {
+                        memberCombine.parameters.push({
+                            Names: [],
+                            Types: []
+                        });
+                    }
+                    let names = memberCombine.parameters[i].Names;
+                    let types = memberCombine.parameters[i].Types;
+                    if (names.includes(parameter.Name) == false) {
+                        names.push(parameter.Name);
+                    }
+                    let alias = getTypeAlias(parameter.ParameterType.Name);
+                    if (types.includes(alias.data) == false) {
+                        types.push(alias.data);
+                    }
+                }
+                let returnTypeAlias = getTypeAlias(method.ReturnType.Name);
+                if (memberCombine.returnTypes.includes(returnTypeAlias.data) == false) {
+                    memberCombine.returnTypes.push(returnTypeAlias.data);
+                }
+            }
+        }
+        else if (member.MemberType == MemberTypes.Constructor) {
+
+        }
+    });
+    let memberKeys = Object.keys(memberCombines);
+    memberKeys.forEach(key => {
+        let memberCombine = memberCombines[key];
+        if (memberCombine.isValid == false) {
+            return;
+        }
+        let parameters = memberCombine.parameters.map(p => `${p.Names.join("_or_")}?: ${p.Types.join(" | ")}`).join(", ");
+        let returnTypes = memberCombine.returnTypes.join(" | ");
+        if (memberCombine.isConstructor) {
+        }
+        else {
+            lines.push(`export const ${key}:(${parameters})=> ${returnTypes} = 0 as any`);
+        }
+    });
+    let staticMemberKeys = Object.keys(staticMemberCombines);
+    staticMemberKeys.forEach(key => {
+        let memberCombine = staticMemberCombines[key];
+        if (memberCombine.isValid == false) {
+            return;
+        }
+        let parameters = memberCombine.parameters.map(p => `${p.Names.join("_or_")}?: ${p.Types.join(" | ")}`).join(", ");
+        let returnTypes = memberCombine.returnTypes.join(" | ");
+        lines.push(`export const ${key}:(${parameters}) => ${returnTypes} = 0 as any`);
+    });
+    let importLines = [] as string[];
+    toImport.forEach(item => {
+        if (item.FullName == null) return;
+        let relativePath = Path.GetRelativePath(Path.GetDirectoryName(type.FullName.replace(".", "/")), item.FullName.replace(".", "/")).replace("\\", "/");
+        if (relativePath.startsWith(".") == false) relativePath = "./" + relativePath;
+        importLines.push(`import { ${item.Name} } from "${relativePath}";`);
+    });
+    return [...importLines, ...lines].join("\n");
+};
+
 let exportClass = (type: Type) => {
     let members = type.GetMembers();
     let lines = [] as string[];
@@ -337,7 +506,7 @@ let exportTypesByTypeNameRegex = (typeNameRegex: string) => {
     let types = reflection.getTypes(typeNameRegex);
     let index = 0;
     types.forEach(type => {
-        console.log(`To Export ${type.FullName} (${index}/${types.length})`);
+        console.log(`To Export ${type.FullName} (${index++}/${types.length})`);
     });
     // 询问是否继续
     console.log("Continue? (y/n)");
@@ -395,6 +564,52 @@ let exportTypesByFileImports = (path: string) => {
     exportTypes(Path.GetDirectoryName(path), types);
 };
 
+let exportInitialTypes = (typeNameRegex: string, membersTypeNameRegex: string) => {
+    let rootDirectory = Directory.GetCurrentDirectory();
+    let types = reflection.getTypes(typeNameRegex);
+    let memberTypes = reflection.getTypes(membersTypeNameRegex);
+    let index = 0;
+    let count = types.length + memberTypes.length;
+    types.forEach(type => {
+        console.log(`To Export ${type.FullName} (${index++}/${count})`);
+    });
+    memberTypes.forEach(type => {
+        console.log(`To Export ${type.FullName} (${index++}/${count})`);
+    });
+    console.log("Continue? (y/n)");
+    let isContinue = Console.ReadLine();
+    if (isContinue != "y") {
+        console.log("Canceled.");
+        return;
+    }
+    index = 0;
+    types.forEach(type => {
+        console.log(`Exporting ${type.FullName} (${index++}/${count})`);
+        if (type.FullName.includes("+") || type.FullName.includes("`") || type.FullName.startsWith("__")) {
+            return;
+        }
+        let directory = Path.GetFullPath(type.FullName.replace(".", "/"), rootDirectory);
+        directory = Path.GetDirectoryName(directory);
+        if (Directory.Exists(directory) == false) {
+            Directory.CreateDirectory(directory);
+        }
+        File.WriteAllText(Path.GetFullPath(type.FullName.replace(".", "/") + ".ts", rootDirectory), exportTypeScript(type));
+    });
+    memberTypes.forEach(type => {
+        console.log(`Exporting ${type.FullName} (${index++}/${count})`);
+        if (type.FullName.includes("+") || type.FullName.includes("`") || type.FullName.startsWith("__")) {
+            return;
+        }
+        let directory = Path.GetFullPath(type.FullName.replace(".", "/"), rootDirectory);
+        let filename = Path.GetFileName(directory);
+        directory = Path.GetDirectoryName(directory);
+        if (Directory.Exists(directory) == false) {
+            Directory.CreateDirectory(directory);
+        }
+        File.WriteAllText(Path.GetFullPath(filename + ".ts", rootDirectory), exportMembers(type));
+    });
+};
+
 let help = () => {
     console.log("-".padEnd(48, "-"));
     console.log("Usage: types [typename-regex-string]");
@@ -408,11 +623,11 @@ let help = () => {
 let main = () => {
     console.log(`args:${args}`);
     if (args.length == 0) {
-        exportTypesByTypeNameRegex([
+        exportInitialTypes([
             "(System\\.IO\\.(Path|Directory|File))",
             "(System\\.Text\\.UTF8Encoding)",
             "(TidyHPC\\.(LiteJson|LiteXml|Routers)\\..*)"
-        ].join("|"));
+        ].join("|"),"TypeSharp\\.System\\.context)");
     }
     else if (args.length == 2) {
         let cmd = args[0];
