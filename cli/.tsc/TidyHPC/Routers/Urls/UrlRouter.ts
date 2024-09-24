@@ -1,6 +1,5 @@
 import { UrlFilter } from "./UrlFilter";
 import { UrlRouterEvents } from "./UrlRouterEvents";
-import { Task } from "../../../System/Threading/Tasks/Task";
 import { Session } from "./Session";
 import { IServer } from "./Interfaces/IServer";
 import { MethodInfo } from "../../../System/Reflection/MethodInfo";
@@ -13,10 +12,10 @@ export class UrlRouter {
     public get Events(): UrlRouterEvents {
         return {} as any;
     }
-    public Route(url?: string, session?: Session): Task {
+    public Route(url?: string, session?: Session): Promise<void> {
         return {} as any;
     }
-    public Listen(server?: IServer): Task {
+    public Listen(server?: IServer): Promise<void> {
         return {} as any;
     }
     public Register(urlAliases?: string[], method?: Delegate): void {

@@ -12,7 +12,6 @@ import { FileAttributes } from "./FileAttributes";
 import { UnixFileMode } from "./UnixFileMode";
 import { Encoding } from "../Text/Encoding";
 import { CancellationToken } from "../Threading/CancellationToken";
-import { Task } from "../Threading/Tasks/Task";
 import { FileSystemInfo } from "./FileSystemInfo";
 import { Type } from "../Type";
 export class File {
@@ -142,13 +141,13 @@ export class File {
     public static Decrypt(path?: string): void {
         return {} as any;
     }
-    public static WriteAllTextAsync(path?: string, contents?: string, cancellationToken_or_encoding?: CancellationToken | Encoding, cancellationToken?: CancellationToken): Task {
+    public static WriteAllTextAsync(path?: string, contents?: string, cancellationToken_or_encoding?: CancellationToken | Encoding, cancellationToken?: CancellationToken): Promise<void> {
         return {} as any;
     }
-    public static WriteAllBytesAsync(path?: string, bytes?: number[], cancellationToken?: CancellationToken): Task {
+    public static WriteAllBytesAsync(path?: string, bytes?: number[], cancellationToken?: CancellationToken): Promise<void> {
         return {} as any;
     }
-    public static AppendAllTextAsync(path?: string, contents?: string, cancellationToken_or_encoding?: CancellationToken | Encoding, cancellationToken?: CancellationToken): Task {
+    public static AppendAllTextAsync(path?: string, contents?: string, cancellationToken_or_encoding?: CancellationToken | Encoding, cancellationToken?: CancellationToken): Promise<void> {
         return {} as any;
     }
     public static CreateSymbolicLink(path?: string, pathToTarget?: string): FileSystemInfo {

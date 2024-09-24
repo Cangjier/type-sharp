@@ -1,8 +1,13 @@
-import {Server} from '../.tsc/TypeSharp/System/Server'
+import { Server } from '../.tsc/TypeSharp/System/Server'
+import { Session } from '../.tsc/TidyHPC/Routers/Urls/Session'
+import { args } from '../.tsc/context'
 
-let main=()=>{
+let main = async () => {
     let server = new Server();
-    await server.start();
+    server.use("/api/v1/webhook", async (session: Session) => {
+        console.log(session.Request.Url);
+    });
+    await server.start(Number(args[0]));
 };
 
-let a:Promise=()=>void;
+await main();

@@ -1,11 +1,10 @@
-import { Task } from "../../System/Threading/Tasks/Task";
 import { Delegate } from "../../System/Delegate";
 import { Type } from "../../System/Type";
 export class Server {
     public useStatic(directory?: string): void {
         return {} as any;
     }
-    public start(port?: number): Task {
+    public start(port?: number): Promise<void> {
         return {} as any;
     }
     public use(pattern?: string, delegate?: Delegate): void {
