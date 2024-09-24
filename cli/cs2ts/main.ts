@@ -12,6 +12,7 @@ import { MemberInfo } from "../.tsc/System/Reflection/MemberInfo";
 import { Console } from "../.tsc/System/Console";
 import { Assembly } from "../.tsc/System/Reflection/Assembly";
 import { UTF8Encoding } from "../.tsc/System/Text/UTF8Encoding";
+import { ParameterInfo } from "../.tsc/System/Reflection/ParameterInfo";
 const typeAlias = {
     "Int32": "number",
     "Int64": "number",
@@ -97,7 +98,8 @@ let exportMembers = (type: Type) => {
         [key: string]: {
             parameters: {
                 Names: string[],
-                Types: string[]
+                Types: string[],
+                isParams: boolean
             }[],
             returnTypes: string[],
             isValid: boolean,
@@ -152,7 +154,8 @@ let exportMembers = (type: Type) => {
                 let memberCombine = {} as {
                     parameters: {
                         Names: string[],
-                        Types: string[]
+                        Types: string[],
+                        isParams: boolean
                     }[],
                     returnTypes: string[],
                     isValid: boolean,
@@ -190,11 +193,14 @@ let exportMembers = (type: Type) => {
                     if (memberCombine.parameters.length <= i) {
                         memberCombine.parameters.push({
                             Names: [],
-                            Types: []
+                            Types: [],
+                            isParams: false
                         });
                     }
-                    let names = memberCombine.parameters[i].Names;
-                    let types = memberCombine.parameters[i].Types;
+                    let memberParameter = memberCombine.parameters[i];
+                    memberParameter.isParams = parameter.IsParams;
+                    let names = memberParameter.Names;
+                    let types = memberParameter.Types;
                     if (names.includes(parameter.Name) == false) {
                         names.push(parameter.Name);
                     }
@@ -627,7 +633,7 @@ let main = () => {
             "(System\\.Text\\.UTF8Encoding$)",
             "(System\\.(Console|Type|Environment)$)",
             "(TidyHPC\\.(LiteJson|LiteXml|Routers)\\..*)",
-            "(System\\.Reflection\\.(Assembly|ConstructorInfo|FieldInfo|MemberInfo|MemberTypes|MethodInfo)$)",
+            "(System\\.Reflection\\.(Assembly|ConstructorInfo|FieldInfo|MemberInfo|MemberTypes|MethodInfo|ParameterInfo)$)",
             "(TypeSharp\\.System\\..*)"
         ].join("|"), "TypeSharp\\.System\\.context");
     }

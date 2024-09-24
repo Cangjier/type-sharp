@@ -8,7 +8,7 @@ export const GetType:()=> Type = 0 as any
 export const ToString:()=> string = 0 as any
 export const Equals:(obj?: any)=> boolean = 0 as any
 export const GetHashCode:()=> number = 0 as any
-export const exec:(path?: string, args?: string[]) => number = 0 as any
+export const exec:(path?: string, ...args: string[]) => number = 0 as any
 export const start:(path?: string, args?: string[]) => void = 0 as any
 export const cmd:(workingDirectory?: string, commandLine?: string) => number = 0 as any
 export const parseFloat:(value?: string) => number = 0 as any
