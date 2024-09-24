@@ -625,10 +625,10 @@ let main = () => {
     console.log(`args:${args}`);
     if (args.length == 0) {
         exportInitialTypes([
-            "(System\\.IO\\.(Path|Directory|File))",
-            "(System\\.Text\\.UTF8Encoding)",
+            "(System\\.IO\\.(Path|Directory|File)$)",
+            "(System\\.Text\\.UTF8Encoding$)",
             "(TidyHPC\\.(LiteJson|LiteXml|Routers)\\..*)",
-            "(System\\.Reflection\\.(Assembly|ConstructorInfo|FieldInfo|MemberInfo|MemberTypes|MethodInfo))",
+            "(System\\.Reflection\\.(Assembly|ConstructorInfo|FieldInfo|MemberInfo|MemberTypes|MethodInfo)$)",
             "(TypeSharp\\.System\\..*)"
         ].join("|"), "TypeSharp\\.System\\.context");
     }
