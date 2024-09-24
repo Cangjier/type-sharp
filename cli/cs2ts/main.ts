@@ -575,7 +575,7 @@ let exportInitialTypes = (typeNameRegex: string, membersTypeNameRegex: string) =
     let memberTypes = reflection.getTypes(membersTypeNameRegex).filter(type => isValidTypeName(type.FullName));
     let index = 0;
     let count = types.length + memberTypes.length;
-    types.filter(type => {
+    types.forEach(type => {
         console.log(`To Export ${type.FullName} (${index++}/${count})`);
     });
     memberTypes.forEach(type => {
