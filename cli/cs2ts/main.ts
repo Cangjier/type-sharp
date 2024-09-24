@@ -1,17 +1,17 @@
-import { Path } from "./System/IO/Path";
-import { Directory } from "./System/IO/Directory";
-import { File } from "./System/IO/File";
-import { args } from "./context";
-import { reflection } from "./reflection";
-import { Type } from "./System/Type";
-import { FieldInfo } from "./System/Reflection/FieldInfo";
-import { MethodInfo } from "./System/Reflection/MethodInfo";
-import { MemberTypes } from "./System/Reflection/MemberTypes";
-import { ConstructorInfo } from "./System/Reflection/ConstructorInfo";
-import { MemberInfo } from "./System/Reflection/MemberInfo";
-import { Console } from "./System/Console";
-import { Assembly } from "./System/Reflection/Assembly";
-import { UTF8Encoding } from "./System/Text/UTF8Encoding";
+import { Path } from "../.tsc/System/IO/Path";
+import { Directory } from "../.tsc/System/IO/Directory";
+import { File } from "../.tsc/System/IO/File";
+import { args } from "../.tsc/context";
+import { reflection } from "../.tsc/TypeSharp/System/reflection";
+import { Type } from "../.tsc/System/Type";
+import { FieldInfo } from "../.tsc/System/Reflection/FieldInfo";
+import { MethodInfo } from "../.tsc/System/Reflection/MethodInfo";
+import { MemberTypes } from "../.tsc/System/Reflection/MemberTypes";
+import { ConstructorInfo } from "../.tsc/System/Reflection/ConstructorInfo";
+import { MemberInfo } from "../.tsc/System/Reflection/MemberInfo";
+import { Console } from "../.tsc/System/Console";
+import { Assembly } from "../.tsc/System/Reflection/Assembly";
+import { UTF8Encoding } from "../.tsc/System/Text/UTF8Encoding";
 const typeAlias = {
     "Int32": "number",
     "Int64": "number",
@@ -637,6 +637,7 @@ let main = () => {
         exportInitialTypes([
             "(System\\.IO\\.(Path|Directory|File)$)",
             "(System\\.Text\\.UTF8Encoding$)",
+            "(System\\.(Console|Type)$)",
             "(TidyHPC\\.(LiteJson|LiteXml|Routers)\\..*)",
             "(System\\.Reflection\\.(Assembly|ConstructorInfo|FieldInfo|MemberInfo|MemberTypes|MethodInfo)$)",
             "(TypeSharp\\.System\\..*)"
