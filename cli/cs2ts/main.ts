@@ -33,6 +33,10 @@ const typeAlias = {
     "Array": "any[]",
     "Json": "any",
 };
+
+let isValidTypeName = (typeFullName: string) => {
+    return (typeFullName.includes("+") || typeFullName.includes("`") || typeFullName.startsWith("__")) == false;
+};
 let getTypeAlias = (typeName: string) => {
     if (typeName.includes("`") || typeName.includes("&") || typeName.includes("*")) {
         return {
@@ -491,7 +495,7 @@ let exportTypes = (rootDirectory: string, types: Type[]) => {
     types.forEach(type => {
         console.log(`Exporting ${type.FullName} (${index}/${types.length})`);
         index = index + 1;
-        if (type.FullName.includes("+") || type.FullName.includes("`") || type.FullName.startsWith("__")) {
+        if (isValidTypeName(type.FullName) == false) {
             return;
         }
         let directory = Path.GetFullPath(type.FullName.replace(".", "/"), rootDirectory);
@@ -572,9 +576,15 @@ let exportInitialTypes = (typeNameRegex: string, membersTypeNameRegex: string) =
     let index = 0;
     let count = types.length + memberTypes.length;
     types.forEach(type => {
+        if (isValidTypeName(type.FullName) == false) {
+            return;
+        }
         console.log(`To Export ${type.FullName} (${index++}/${count})`);
     });
     memberTypes.forEach(type => {
+        if (isValidTypeName(type.FullName) == false) {
+            return;
+        }
         console.log(`To Export ${type.FullName} (${index++}/${count})`);
     });
     console.log("Continue? (y/n)");
@@ -586,7 +596,7 @@ let exportInitialTypes = (typeNameRegex: string, membersTypeNameRegex: string) =
     index = 0;
     types.forEach(type => {
         console.log(`Exporting ${type.FullName} (${index++}/${count})`);
-        if (type.FullName.includes("+") || type.FullName.includes("`") || type.FullName.startsWith("__")) {
+        if (isValidTypeName(type.FullName) == false) {
             return;
         }
         let directory = Path.GetFullPath(type.FullName.replace(".", "/"), rootDirectory);
@@ -598,7 +608,7 @@ let exportInitialTypes = (typeNameRegex: string, membersTypeNameRegex: string) =
     });
     memberTypes.forEach(type => {
         console.log(`Exporting ${type.FullName} (${index++}/${count})`);
-        if (type.FullName.includes("+") || type.FullName.includes("`") || type.FullName.startsWith("__")) {
+        if (isValidTypeName(type.FullName) == false) {
             return;
         }
         let directory = Path.GetFullPath(type.FullName.replace(".", "/"), rootDirectory);
