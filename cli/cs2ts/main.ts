@@ -66,7 +66,14 @@ let getTaskTypeAias = (fullName: FullName) => {
     return `Promise<${alias.data}>`;
 };
 getTypeAlias = (typeFullName: string) => {
-    let fullName = null;
+    if (typeFullName.includes("&") || typeFullName.includes("*")) {
+        return {
+            success: false,
+            data: typeFullName,
+            containsAlias: false
+        };
+    }
+    let fullName;
     try{
         fullName = reflection.parseFullName(typeFullName);
     }
