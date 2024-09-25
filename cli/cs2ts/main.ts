@@ -3,6 +3,7 @@ import { Directory } from "../.tsc/System/IO/Directory";
 import { File } from "../.tsc/System/IO/File";
 import { args } from "../.tsc/context";
 import { reflection } from "../.tsc/TypeSharp/System/reflection";
+import { FullName } from "../.tsc/TypeSharp/FullNameScript/FullName";
 import { Type } from "../.tsc/System/Type";
 import { FieldInfo } from "../.tsc/System/Reflection/FieldInfo";
 import { MethodInfo } from "../.tsc/System/Reflection/MethodInfo";
@@ -33,48 +34,87 @@ const typeAlias = {
     "Action": "()=>void",
     "Array": "any[]",
     "Json": "any",
-    "Task":"Promise<void>"
+    "Task": "Promise<void>"
+};
+let getTypeAlias = (typeName: string) => {
+    return {
+        success: true,
+        data: typeName,
+        containsAlias: false
+    };
 };
 
 let isValidTypeName = (typeFullName: string) => {
     return (typeFullName.includes("+") || typeFullName.includes("`") || typeFullName.startsWith("__")) == false;
 };
-let getTypeAlias = (typeName: string) => {
-    if (typeName.includes("`") || typeName.includes("&") || typeName.includes("*")) {
+let isTaskType = (fullName: FullName) => {
+    return fullName.TypeName == "Task";
+};
+let getTaskTypeAias = (fullName: FullName) => {
+    if (fullName.IsGeneric) {
+        return "Promise<void>";
+    }
+    let genericTypes = fullName.GenericTypes;
+    if (genericTypes.length == 0) {
+        return "Promise<void>";
+    }
+    let genericType = genericTypes[0];
+    let alias = getTypeAlias(genericType.FullName);
+    if (alias.success == false) {
+        return "Promise<any>";
+    }
+    return `Promise<${alias.data}>`;
+};
+getTypeAlias = (typeFullName: string) => {
+    let fullName = null;
+    try{
+        fullName = reflection.parseFullName(typeFullName);
+    }
+    catch(e){
+        console.log(typeFullName,e);
+        throw `typeFullName=${typeFullName}`;
+    }
+    if (isTaskType(fullName)) {
+        return {
+            success: true,
+            data: getTaskTypeAias(fullName),
+            containsAlias: true
+        };
+    }
+    else if (typeFullName.includes("`") || typeFullName.includes("&") || typeFullName.includes("*")) {
         return {
             success: false,
-            data: typeName,
+            data: typeFullName,
             containsAlias: false
         };
     }
-    if (typeName.endsWith("[]")) {
-        typeName = typeName.substring(0, typeName.length - 2);
-        if (typeAlias[typeName] != null && typeAlias[typeName] != undefined) {
+    else if (fullName.IsArray) {
+        if (typeAlias[fullName.TypeName] != null && typeAlias[fullName.TypeName] != undefined) {
             return {
                 success: true,
-                data: typeAlias[typeName] + "[]",
+                data: typeAlias[fullName.TypeName] + "[]",
                 containsAlias: true
             };
         }
         else {
             return {
                 success: true,
-                data: typeName + "[]",
+                data: fullName.TypeName + "[]",
                 containsAlias: false
             };
         }
     }
-    else if (typeAlias[typeName] != null && typeAlias[typeName] != undefined) {
+    else if (typeAlias[fullName.TypeName] != null && typeAlias[fullName.TypeName] != undefined) {
         return {
             success: true,
-            data: typeAlias[typeName],
+            data: typeAlias[fullName.TypeName],
             containsAlias: true
         };
     }
     else {
         return {
             success: true,
-            data: typeName,
+            data: fullName.TypeName,
             containsAlias: false
         };
     }
@@ -141,7 +181,7 @@ let exportMembers = (type: Type) => {
         }
 
         if (member.MemberType == "Field") {
-            lines.push(`export const ${member.Name}: ${getTypeAlias((member as FieldInfo).FieldType.Name).data} = 0 as any;`);
+            lines.push(`export const ${member.Name}: ${getTypeAlias((member as FieldInfo).FieldType.FullName).data} = 0 as any;`);
         }
         else if (member.MemberType == "Method") {
             let method = member as MethodInfo;
@@ -206,12 +246,12 @@ let exportMembers = (type: Type) => {
                     if (names.includes(parameter.Name) == false) {
                         names.push(parameter.Name);
                     }
-                    let alias = getTypeAlias(parameter.ParameterType.Name);
+                    let alias = getTypeAlias(parameter.ParameterType.FullName);
                     if (types.includes(alias.data) == false) {
                         types.push(alias.data);
                     }
                 }
-                let returnTypeAlias = getTypeAlias(method.ReturnType.Name);
+                let returnTypeAlias = getTypeAlias(method.ReturnType.FullName);
                 if (memberCombine.returnTypes.includes(returnTypeAlias.data) == false) {
                     memberCombine.returnTypes.push(returnTypeAlias.data);
                 }
@@ -314,7 +354,7 @@ let exportClass = (type: Type) => {
         }
         let isValid = true as boolean;
         types.forEach(itemType => {
-            let alias = getTypeAlias(itemType.Name);
+            let alias = getTypeAlias(itemType.FullName);
             if (alias.success == false) {
                 isValid = false;
             }
@@ -329,25 +369,25 @@ let exportClass = (type: Type) => {
         }
 
         if (member.MemberType == "Field") {
-            lines.push(`    public ${member.Name}: ${getTypeAlias((member as FieldInfo).FieldType.Name).data};`);
+            lines.push(`    public ${member.Name}: ${getTypeAlias((member as FieldInfo).FieldType.FullName).data};`);
         }
         else if (member.MemberType == "Method") {
             let method = member as MethodInfo;
             if (member.Name.startsWith("get_")) {
                 if (method.IsStatic) {
-                    lines.push(`    public static get ${member.Name.substring(4)}(): ${getTypeAlias(method.ReturnType.Name).data} {`);
+                    lines.push(`    public static get ${member.Name.substring(4)}(): ${getTypeAlias(method.ReturnType.FullName).data} {`);
                     lines.push(`        return {} as any;`);
                     lines.push(`    }`);
                 }
                 else {
-                    lines.push(`    public get ${member.Name.substring(4)}(): ${getTypeAlias(method.ReturnType.Name).data} {`);
+                    lines.push(`    public get ${member.Name.substring(4)}(): ${getTypeAlias(method.ReturnType.FullName).data} {`);
                     lines.push(`        return {} as any;`);
                     lines.push(`    }`);
                 }
                 return;
             }
             else if (member.Name.startsWith("set_")) {
-                let args = method.GetParameters().map(p => `${p.Name}: ${getTypeAlias(p.ParameterType.Name).data}`).join(", ");
+                let args = method.GetParameters().map(p => `${p.Name}: ${getTypeAlias(p.ParameterType.FullName).data}`).join(", ");
                 if (method.IsStatic) {
                     lines.push(`    public static set ${member.Name.substring(4)}(${args}) {`);
                     lines.push(`    }`);
@@ -409,12 +449,12 @@ let exportClass = (type: Type) => {
                     if (names.includes(parameter.Name) == false) {
                         names.push(parameter.Name);
                     }
-                    let alias = getTypeAlias(parameter.ParameterType.Name);
+                    let alias = getTypeAlias(parameter.ParameterType.FullName);
                     if (types.includes(alias.data) == false) {
                         types.push(alias.data);
                     }
                 }
-                let returnTypeAlias = getTypeAlias(method.ReturnType.Name);
+                let returnTypeAlias = getTypeAlias(method.ReturnType.FullName);
                 if (memberCombine.returnTypes.includes(returnTypeAlias.data) == false) {
                     memberCombine.returnTypes.push(returnTypeAlias.data);
                 }
@@ -447,7 +487,7 @@ let exportClass = (type: Type) => {
                 if (names.includes(parameter.Name) == false) {
                     names.push(parameter.Name);
                 }
-                let alias = getTypeAlias(parameter.ParameterType.Name);
+                let alias = getTypeAlias(parameter.ParameterType.FullName);
                 if (types.includes(alias.data) == false) {
                     types.push(alias.data);
                 }
@@ -650,7 +690,7 @@ let main = () => {
             "(System\\.(Console|Type|Environment)$)",
             "(TidyHPC\\.(LiteJson|LiteXml|Routers)\\..*)",
             "(System\\.Reflection\\.(Assembly|ConstructorInfo|FieldInfo|MemberInfo|MemberTypes|MethodInfo|ParameterInfo)$)",
-            "(TypeSharp\\.System\\..*)"
+            "(TypeSharp\\.(System|FullNameScript)\\..*)"
         ].join("|"), "TypeSharp\\.System\\.context");
     }
     else if (args.length == 2) {

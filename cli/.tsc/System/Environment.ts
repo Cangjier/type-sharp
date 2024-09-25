@@ -110,7 +110,7 @@ export class Environment {
     public static SetEnvironmentVariable(variable?: string, value?: string, target?: EnvironmentVariableTarget): void {
         return {} as any;
     }
-    public static GetCommandLineArgs(): string[] {
+    public static GetCommandLineArgs(): string {
         return {} as any;
     }
     public static ExpandEnvironmentVariables(name?: string): string {
@@ -119,7 +119,7 @@ export class Environment {
     public static GetFolderPath(folder?: SpecialFolder, option?: SpecialFolderOption): string {
         return {} as any;
     }
-    public static GetLogicalDrives(): string[] {
+    public static GetLogicalDrives(): string {
         return {} as any;
     }
 }
