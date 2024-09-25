@@ -6,3 +6,5 @@ tsc run webhook-react-deploy <port>
 ```
 - port: 监听的端口
 
+目前支持react项目的自动化编译和部署，当项目存在package.json并且支持`npm run build`，则会自动克隆并安装依赖包，然后执行构建。
+
