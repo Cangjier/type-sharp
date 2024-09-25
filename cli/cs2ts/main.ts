@@ -51,7 +51,7 @@ let isTaskType = (fullName: FullName) => {
     return fullName.TypeName == "Task";
 };
 let getTaskTypeAias = (fullName: FullName) => {
-    if (fullName.IsGeneric) {
+    if (fullName.IsGeneric == false) {
         return "Promise<void>";
     }
     let genericTypes = fullName.GenericTypes;
@@ -59,7 +59,7 @@ let getTaskTypeAias = (fullName: FullName) => {
         return "Promise<void>";
     }
     let genericType = genericTypes[0];
-    let alias = getTypeAlias(genericType.FullName);
+    let alias = getTypeAlias(genericType.ToString());
     if (alias.success == false) {
         return "Promise<any>";
     }
@@ -74,11 +74,11 @@ getTypeAlias = (typeFullName: string) => {
         };
     }
     let fullName;
-    try{
+    try {
         fullName = reflection.parseFullName(typeFullName);
     }
-    catch(e){
-        console.log(typeFullName,e);
+    catch (e) {
+        console.log(typeFullName, e);
         throw `typeFullName=${typeFullName}`;
     }
     if (isTaskType(fullName)) {

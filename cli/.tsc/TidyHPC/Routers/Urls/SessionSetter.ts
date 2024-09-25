@@ -5,6 +5,9 @@ export class SessionSetter {
     public get Session(): Session {
         return {} as any;
     }
+    public SetResponse(resultValue?: any, urlRouter?: UrlRouter): Promise<boolean> {
+        return {} as any;
+    }
     public GetType(): Type {
         return {} as any;
     }

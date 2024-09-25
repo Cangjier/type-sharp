@@ -5,6 +5,9 @@ export class UrlFilter {
     public get UrlRouter(): UrlRouter {
         return {} as any;
     }
+    public Register(order?: number, urlPatterns?: string[], func?: null): void {
+        return {} as any;
+    }
     public GetType(): Type {
         return {} as any;
     }

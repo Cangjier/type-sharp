@@ -19,6 +19,9 @@ export class SessionCache {
     public SetUrlRegexMatchGroups(groupCollection?: GroupCollection): void {
         return {} as any;
     }
+    public GetRequstBodyJson(): Promise<any> {
+        return {} as any;
+    }
     public Dispose(): void {
         return {} as any;
     }

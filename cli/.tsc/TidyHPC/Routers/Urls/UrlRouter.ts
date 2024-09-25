@@ -18,7 +18,7 @@ export class UrlRouter {
     public Listen(server?: IServer): Promise<void> {
         return {} as any;
     }
-    public Register(urlAliases?: string[], method?: Delegate): void {
+    public Register(urlAliases?: string[], method_or_func?: Delegate | null): void {
         return {} as any;
     }
     public GetType(): Type {

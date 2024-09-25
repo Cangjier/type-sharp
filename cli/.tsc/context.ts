@@ -11,6 +11,7 @@ export const GetHashCode:()=> number = 0 as any
 export const exec:(path?: string, ...args: string[]) => number = 0 as any
 export const start:(path?: string, ...args: string[]) => void = 0 as any
 export const cmd:(workingDirectory?: string, commandLine?: string) => number = 0 as any
+export const cmdAsync:(workingDirectory?: string, commandLine?: string) => Promise<number> = 0 as any
 export const startCmd:(workingDirectory?: string, commandLine?: string) => void = 0 as any
 export const parseFloat:(value?: string) => number = 0 as any
 export const parseInt:(value?: string) => number = 0 as any

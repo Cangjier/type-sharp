@@ -128,7 +128,7 @@ export class MethodInfo {
     public GetBaseDefinition(): MethodInfo {
         return {} as any;
     }
-    public CreateDelegate(delegateType_or_target?: Type | any, target?: any): Delegate | T {
+    public CreateDelegate(delegateType_or_target?: Type | any, target?: any): Delegate | null {
         return {} as any;
     }
     public Equals(obj?: any): boolean {

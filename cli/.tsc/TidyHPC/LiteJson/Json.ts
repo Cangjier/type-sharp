@@ -168,6 +168,15 @@ export class Json {
     public Dispose(): void {
         return {} as any;
     }
+    public ToList(selector?: null): null {
+        return {} as any;
+    }
+    public ToArray(selector?: null): null {
+        return {} as any;
+    }
+    public SelectArray(selector?: null): null {
+        return {} as any;
+    }
     public Equals(other?: any): boolean {
         return {} as any;
     }
@@ -219,7 +228,7 @@ export class Json {
     public Is(): boolean {
         return {} as any;
     }
-    public As(): T {
+    public As(): null {
         return {} as any;
     }
     public RemoveKey(key?: string): void {
@@ -258,6 +267,9 @@ export class Json {
         return {} as any;
     }
     public static Parse(value_or_stream_or_bytes?: string | Stream | number[]): any {
+        return {} as any;
+    }
+    public static ParseAsync(stream?: Stream): Promise<any> {
         return {} as any;
     }
     public static Load(path?: string): any {

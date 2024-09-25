@@ -141,10 +141,19 @@ export class File {
     public static Decrypt(path?: string): void {
         return {} as any;
     }
+    public static ReadAllTextAsync(path?: string, cancellationToken_or_encoding?: CancellationToken | Encoding, cancellationToken?: CancellationToken): Promise<string> {
+        return {} as any;
+    }
     public static WriteAllTextAsync(path?: string, contents?: string, cancellationToken_or_encoding?: CancellationToken | Encoding, cancellationToken?: CancellationToken): Promise<void> {
         return {} as any;
     }
+    public static ReadAllBytesAsync(path?: string, cancellationToken?: CancellationToken): Promise<number[]> {
+        return {} as any;
+    }
     public static WriteAllBytesAsync(path?: string, bytes?: number[], cancellationToken?: CancellationToken): Promise<void> {
+        return {} as any;
+    }
+    public static ReadAllLinesAsync(path?: string, cancellationToken_or_encoding?: CancellationToken | Encoding, cancellationToken?: CancellationToken): Promise<string[]> {
         return {} as any;
     }
     public static AppendAllTextAsync(path?: string, contents?: string, cancellationToken_or_encoding?: CancellationToken | Encoding, cancellationToken?: CancellationToken): Promise<void> {

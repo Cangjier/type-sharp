@@ -1,5 +1,6 @@
 import { Type } from "../../System/Type";
 import { ParameterInfo } from "../../System/Reflection/ParameterInfo";
+import { FullName } from "../FullNameScript/FullName";
 export class reflection {
     public GetType(): Type {
         return {} as any;
@@ -20,6 +21,9 @@ export class reflection {
         return {} as any;
     }
     public static isParams(parameter?: ParameterInfo): boolean {
+        return {} as any;
+    }
+    public static parseFullName(fullName?: string): FullName {
         return {} as any;
     }
 }
