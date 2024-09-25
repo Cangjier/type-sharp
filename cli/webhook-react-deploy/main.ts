@@ -23,7 +23,7 @@ let main = async () => {
         if (Directory.Exists(tempDirectory) == false) {
             Directory.CreateDirectory(tempDirectory);
         }
-        console.log(`Working Directory : ${tempDirectory}`);
+        console.log(`Working Directory : ${tempDirectory}, Existing: ${Directory.Exists(tempDirectory)}`);
         console.log(`git clone ${cloneUrl} .`);
         if (await cmdAsync(tempDirectory, `git clone ${cloneUrl} .`) != 0) {
             console.log(`git clone ${cloneUrl} failed, delete temp directory: ${tempDirectory}`);
