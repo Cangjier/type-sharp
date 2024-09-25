@@ -20,6 +20,9 @@ let main = async () => {
         let repo = data.repository.name;
         // 下一步，使用cloneUrl和commit下载代码
         let tempDirectory = Path.Combine(Path.GetTempPath(), commit);
+        if (Directory.Exists(tempDirectory) == false) {
+            Directory.CreateDirectory(tempDirectory);
+        }
         console.log(`Working Directory : ${tempDirectory}`);
         console.log(`git clone ${cloneUrl} .`);
         if (await cmdAsync(tempDirectory, `git clone ${cloneUrl} .`) != 0) {
