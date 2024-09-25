@@ -43,6 +43,14 @@ let main = async () => {
             Directory.Delete(tempDirectory, true);
             return;
         }
+        // 设置镜像源
+        // npm config set registry https://mirrors.cloud.tencent.com/npm/
+        console.log(`npm config set registry https://mirrors.cloud.tencent.com/npm/`);
+        if (await cmdAsync(tempDirectory, `npm config set registry https://mirrors.cloud.tencent.com/npm/`) != 0) {
+            console.log(`npm config set registry https://mirrors.cloud.tencent.com/npm/ failed, delete temp directory: ${tempDirectory}`);
+            Directory.Delete(tempDirectory, true);
+            return;
+        }
         // 下一步，使用npm install安装依赖
         console.log(`npm install`);
         if (await cmdAsync(tempDirectory, `npm install`) != 0) {
