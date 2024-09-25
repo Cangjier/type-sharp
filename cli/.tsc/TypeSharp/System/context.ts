@@ -41,4 +41,10 @@ export class context {
     public static toString(value?: any): string {
         return {} as any;
     }
+    public static Number(value?: string): any {
+        return {} as any;
+    }
+    public static copyDirectory(sourceDirectory?: string, destinationDirectory?: string): void {
+        return {} as any;
+    }
 }

@@ -16,3 +16,5 @@ export const startCmd:(workingDirectory?: string, commandLine?: string) => void 
 export const parseFloat:(value?: string) => number = 0 as any
 export const parseInt:(value?: string) => number = 0 as any
 export const toString:(value?: any) => string = 0 as any
+export const Number:(value?: string) => any = 0 as any
+export const copyDirectory:(sourceDirectory?: string, destinationDirectory?: string) => void = 0 as any
