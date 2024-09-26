@@ -31,8 +31,10 @@ fi`;
     let detectScriptPath = Path.Combine(Path.GetTempPath(), `${name}-detect.sh`);
     await File.WriteAllTextAsync(detectScriptPath, detectScript, utf8);
     await cmdAsync(script_directory, `sudo chmod +x ${detectScriptPath}`);
+    console.log(`正在检查服务 ${name} 是否已启动...`);
+    console.log(`sudo bash ${detectScriptPath}`)
     await cmdAsync(script_directory, `sudo bash ${detectScriptPath}`);
-    File.Delete(detectScriptPath);
+    // File.Delete(detectScriptPath);
     // 构建服务文件
     let template = await File.ReadAllTextAsync(Path.Combine(script_directory, "template.service"), utf8);
     let serviceFileContent = template
