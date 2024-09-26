@@ -62,9 +62,10 @@ let main = async () => {
             return;
         }
         // 在.env文件中设置PUBLIC_URL为/repo
-        console.log(`Set PUBLIC_URL=.${repo}`);
+        console.log(`Set PUBLIC_URL=/${repo}`);
         let envFile = Path.Combine(tempDirectory, ".env");
-        let envContent = `PUBLIC_URL=.${repo}`;
+        let envContent = `PUBLIC_URL=/${repo}
+GENERATE_SOURCEMAP=false`;
         File.WriteAllText(envFile, envContent, utf8);
 
         // 下一步，使用npm run build打包
