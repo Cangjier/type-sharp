@@ -1,0 +1,11 @@
+[Unit]
+Description=<Description>
+After=network.target
+
+[Service]
+ExecStart=<ExecStart>
+Restart=always
+User=root
+
+[Install]
+WantedBy=multi-user.target
