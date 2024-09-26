@@ -2,9 +2,12 @@ import { Server } from '../.tsc/TypeSharp/System/Server';
 import { Session } from '../.tsc/TidyHPC/Routers/Urls/Session';
 import { args, cmd, cmdAsync, copyDirectory } from '../.tsc/context';
 import { Path } from '../.tsc/System/IO/Path';
+import { File } from '../.tsc/System/IO/File';
 import { Directory } from '../.tsc/System/IO/Directory';
+import { UTF8Encoding } from '../.tsc/System/Text/UTF8Encoding';
 
 let main = async () => {
+    let utf8 = new UTF8Encoding(false);
     let server = new Server();
     let staticPath = Path.Combine(Path.GetTempPath(), "webhook-react-deploy");
     server.useStatic(staticPath);
@@ -58,6 +61,11 @@ let main = async () => {
             Directory.Delete(tempDirectory, true);
             return;
         }
+        // 在.env文件中设置PUBLIC_URL为/repo
+        console.log(`Set PUBLIC_URL=.${repo}`);
+        let envFile = Path.Combine(tempDirectory, ".env");
+        let envContent = `PUBLIC_URL=.${repo}`;
+        File.WriteAllText(envFile, envContent, utf8);
 
         // 下一步，使用npm run build打包
         console.log(`npm run build`);
