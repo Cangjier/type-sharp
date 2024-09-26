@@ -7,6 +7,18 @@ import { Directory } from '../.tsc/System/IO/Directory';
 import { UTF8Encoding } from '../.tsc/System/Text/UTF8Encoding';
 
 let main = async () => {
+    if (args.length < 1) {
+        console.log("Usage: tscl run webhook-react-deploy <port> <secret>");
+        console.log(`secret is optional, such as username:token`);
+        return;
+    }
+    else if (args.length < 2) {
+        console.log("Usage: tscl run webhook-react-deploy <port> <secret>");
+        console.log(`secret is optional, such as username:token`);
+        console.log(`Warning: secret is not set, repository clone url will not contain secret`);
+    }
+    let port = Number(args[0]);
+    let secret = args.length > 1 ? args[1] : "";
     let utf8 = new UTF8Encoding(false);
     let server = new Server();
     let staticPath = Path.Combine(Path.GetTempPath(), "webhook-react-deploy");
@@ -18,9 +30,16 @@ let main = async () => {
             console.log(`Skip: ${data.ref}`);
             return;
         }
+        //https://github.com/Cangjier/type-sharp.git
         let cloneUrl = data.repository.clone_url;
         let commit = data.head_commit.id;
         let repo = data.repository.name;
+        if (secret != "") {
+            // 下一步，将secret添加到cloneUrl中
+            //https://username:your_token@github.com/username/repo.git
+            let index = cloneUrl.indexOf("//");
+            cloneUrl = cloneUrl.substring(0, index + 2) + secret + "@" + cloneUrl.substring(index + 2);
+        }
         // 下一步，使用cloneUrl和commit下载代码
         let tempDirectory = Path.Combine(Path.GetTempPath(), commit);
         if (Directory.Exists(tempDirectory) == false) {
@@ -86,7 +105,7 @@ GENERATE_SOURCEMAP=false`;
         Directory.Delete(tempDirectory, true);
         console.log(`Delete temp directory: ${tempDirectory}`);
     });
-    await server.start(Number(args[0]));
+    await server.start(port);
 };
 
 await main();
