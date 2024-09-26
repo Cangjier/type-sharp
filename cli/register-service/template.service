@@ -3,6 +3,9 @@ Description=<Description>
 After=network.target
 
 [Service]
+Environment=DOTNET_ROOT=/home/ubuntu/.dotnet
+Environment=PATH=/usr/local/nodejs/bin:/home/ubuntu/.dotnet:/home/ubuntu/.dotnet/tools
+WorkingDirectory=/home/ubuntu
 ExecStart=<ExecStart>
 Restart=always
 User=root
