@@ -17,9 +17,18 @@ let main = async () => {
     let description = args.length > 2 ? args[2] : "";
     let script_directory = Path.GetDirectoryName(script_path);
     let systemdPath = "/etc/systemd/system";
-    let serviceFileDestination = Path.Combine(systemdPath, `${name}.service`);
     let serviceFilePath = Path.Combine(Path.GetTempPath(), `${name}.service`);
-    // 第一步，构建服务文件
+    // 排查是否服务 {name} 服务是否已启动，如果启动则停止
+    await cmdAsync(script_directory, `SERVICE="${name}.service"
+# 检查服务状态
+if systemctl is-active --quiet "$SERVICE" && systemctl show "$SERVICE" -p ActiveState | grep -q "activating"; then
+    echo "$SERVICE is starting. Stopping it now..."
+    systemctl stop "$SERVICE"
+    echo "$SERVICE has been stopped."
+else
+    echo "$SERVICE is not starting."
+fi`);
+    // 构建服务文件
     let template = await File.ReadAllTextAsync(Path.Combine(script_directory, "template.service"), utf8);
     let serviceFileContent = template
         .replace("<Description>", description)
