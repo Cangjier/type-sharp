@@ -6,6 +6,11 @@ import { Path } from "../.tsc/System/IO/Path";
 import { args, cmdAsync, script_path } from "../.tsc/context";
 import { Environment } from "../.tsc/System/Environment";
 let main = async () => {
+    if(args.length < 2) {
+        console.log("Usage: tscl run register-service <name> <exec_start> [description]");
+        return;
+    }
+
     let utf8 = new UTF8Encoding(false);
     let name = args[0];
     let execStart = args[1];
