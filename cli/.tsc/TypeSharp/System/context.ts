@@ -20,6 +20,9 @@ export class context {
     public static exec(path?: string, args?: string[]): number {
         return {} as any;
     }
+    public static execAsync(path?: string, args?: string[]): Promise<number> {
+        return {} as any;
+    }
     public static start(path?: string, args?: string[]): void {
         return {} as any;
     }
