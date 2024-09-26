@@ -21,7 +21,7 @@ let main = async () => {
     // 排查是否服务 {name} 服务是否已启动，如果启动则停止
     let detectScript = `SERVICE="${name}.service"
 # 检查服务状态
-if systemctl is-active --quiet "$SERVICE" && systemctl show "$SERVICE" -p ActiveState | grep -q "activating"; then
+if systemctl is-active --quiet "$SERVICE"; then
     echo "$SERVICE is starting. Stopping it now..."
     systemctl stop "$SERVICE"
     echo "$SERVICE has been stopped."
