@@ -38,7 +38,7 @@ fi`;
     // 构建服务文件
     let template = await File.ReadAllTextAsync(Path.Combine(script_directory, "template.service"), utf8);
     // 将env输出至tmp文件
-    await cmdAsync(`env > ${serviceFilePath}.env`);
+    await cmdAsync(script_directory,`env > ${serviceFilePath}.env`);
     let serviceFileContent = template
         .replace("<Description>", description)
         .replace("<EnvironmentFile>", `${serviceFilePath}.env`)
