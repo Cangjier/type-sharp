@@ -6,7 +6,7 @@ import { Path } from "../.tsc/System/IO/Path";
 import { args, cmdAsync, script_path } from "../.tsc/context";
 import { Environment } from "../.tsc/System/Environment";
 let main = async () => {
-    if(args.length < 2) {
+    if (args.length < 2) {
         console.log("Usage: tscl run register-service <name> <exec_start> [description]");
         return;
     }
@@ -45,4 +45,11 @@ fi`);
     Console.WriteLine("服务启动成功！");
 };
 
-await main();
+let loggerPath = Path.Combine(Path.GetTempPath(), "register-service.log");
+try {
+    await main();
+}
+catch (e) {
+    await File.WriteAllTextAsync(loggerPath, e.ToString(), new UTF8Encoding(false));
+    throw e;
+}
