@@ -26,7 +26,7 @@ let main = async () => {
         .replace("<ExecStart>", execStart);
     await File.WriteAllTextAsync(serviceFilePath, serviceFileContent, utf8);
     // 将服务拷贝到 /etc/systemd/system
-    File.Copy(serviceFilePath, serviceFileDestination, true);
+    await cmdAsync(script_directory, `sudo mv ${serviceFilePath} ${systemdPath}`);
     // 刷新服务配置
     await cmdAsync(script_directory, "sudo systemctl daemon-reload");
     // 服务开机启动
