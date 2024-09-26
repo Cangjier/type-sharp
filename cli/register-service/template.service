@@ -4,7 +4,7 @@ After=network.target
 
 [Service]
 WorkingDirectory=/home/ubuntu
-ExecStart=/bin/bash -lc '<ExecStart>'
+ExecStart=/bin/bash -c 'source ~/.bashrc && <ExecStart>'
 Restart=always
 User=root
 
