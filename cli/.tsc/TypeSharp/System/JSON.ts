@@ -1,6 +1,5 @@
 import { Type } from "../../System/Type";
-export class axiosConfig {
-    public responseType: string;
+export class JSON {
     public GetType(): Type {
         return {} as any;
     }
@@ -15,7 +14,10 @@ export class axiosConfig {
     }
     public constructor() {
     }
-    public static op_Implicit(target?: any): axiosConfig {
+    public static stringify(value?: any): string {
+        return {} as any;
+    }
+    public static parse(stringValue?: string): any {
         return {} as any;
     }
 }

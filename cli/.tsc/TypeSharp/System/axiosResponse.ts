@@ -5,6 +5,16 @@ export class axiosResponse {
     }
     public set data(value: any) {
     }
+    public get status(): number {
+        return {} as any;
+    }
+    public set status(value: number) {
+    }
+    public get statusText(): string {
+        return {} as any;
+    }
+    public set statusText(value: string) {
+    }
     public GetType(): Type {
         return {} as any;
     }
