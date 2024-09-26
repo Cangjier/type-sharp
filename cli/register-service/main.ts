@@ -33,8 +33,6 @@ let main = async () => {
     await cmdAsync(script_directory, `sudo systemctl enable ${name}.service`);
     // 启动服务
     await cmdAsync(script_directory, `sudo systemctl start ${name}.service`);
-    // 打印服务状态
-    await cmdAsync(script_directory, `sudo systemctl status ${name}.service`);
     Console.WriteLine("服务启动成功！");
 };
 
