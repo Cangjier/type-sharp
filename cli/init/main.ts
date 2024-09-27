@@ -14,13 +14,15 @@ let main = async () => {
     }
     let mainTs = Path.Combine(Environment.CurrentDirectory, "main.ts");
     await File.WriteAllTextAsync(mainTs, `
-import { exec, execAsync, cmd, cmdAsync, start, startCmd } from "./context";
+import { args, exec, execAsync, cmd, cmdAsync, start, startCmd, copyDirectory } from "./context";
 import { Environment } from "./System/Environment";
 import { Directory } from "./System/IO/Directory";
 import { Path } from "./System/IO/Path";
 import { File } from "./System/IO/File";
 import { UTF8Encoding } from "./System/Text/UTF8Encoding";
+import { Server } from "./TypeSharp/System/Server";
 
+console.log(args);
 let main=async()=>{
     let utf8=new UTF8Encoding(false);
 };
