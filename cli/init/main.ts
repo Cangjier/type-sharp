@@ -31,7 +31,6 @@ await main();
     `;
     let parentDirectories = Directory.GetDirectories(Path.GetDirectoryName(Environment.CurrentDirectory));
     if (parentDirectories.findIndex(item => Path.GetFileName(item) == ".tsc")) {
-        let tscPath = Path.Combine(Path.GetDirectoryName(Environment.CurrentDirectory), ".tsc");
         let mainTsPath = Path.Combine(Environment.CurrentDirectory, "main.ts");
         await File.WriteAllTextAsync(mainTsPath, mainTs.replace("./", "../.tsc/"), utf8);
     }
