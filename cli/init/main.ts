@@ -7,14 +7,15 @@ import { UTF8Encoding } from "../.tsc/System/Text/UTF8Encoding";
 
 let main = async () => {
     let utf8 = new UTF8Encoding(false);
-    await execAsync(Environment.ProcessPath, "run", "cs2ts");
+    // 第一种情况，所在目录是.tsc，则需要输出cs2ts
+    // 第二种情况，父级同级目录有.tsc，当前目录输出main.ts
+    // 第三种情况，父级同级目录没有.tsc，则在当前目录输出cs2ts和main.ts
+
     if (Path.GetDirectoryName(Environment.CurrentDirectory) == ".tsc") {
-        // 如果是.tsc目录，则不需要创建main.ts
+        await execAsync(Environment.ProcessPath, "run", "cs2ts");
         return;
     }
-    let mainTs = Path.Combine(Environment.CurrentDirectory, "main.ts");
-    await File.WriteAllTextAsync(mainTs, `
-import { args, exec, execAsync, cmd, cmdAsync, start, startCmd, copyDirectory } from "./context";
+    let mainTs = `import { args, exec, execAsync, cmd, cmdAsync, start, startCmd, copyDirectory } from "./context";
 import { Environment } from "./System/Environment";
 import { Directory } from "./System/IO/Directory";
 import { Path } from "./System/IO/Path";
@@ -27,7 +28,17 @@ let main=async()=>{
     let utf8=new UTF8Encoding(false);
 };
 await main();
-`, utf8);
+    `;
+    let parentDirectories = Directory.GetDirectories(Path.GetDirectoryName(Environment.CurrentDirectory));
+    if (parentDirectories.findIndex(item => Path.GetFileName(item) == ".tsc")) {
+        let tscPath = Path.Combine(Path.GetDirectoryName(Environment.CurrentDirectory), ".tsc");
+        let mainTsPath = Path.Combine(Environment.CurrentDirectory, "main.ts");
+        await File.WriteAllTextAsync(mainTsPath, mainTs.replace("./", "../.tsc/"), utf8);
+    }
+    else {
+        let mainTsPath = Path.Combine(Environment.CurrentDirectory, "main.ts");
+        await File.WriteAllTextAsync(mainTsPath, mainTs, utf8);
+    }
 };
 
 await main();
