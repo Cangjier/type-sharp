@@ -81,7 +81,7 @@ let isDotNet = (tempDirectory: string) => {
     return true;
 };
 
-let regex_GeneratePackageOnBuild = new Regex("<GeneratePackageOnBuild>\\s*true\\s*</GeneratePackageOnBuild>");
+let regex_GeneratePackageOnBuild = new Regex("<GeneratePackageOnBuild>\\s*(true|True)\\s*</GeneratePackageOnBuild>");
 let isNuget = (csprojPath: string) => {
     let csprojContent = File.ReadAllText(csprojPath, utf8);
     if (regex_GeneratePackageOnBuild.IsMatch(csprojContent)) {
