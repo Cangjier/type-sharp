@@ -1,6 +1,6 @@
 import { Server } from '../.tsc/TypeSharp/System/Server';
 import { Session } from '../.tsc/TidyHPC/Routers/Urls/Session';
-import { args, cmd, cmdAsync, copyDirectory } from '../.tsc/context';
+import { args, cmd, cmdAsync, copyDirectory, deleteDirectory } from '../.tsc/context';
 import { Path } from '../.tsc/System/IO/Path';
 import { File } from '../.tsc/System/IO/File';
 import { Directory } from '../.tsc/System/IO/Directory';
@@ -10,7 +10,8 @@ import { Regex } from '../.tsc/System/Text/RegularExpressions/Regex';
 import { Environment } from '../.tsc/System/Environment';
 
 let utf8 = new UTF8Encoding(false);
-let staticPath = Path.Combine(Path.GetTempPath(), "webhook-react-deploy");
+let staticFrontPath = Path.Combine(Path.GetTempPath(), "webhook-front");
+let staticEndPath = Path.Combine(Path.GetTempPath(), "webhook-end");
 
 let parameters = {} as { [key: string]: string };
 for (let i = 0; i < args.length; i++) {
@@ -28,7 +29,7 @@ for (let i = 0; i < args.length; i++) {
         i++;
     }
 }
-console.log(`Parameters: ${parameters}`);
+console.log(`parameters: ${parameters}`);
 let port = parameters.port ?? "8080";
 let gitSecret = parameters.git ?? "";
 let nugetSecret = parameters.nuget ?? "";
@@ -82,7 +83,7 @@ GENERATE_SOURCEMAP=false`;
         return;
     }
     // 下一步，将打包后的文件复制到指定目录
-    let destDirectory = Path.Combine(staticPath, repo);
+    let destDirectory = Path.Combine(staticFrontPath, repo);
     console.log(`Copy to ${destDirectory}`);
     if (Directory.Exists(destDirectory)) {
         Directory.Delete(destDirectory, true);
@@ -127,31 +128,37 @@ let getCurrentNugetVersion = async (csprojPath: string) => {
 let buildNugetPackage = async (csprojPath: string) => {
     let currentDirectory = Path.GetDirectoryName(csprojPath);
     let version = await getCurrentNugetVersion(csprojPath);
-    let nugetPackagePath = Path.Combine(currentDirectory, `bin/Release/${version}`);
-    if (Directory.Exists(nugetPackagePath)) {
-        Directory.Delete(nugetPackagePath, true);
+    let nugetPackageDirectory = Path.Combine(currentDirectory, "bin", "Release", version);
+    if (Directory.Exists(nugetPackageDirectory)) {
+        Directory.Delete(nugetPackageDirectory, true);
     }
-    console.log(`dotnet pack -c Release -o ${nugetPackagePath}`);
-    if (await cmdAsync(currentDirectory, `dotnet pack -c Release -o ${nugetPackagePath}`) != 0) {
-        console.log(`dotnet pack failed, delete nuget package directory: ${nugetPackagePath}`);
-        if (Directory.Exists(nugetPackagePath)) {
-            Directory.Delete(nugetPackagePath, true);
+    console.log(`dotnet pack -c Release -o ${nugetPackageDirectory}`);
+    if (await cmdAsync(currentDirectory, `dotnet pack -c Release -o ${nugetPackageDirectory}`) != 0) {
+        console.log(`dotnet pack failed, delete nuget package directory: ${nugetPackageDirectory}`);
+        if (Directory.Exists(nugetPackageDirectory)) {
+            Directory.Delete(nugetPackageDirectory, true);
         }
         return "";
     }
-    return nugetPackagePath;
+    let files = Directory.GetFiles(nugetPackageDirectory, "*.nupkg");
+    if (files.length == 0) {
+        console.log(`No .nupkg file found`);
+        return "";
+    }
+    return files[0];
 };
 
 let publishCsproj = async (csprojPath: string) => {
     let currentDirectory = Path.GetDirectoryName(csprojPath);
-    console.log(`dotnet publish -c Release`);
-    if (await cmdAsync(currentDirectory, `dotnet publish -c Release`) != 0) {
+    let cmd = `dotnet publish -c Release -f net8.0`;
+    console.log(cmd);
+    if (await cmdAsync(currentDirectory, cmd) != 0) {
         console.log(`dotnet publish failed`);
         return false;
     }
     return true;
 };
-// 
+
 let uploadNugetPackage = async (nugetPackagePath: string) => {
     // 通过dotnet上传nuget包
     let cmd = `dotnet nuget push ${Path.GetFileName(nugetPackagePath)} --api-key ${nugetSecret} --source https://api.nuget.org/v3/index.json`;
@@ -163,72 +170,7 @@ let uploadNugetPackage = async (nugetPackagePath: string) => {
     return true;
 };
 
-let gitClone = async (tempDirectory: string, cloneUrl: string, commit: string) => {
-    if (gitSecret != "") {
-        // 下一步，将secret添加到cloneUrl中
-        //https://username:your_token@github.com/username/repo.git
-        let index = cloneUrl.indexOf("//");
-        cloneUrl = cloneUrl.substring(0, index + 2) + gitSecret + "@" + cloneUrl.substring(index + 2);
-    }
-    // 下一步，使用cloneUrl和commit下载代码
-    console.log(`Create temp directory: ${tempDirectory}`);
-    if (Directory.Exists(tempDirectory) == false) {
-        Directory.CreateDirectory(tempDirectory);
-    }
-    console.log(`Working Directory : ${tempDirectory}, Existing: ${Directory.Exists(tempDirectory)}`);
-    console.log(`git clone ${cloneUrl} .`);
-    if (await cmdAsync(tempDirectory, `git clone ${cloneUrl} .`) != 0) {
-        console.log(`git clone ${cloneUrl} failed, delete temp directory: ${tempDirectory}`);
-        Directory.Delete(tempDirectory, true);
-        return;
-    }
-    if (commit != "") {
-        console.log(`git checkout ${commit}`);
-        if (await cmdAsync(tempDirectory, `git checkout ${commit}`) != 0) {
-            console.log(`git checkout ${commit} failed, delete temp directory: ${tempDirectory}`);
-            Directory.Delete(tempDirectory, true);
-            return;
-        }
-    }
-};
-
-let main = async () => {
-    let server = new Server();
-
-    server.useStatic(staticPath);
-    console.log(`Static Path: ${staticPath}`);
-    server.use("/api/v1/webhook", async (session: Session) => {
-        let data = await session.Cache.GetRequstBodyJson();
-        if (data.ref != "refs/heads/main") {
-            console.log(`Skip: ${data.ref}`);
-            return;
-        }
-        //https://github.com/Cangjier/type-sharp.git
-        let cloneUrl = data.repository.clone_url;
-        let commit = data.head_commit.id;
-        let repo = data.repository.name;
-        let tempDirectory = Path.Combine(Path.GetTempPath(), commit);
-        gitClone(tempDirectory, cloneUrl, commit);
-        if (isNodeJs(tempDirectory)) {
-            await buildNodeJs(tempDirectory, repo);
-        }
-        if (Directory.Exists(tempDirectory)) {
-            Directory.Delete(tempDirectory, true);
-            console.log(`Delete temp directory: ${tempDirectory}`);
-        }
-    });
-    await server.start(Number(port));
-};
-
-// await main();
-
-let test1 = async (cloneUrl: string, commit: string) => {
-    let tempDirectory = Path.Combine(Path.GetTempPath(), commit);
-    await gitClone(tempDirectory, cloneUrl, commit);
-    if (isDotNet(tempDirectory) == false) {
-        console.log(`Not a .NET project`);
-        return;
-    }
+let buildDotNet = async (tempDirectory: string, repo: string) => {
     let csprojFiles = Directory.GetFiles(tempDirectory, "*.csproj");
     if (csprojFiles.length != 1) {
         console.log(`More than one .csproj file found or no .csproj file found`);
@@ -239,20 +181,97 @@ let test1 = async (cloneUrl: string, commit: string) => {
         console.log(`Publish failed`);
         return;
     }
-    if (isNuget(csprojPath) == false) {
-        console.log(`Not a Nuget project`);
-        return;
-    }
-    let nugetPackagePath = await buildNugetPackage(csprojPath);
-    if (File.Exists(nugetPackagePath) == false) {
-        console.log(`Nuget package not found`);
-        return;
-    }
-    if (await uploadNugetPackage(nugetPackagePath) == false) {
-        console.log(`Upload nuget package failed`);
-        return;
+    if (isNuget(csprojPath)) {
+        let nugetPackagePath = await buildNugetPackage(csprojPath);
+        if (File.Exists(nugetPackagePath)) {
+            await uploadNugetPackage(nugetPackagePath);
+        }
     }
 
+    // 如果发布目录下存在.service，说明是一个服务
+    // 修改.service 文件中的WorkingDirectory为destDirectory
+    // 将服务文件拷贝到/ect/systemd/system/目录下，并重启服务
+    let serviceFiles = Directory.GetFiles(tempDirectory, "*.service");
+    if (serviceFiles.length > 0) {
+        let destDirectory = Path.Combine(staticEndPath, repo);
+
+        await cmdAsync(tempDirectory, `sudo mkdir -p ${destDirectory}`);
+        await cmdAsync(tempDirectory, `sudo cp -r ${tempDirectory}/bin/Release/net8.0/publish/* ${destDirectory}`);
+
+        let serviceFile = serviceFiles[0];
+        let serviceContent = File.ReadAllText(serviceFile, utf8);
+        serviceContent = serviceContent.replace(/^WorkingDirectory=.*$/m, `WorkingDirectory=${destDirectory}`);
+        File.WriteAllText(serviceFile, serviceContent, utf8);
+        let serviceDestFile = Path.Combine("/etc/systemd/system", Path.GetFileName(serviceFile));
+        if (await cmdAsync(tempDirectory, `sudo cp ${serviceFile} ${serviceDestFile}`) == 0) {
+            console.log(`Copy ${serviceFile} to ${serviceDestFile}`);
+            console.log(`systemctl daemon-reload`);
+            await cmdAsync(tempDirectory, `sudo systemctl daemon-reload`);
+            console.log(`systemctl restart ${Path.GetFileNameWithoutExtension(serviceFile)}`);
+            await cmdAsync(tempDirectory, `systemctl restart ${Path.GetFileNameWithoutExtension(serviceFile)}`);
+        }
+    }
 };
 
-await test1("https://github.com/Cangjier/tidy-hpc.git", "");
+let gitClone = async (tempDirectory: string, cloneUrl: string, commit: string) => {
+    if (gitSecret != "") {
+        // 下一步，将secret添加到cloneUrl中
+        //https://username:your_token@github.com/username/repo.git
+        let index = cloneUrl.indexOf("//");
+        cloneUrl = cloneUrl.substring(0, index + 2) + gitSecret + "@" + cloneUrl.substring(index + 2);
+    }
+    // 下一步，使用cloneUrl和commit下载代码
+    console.log(`Create temp directory: ${tempDirectory}`);
+    if (Directory.Exists(tempDirectory)) {
+        deleteDirectory(tempDirectory);
+    }
+    Directory.CreateDirectory(tempDirectory);
+    console.log(`Working Directory : ${tempDirectory}, Existing: ${Directory.Exists(tempDirectory)}`);
+    console.log(`git clone ${cloneUrl} .`);
+    if (await cmdAsync(tempDirectory, `git clone ${cloneUrl} .`) != 0) {
+        console.log(`git clone ${cloneUrl} failed, delete temp directory: ${tempDirectory}`);
+        deleteDirectory(tempDirectory);
+        return false;
+    }
+    if (commit != "") {
+        console.log(`git checkout ${commit}`);
+        if (await cmdAsync(tempDirectory, `git checkout ${commit}`) != 0) {
+            console.log(`git checkout ${commit} failed, delete temp directory: ${tempDirectory}`);
+            deleteDirectory(tempDirectory);
+            return false;
+        }
+    }
+    return true;
+};
+
+let main = async () => {
+    let server = new Server();
+
+    server.useStatic(staticFrontPath);
+    console.log(`Static Path: ${staticFrontPath}`);
+    server.use("/api/v1/webhook", async (session: Session) => {
+        let data = await session.Cache.GetRequstBodyJson();
+        if (data.ref != "refs/heads/main") {
+            console.log(`Skip: ${data.ref}`);
+            return;
+        }
+        let cloneUrl = data.repository.clone_url;
+        let commit = data.head_commit.id;
+        let repo = data.repository.name;
+        let tempDirectory = Path.Combine(Path.GetTempPath(), commit);
+        gitClone(tempDirectory, cloneUrl, commit);
+        if (isNodeJs(tempDirectory)) {
+            await buildNodeJs(tempDirectory, repo);
+        }
+        else if (isDotNet(tempDirectory)) {
+            await buildDotNet(tempDirectory, repo);
+        }
+        if (Directory.Exists(tempDirectory)) {
+            deleteDirectory(tempDirectory);
+            console.log(`Delete temp directory: ${tempDirectory}`);
+        }
+    });
+    await server.start(Number(port));
+};
+
+await main();

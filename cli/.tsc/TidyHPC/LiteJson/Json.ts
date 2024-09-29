@@ -275,6 +275,9 @@ export class Json {
     public static Load(path?: string): any {
         return {} as any;
     }
+    public static LoadAsync(path?: string): Promise<any> {
+        return {} as any;
+    }
     public static Validate(json_or_stream?: string | Stream): boolean {
         return {} as any;
     }

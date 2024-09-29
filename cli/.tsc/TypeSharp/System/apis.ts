@@ -1,5 +1,10 @@
 import { Type } from "../../System/Type";
-export class console {
+export class apis {
+    public static get directory(): string {
+        return {} as any;
+    }
+    public static set directory(value: string) {
+    }
     public GetType(): Type {
         return {} as any;
     }
@@ -14,13 +19,7 @@ export class console {
     }
     public constructor() {
     }
-    public static log(values?: any[]): void {
-        return {} as any;
-    }
-    public static error(values?: any[]): void {
-        return {} as any;
-    }
-    public static debug(values?: any[]): void {
+    public static runAsync(apiName?: string, args?: any): Promise<any> {
         return {} as any;
     }
 }

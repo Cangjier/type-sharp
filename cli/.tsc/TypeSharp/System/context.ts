@@ -1,3 +1,4 @@
+import { Guid } from "../../System/Guid";
 import { Type } from "../../System/Type";
 export class context {
     public args: string[];
@@ -48,6 +49,24 @@ export class context {
         return {} as any;
     }
     public static copyDirectory(sourceDirectory?: string, destinationDirectory?: string): void {
+        return {} as any;
+    }
+    public static deleteDirectory(sourceDirectory?: string): void {
+        return {} as any;
+    }
+    public static setLoggerPath(path?: string): void {
+        return {} as any;
+    }
+    public static getLoggerPath(): string {
+        return {} as any;
+    }
+    public static lock(id?: Guid): void {
+        return {} as any;
+    }
+    public static lockAsync(id?: Guid): Promise<void> {
+        return {} as any;
+    }
+    public static unlock(id?: Guid): void {
         return {} as any;
     }
 }
