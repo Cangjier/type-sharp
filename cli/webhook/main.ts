@@ -12,6 +12,27 @@ import { Environment } from '../.tsc/System/Environment';
 let utf8 = new UTF8Encoding(false);
 let staticPath = Path.Combine(Path.GetTempPath(), "webhook-react-deploy");
 
+let parameters = {} as { [key: string]: string };
+for (let i = 0; i < args.length; i++) {
+    let arg = args[i];
+    if (arg.startsWith("--")) {
+        let key = arg.substring(2);
+        let value = args[i + 1];
+        parameters[key] = value;
+        i++;
+    }
+    else if (arg.startsWith("-")) {
+        let key = arg.substring(1);
+        let value = args[i + 1];
+        parameters[key] = value;
+        i++;
+    }
+}
+console.log(`Parameters: ${parameters}`);
+let port = parameters.port ?? "8080";
+let gitSecret = parameters.git ?? "";
+let nugetSecret = parameters.nuget ?? "";
+
 let isNodeJs = (tempDirectory: string) => {
     // 判断是否存在package.json
     let packageJsonPath = Path.Combine(tempDirectory, "package.json");
@@ -130,21 +151,48 @@ let publishCsproj = async (csprojPath: string) => {
     }
     return true;
 };
+// 
+let uploadNugetPackage = async (nugetPackagePath: string) => {
+    // 通过dotnet上传nuget包
+    let cmd = `dotnet nuget push ${Path.GetFileName(nugetPackagePath)} --api-key ${nugetSecret} --source https://api.nuget.org/v3/index.json`;
+    console.log(cmd);
+    if (await cmdAsync(Path.GetDirectoryName(nugetPackagePath), cmd) != 0) {
+        console.log(`dotnet nuget push failed`);
+        return false;
+    }
+    return true;
+};
 
-let main = async () => {
-    if (args.length < 1) {
-        console.log("Usage: tscl run webhook-react-deploy <port> <secret>");
-        console.log(`secret is optional, such as username:token`);
+let gitClone = async (tempDirectory: string, cloneUrl: string, commit: string) => {
+    if (gitSecret != "") {
+        // 下一步，将secret添加到cloneUrl中
+        //https://username:your_token@github.com/username/repo.git
+        let index = cloneUrl.indexOf("//");
+        cloneUrl = cloneUrl.substring(0, index + 2) + gitSecret + "@" + cloneUrl.substring(index + 2);
+    }
+    // 下一步，使用cloneUrl和commit下载代码
+    console.log(`Create temp directory: ${tempDirectory}`);
+    if (Directory.Exists(tempDirectory) == false) {
+        Directory.CreateDirectory(tempDirectory);
+    }
+    console.log(`Working Directory : ${tempDirectory}, Existing: ${Directory.Exists(tempDirectory)}`);
+    console.log(`git clone ${cloneUrl} .`);
+    if (await cmdAsync(tempDirectory, `git clone ${cloneUrl} .`) != 0) {
+        console.log(`git clone ${cloneUrl} failed, delete temp directory: ${tempDirectory}`);
+        Directory.Delete(tempDirectory, true);
         return;
     }
-    else if (args.length < 2) {
-        console.log("Usage: tscl run webhook-react-deploy <port> <secret>");
-        console.log(`secret is optional, such as username:token`);
-        console.log(`Warning: secret is not set, repository clone url will not contain secret`);
+    if (commit != "") {
+        console.log(`git checkout ${commit}`);
+        if (await cmdAsync(tempDirectory, `git checkout ${commit}`) != 0) {
+            console.log(`git checkout ${commit} failed, delete temp directory: ${tempDirectory}`);
+            Directory.Delete(tempDirectory, true);
+            return;
+        }
     }
-    let port = Number(args[0]);
-    let secret = args.length > 1 ? args[1] : "";
+};
 
+let main = async () => {
     let server = new Server();
 
     server.useStatic(staticPath);
@@ -159,31 +207,8 @@ let main = async () => {
         let cloneUrl = data.repository.clone_url;
         let commit = data.head_commit.id;
         let repo = data.repository.name;
-        if (secret != "") {
-            // 下一步，将secret添加到cloneUrl中
-            //https://username:your_token@github.com/username/repo.git
-            let index = cloneUrl.indexOf("//");
-            cloneUrl = cloneUrl.substring(0, index + 2) + secret + "@" + cloneUrl.substring(index + 2);
-        }
-        // 下一步，使用cloneUrl和commit下载代码
         let tempDirectory = Path.Combine(Path.GetTempPath(), commit);
-        if (Directory.Exists(tempDirectory) == false) {
-            Directory.CreateDirectory(tempDirectory);
-        }
-        console.log(`Working Directory : ${tempDirectory}, Existing: ${Directory.Exists(tempDirectory)}`);
-        console.log(`git clone ${cloneUrl} .`);
-        if (await cmdAsync(tempDirectory, `git clone ${cloneUrl} .`) != 0) {
-            console.log(`git clone ${cloneUrl} failed, delete temp directory: ${tempDirectory}`);
-            Directory.Delete(tempDirectory, true);
-            return;
-        }
-        console.log(`git checkout ${commit}`);
-        if (await cmdAsync(tempDirectory, `git checkout ${commit}`) != 0) {
-            console.log(`git checkout ${commit} failed, delete temp directory: ${tempDirectory}`);
-            Directory.Delete(tempDirectory, true);
-            return;
-        }
-
+        gitClone(tempDirectory, cloneUrl, commit);
         if (isNodeJs(tempDirectory)) {
             await buildNodeJs(tempDirectory, repo);
         }
@@ -192,18 +217,19 @@ let main = async () => {
             console.log(`Delete temp directory: ${tempDirectory}`);
         }
     });
-    await server.start(port);
+    await server.start(Number(port));
 };
 
 // await main();
 
-let test1 = async () => {
-    let currentDirectory = Environment.CurrentDirectory;
-    if (isDotNet(currentDirectory) == false) {
+let test1 = async (cloneUrl: string, commit: string) => {
+    let tempDirectory = Path.Combine(Path.GetTempPath(), commit);
+    await gitClone(tempDirectory, cloneUrl, commit);
+    if (isDotNet(tempDirectory) == false) {
         console.log(`Not a .NET project`);
         return;
     }
-    let csprojFiles = Directory.GetFiles(currentDirectory, "*.csproj");
+    let csprojFiles = Directory.GetFiles(tempDirectory, "*.csproj");
     if (csprojFiles.length != 1) {
         console.log(`More than one .csproj file found or no .csproj file found`);
         return;
@@ -218,7 +244,15 @@ let test1 = async () => {
         return;
     }
     let nugetPackagePath = await buildNugetPackage(csprojPath);
-    console.log(`Nuget package path: ${nugetPackagePath}`);
+    if (File.Exists(nugetPackagePath) == false) {
+        console.log(`Nuget package not found`);
+        return;
+    }
+    if (await uploadNugetPackage(nugetPackagePath) == false) {
+        console.log(`Upload nuget package failed`);
+        return;
+    }
+
 };
 
-await test1();
+await test1("https://github.com/Cangjier/tidy-hpc.git", "");
