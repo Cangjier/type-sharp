@@ -26,6 +26,7 @@ let main = async () => {
     console.log(`Static Path: ${staticPath}`);
     server.use("/api/v1/webhook", async (session: Session) => {
         let data = await session.Cache.GetRequstBodyJson();
+        console.log(`Received: ${data.ref}`);
         if (data.ref != "refs/heads/main") {
             console.log(`Skip: ${data.ref}`);
             return;
