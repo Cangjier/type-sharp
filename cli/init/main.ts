@@ -11,7 +11,8 @@ let main = async () => {
     // 第二种情况，父级同级目录有.tsc，当前目录输出main.ts
     // 第三种情况，父级同级目录没有.tsc，则在当前目录输出cs2ts和main.ts
 
-    if (Path.GetDirectoryName(Environment.CurrentDirectory) == ".tsc") {
+    if (Path.GetFileName(Environment.CurrentDirectory) == ".tsc") {
+        console.log("Current directory is .tsc, run cs2ts");
         await execAsync(Environment.ProcessPath, "run", "cs2ts");
         return;
     }
