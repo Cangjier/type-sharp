@@ -121,6 +121,16 @@ let buildNugetPackage = async (csprojPath: string) => {
     return nugetPackagePath;
 };
 
+let publishCsproj = async (csprojPath: string) => {
+    let currentDirectory = Path.GetDirectoryName(csprojPath);
+    console.log(`dotnet publish -c Release`);
+    if (await cmdAsync(currentDirectory, `dotnet publish -c Release`) != 0) {
+        console.log(`dotnet publish failed`);
+        return false;
+    }
+    return true;
+};
+
 let main = async () => {
     if (args.length < 1) {
         console.log("Usage: tscl run webhook-react-deploy <port> <secret>");
@@ -199,6 +209,10 @@ let test1 = async () => {
         return;
     }
     let csprojPath = csprojFiles[0];
+    if (await publishCsproj(csprojPath) == false) {
+        console.log(`Publish failed`);
+        return;
+    }
     if (isNuget(csprojPath) == false) {
         console.log(`Not a Nuget project`);
         return;
