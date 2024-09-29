@@ -110,10 +110,12 @@ let buildNugetPackage = async (csprojPath: string) => {
     if (Directory.Exists(nugetPackagePath)) {
         Directory.Delete(nugetPackagePath, true);
     }
-    // $"dotnet pack -c Release -o {nugetPackagePath}"
+    console.log(`dotnet pack -c Release -o ${nugetPackagePath}`);
     if (await cmdAsync(currentDirectory, `dotnet pack -c Release -o ${nugetPackagePath}`) != 0) {
         console.log(`dotnet pack failed, delete nuget package directory: ${nugetPackagePath}`);
-        Directory.Delete(nugetPackagePath, true);
+        if (Directory.Exists(nugetPackagePath)) {
+            Directory.Delete(nugetPackagePath, true);
+        }
         return "";
     }
     return nugetPackagePath;
