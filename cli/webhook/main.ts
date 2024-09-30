@@ -252,7 +252,7 @@ let main = async () => {
     server.use("/api/v1/webhook", async (session: Session) => {
         let data = await session.Cache.GetRequstBodyJson();
         if ((data.ref == "refs/heads/main" || data.ref == "refs/heads/master") == false) {
-            console.log(`Skip: ${data.ref},${data.ref == "refs/heads/main" || data.ref == "refs/heads/master"}`);
+            console.log(`Skip: ${data.ref}`);
             return;
         }
         let cloneUrl = data.repository.clone_url;
