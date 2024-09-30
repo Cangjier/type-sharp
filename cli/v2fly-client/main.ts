@@ -18,7 +18,8 @@ let main = async () => {
         programPath = Path.Combine(Path.GetTempPath(), programId);
     }
     if (File.Exists(programPath) == false) {
-        
+        //https://github.com/v2fly/v2ray-core/releases/download/v5.18.0/v2ray-linux-64.zip
+        //https://github.com/v2fly/v2ray-core/releases/download/v5.18.0/v2ray-windows-64.zip
     }
 };
 await main();
