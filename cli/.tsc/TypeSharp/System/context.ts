@@ -30,7 +30,7 @@ export class context {
     public static cmd(workingDirectory?: string, commandLine?: string): number {
         return {} as any;
     }
-    public static cmdAsync(workingDirectory?: string, commandLine?: string): Promise<number> {
+    public static cmdAsync(workingDirectory?: string, commandLine?: string, output?: any): Promise<number> {
         return {} as any;
     }
     public static startCmd(workingDirectory?: string, commandLine?: string): void {
@@ -45,7 +45,7 @@ export class context {
     public static toString(value?: any): string {
         return {} as any;
     }
-    public static Number(value?: string): any {
+    public static Number(value?: any): any {
         return {} as any;
     }
     public static copyDirectory(sourceDirectory?: string, destinationDirectory?: string): void {

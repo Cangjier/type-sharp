@@ -23,6 +23,8 @@ import { Path } from "./System/IO/Path";
 import { File } from "./System/IO/File";
 import { UTF8Encoding } from "./System/Text/UTF8Encoding";
 import { Server } from "./TypeSharp/System/Server";
+import { axios } from "../.tsc/TypeSharp/System/axios";
+import { zip } from "../.tsc/TypeSharp/System/zip";
 
 console.log(args);
 let main=async()=>{

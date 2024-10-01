@@ -156,6 +156,9 @@ export class Assembly {
     public static GetAssembly(type?: Type): Assembly {
         return {} as any;
     }
+    public static SetEntryAssembly(assembly?: Assembly): void {
+        return {} as any;
+    }
     public static GetEntryAssembly(): Assembly {
         return {} as any;
     }

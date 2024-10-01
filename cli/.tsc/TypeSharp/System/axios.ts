@@ -15,7 +15,19 @@ export class axios {
     }
     public constructor() {
     }
+    public static setProxy(proxy?: string): void {
+        return {} as any;
+    }
+    public static unsetProxy(): void {
+        return {} as any;
+    }
     public static get(url?: string, config?: axiosConfig): Promise<axiosResponse> {
+        return {} as any;
+    }
+    public static post(url?: string, data?: any, config?: axiosConfig): Promise<axiosResponse> {
+        return {} as any;
+    }
+    public static download(url?: string, path?: string): Promise<void> {
         return {} as any;
     }
 }

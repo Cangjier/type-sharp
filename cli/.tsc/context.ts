@@ -13,12 +13,12 @@ export const exec:(path?: string, ...args: string[]) => number = 0 as any
 export const execAsync:(path?: string, ...args: string[]) => Promise<number> = 0 as any
 export const start:(path?: string, ...args: string[]) => void = 0 as any
 export const cmd:(workingDirectory?: string, commandLine?: string) => number = 0 as any
-export const cmdAsync:(workingDirectory?: string, commandLine?: string) => Promise<number> = 0 as any
+export const cmdAsync:(workingDirectory?: string, commandLine?: string, output?: any) => Promise<number> = 0 as any
 export const startCmd:(workingDirectory?: string, commandLine?: string) => void = 0 as any
 export const parseFloat:(value?: string) => number = 0 as any
 export const parseInt:(value?: string) => number = 0 as any
 export const toString:(value?: any) => string = 0 as any
-export const Number:(value?: string) => any = 0 as any
+export const Number:(value?: any) => any = 0 as any
 export const copyDirectory:(sourceDirectory?: string, destinationDirectory?: string) => void = 0 as any
 export const deleteDirectory:(sourceDirectory?: string) => void = 0 as any
 export const setLoggerPath:(path?: string) => void = 0 as any
