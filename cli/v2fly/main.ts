@@ -33,7 +33,7 @@ let port = parameters.port ?? "8080";
 let vmessUrl = parameters.vmess;
 
 let help = () => {
-    console.log("Usage: v2fly client --port 8080 --vmessUrl vmess://xxx");
+    console.log("Usage: v2fly client --port 8080 --vmess vmess://xxx");
 };
 
 let startClient = async (programPath: string) => {
