@@ -34,6 +34,7 @@ let vmessUrl = parameters.vmess;
 
 let help = () => {
     console.log("Usage: v2fly client --port 8080 --vmess vmess://xxx");
+    console.log("Usage: v2fly server --port 8080");
 };
 
 let generateClientConfig = async (configPath: string) => {
@@ -49,15 +50,30 @@ let generateClientConfig = async (configPath: string) => {
         .replace("<vmess-security>", vmess.type);
     await File.WriteAllTextAsync(configPath, config, utf8);
 };
+
+let generateServerConfig = async (configPath: string) => {
+    let templatePath = Path.Combine(Path.GetDirectoryName(script_path), 'server.json');
+    let template = await File.ReadAllTextAsync(templatePath, utf8);
+    let config = template.replace("<port>", port);
+    await File.WriteAllTextAsync(configPath, config, utf8);
+};
+
 let subscribeVmess = async (url: string) => {
     let response = await axios.get(url, {
         responseType: "text"
-    } as any);
-
+    });
+    let base64 = response.data;
+    let lines = utf8.GetString(Convert.FromBase64String(base64)).replace('\r', '').split('\n');
+    for (let line of lines) {
+        if (line.startsWith("vmess://")) {
+            let vmess = Json.Parse(utf8.GetString(Convert.FromBase64String(line.substring(8))));
+            console.log(vmess);
+        }
+    }
 };
 
 let startClient = async (programPath: string) => {
-    let configGuid = "D5DFCD26946440B194805F932A5324F4";
+    let configGuid = "D5DFCD26946440B194805F932A5324F4.client";
     let configPath = Path.Combine(Path.GetTempPath(), `${configGuid}.json`);
     if (vmessUrl) {
         await generateClientConfig(configPath);
@@ -66,6 +82,15 @@ let startClient = async (programPath: string) => {
         console.log("vmess is required");
         help();
         return;
+    }
+    await execAsync(programPath, "run", "-config", configPath);
+};
+
+let startServer = async (programPath: string) => {
+    let configGuid = "D5DFCD26946440B194805F932A5324F4.server";
+    let configPath = Path.Combine(Path.GetTempPath(), `${configGuid}.json`);
+    if (File.Exists(configPath) == false) {
+        await generateServerConfig(configPath);
     }
     await execAsync(programPath, "run", "-config", configPath);
 };
@@ -118,5 +143,12 @@ let main = async () => {
     if (args[0] == 'client') {
         await startClient(programPath);
     }
+    else if (args[0] == 'server') {
+        await startServer(programPath);
+    }
+    else {
+        help();
+    }
 };
+
 await main();
