@@ -36,10 +36,9 @@ let help = () => {
     console.log("Usage: v2fly client --port 8080 --vmess vmess://xxx");
 };
 
-let startClient = async (programPath: string) => {
+let generateClientConfig = async (configPath: string) => {
     let templatePath = Path.Combine(Path.GetDirectoryName(script_path), 'client.json');
     let template = await File.ReadAllTextAsync(templatePath, utf8);
-    let configPath = Path.Combine(Path.GetTempPath(), `${Guid.NewGuid().ToString("N")}.json`);
     let vmess = Json.Parse(utf8.GetString(Convert.FromBase64String(vmessUrl.substring(8))));
     let config = template.replace("${address}", vmess.add)
         .replace("<port>", port)
@@ -49,15 +48,29 @@ let startClient = async (programPath: string) => {
         .replace("<vmess-alterId>", vmess.aid)
         .replace("<vmess-security>", vmess.type);
     await File.WriteAllTextAsync(configPath, config, utf8);
+};
+let subscribeVmess = async (url: string) => {
+    let response = await axios.get(url, {
+        responseType: "text"
+    } as any);
+
+};
+
+let startClient = async (programPath: string) => {
+    let configGuid = "D5DFCD26946440B194805F932A5324F4";
+    let configPath = Path.Combine(Path.GetTempPath(), `${configGuid}.json`);
+    if (vmessUrl) {
+        await generateClientConfig(configPath);
+    }
+    else if (File.Exists(configPath) == false) {
+        console.log("vmess is required");
+        help();
+        return;
+    }
     await execAsync(programPath, "run", "-config", configPath);
 };
 
 let main = async () => {
-    if (vmessUrl == undefined) {
-        console.error("vmessUrl is required");
-        help();
-        return;
-    }
     let programId = "FE8826DC-18F9-411A-A851-5DC68A12F5BF";
     let programPath;
     if (Environment.OSVersion.Platform == PlatformID.Win32NT) {
@@ -81,15 +94,15 @@ let main = async () => {
         // 根据平台自动下载
         let zipPath = Path.Combine(Path.GetTempPath(), `${programId}.zip`);
         if (Environment.OSVersion.Platform == PlatformID.Win32NT) {
-            console.log(`download ${windowsUrl}`);
+            console.log(`download ${windowsUrl} -> ${zipPath}`);
             await axios.download(windowsUrl, zipPath);
         }
         else {
-            console.log(`download ${linuxUrl}`);
+            console.log(`download ${linuxUrl} -> ${zipPath}`);
             await axios.download(linuxUrl, zipPath);
         }
         let zipExtractPath = Path.Combine(Path.GetTempPath(), programId);
-        zip.extract(zipPath, zipExtractPath);
+        await zip.extract(zipPath, zipExtractPath);
         if (Environment.OSVersion.Platform == PlatformID.Win32NT) {
             let exePath = Path.Combine(zipExtractPath, "v2ray.exe");
             File.Copy(exePath, programPath);

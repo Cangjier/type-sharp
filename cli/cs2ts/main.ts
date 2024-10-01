@@ -501,24 +501,33 @@ let exportClass = (type: Type) => {
             }
         }
     });
-    let memberKeys = Object.keys(memberCombines);
-    memberKeys.forEach(key => {
-        let memberCombine = memberCombines[key];
-        if (memberCombine.isValid == false) {
-            return;
-        }
-        let parameters = memberCombine.parameters.map(p => `${p.Names.join("_or_")}?: ${p.Types.join(" | ")}`).join(", ");
-        let returnTypes = memberCombine.returnTypes.join(" | ");
-        if (memberCombine.isConstructor) {
-            lines.push(`    public constructor(${parameters}) {`);
-            lines.push(`    }`);
-        }
-        else {
-            lines.push(`    public ${key}(${parameters}): ${returnTypes} {`);
-            lines.push(`        return {} as any;`);
-            lines.push(`    }`);
-        }
-    });
+    let isContainsOpImplicit = staticMemberCombines.op_Implicit != undefined;
+    let firstLetter = type.Name[0].toLowerCase();
+    let firstLetterIsLowerCase = firstLetter == type.Name[0];
+    if (isContainsOpImplicit && firstLetterIsLowerCase) {
+        // 如果包含op_Implicit方法，并且类名的首字母是小写，则该类是一个接口描述类
+    }
+    else {
+        let memberKeys = Object.keys(memberCombines);
+        memberKeys.forEach(key => {
+            let memberCombine = memberCombines[key];
+            if (memberCombine.isValid == false) {
+                return;
+            }
+            let parameters = memberCombine.parameters.map(p => `${p.Names.join("_or_")}?: ${p.Types.join(" | ")}`).join(", ");
+            let returnTypes = memberCombine.returnTypes.join(" | ");
+            if (memberCombine.isConstructor) {
+                lines.push(`    public constructor(${parameters}) {`);
+                lines.push(`    }`);
+            }
+            else {
+                lines.push(`    public ${key}(${parameters}): ${returnTypes} {`);
+                lines.push(`        return {} as any;`);
+                lines.push(`    }`);
+            }
+        });
+    }
+
     let staticMemberKeys = Object.keys(staticMemberCombines);
     staticMemberKeys.forEach(key => {
         let memberCombine = staticMemberCombines[key];
