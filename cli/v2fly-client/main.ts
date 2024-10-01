@@ -7,12 +7,13 @@ import { UTF8Encoding } from "../.tsc/System/Text/UTF8Encoding";
 import { Server } from "../.tsc/TypeSharp/System/Server";
 import { axios } from "../.tsc/TypeSharp/System/axios";
 import { zip } from "../.tsc/TypeSharp/System/zip";
+import { PlatformID } from "../.tsc/System/PlatformID";
 
 console.log(args);
 let main = async () => {
     let programId = "FE8826DC-18F9-411A-A851-5DC68A12F5BF";
     let programPath;
-    if (Environment.OSVersion == "Windows_NT") {
+    if (Environment.OSVersion.Platform == PlatformID.Win32NT) {
         programPath = Path.Combine(Path.GetTempPath(), `${programId}.exe`);
     }
     else {
@@ -33,7 +34,7 @@ let main = async () => {
         // 根据平台自动下载
         let zipPath = Path.Combine(Path.GetTempPath(), `${programId}.zip`);
         console.log(Environment.OSVersion);
-        if (Environment.OSVersion == "Windows_NT") {
+        if (Environment.OSVersion.Platform == PlatformID.Win32NT) {
             await axios.download(windowsUrl, zipPath);
         }
         else {
@@ -41,7 +42,7 @@ let main = async () => {
         }
         let zipExtractPath = Path.Combine(Path.GetTempPath(), programId);
         zip.extract(zipPath, zipExtractPath);
-        if (Environment.OSVersion == "Windows_NT") {
+        if (Environment.OSVersion.Platform == PlatformID.Win32NT) {
             let exePath = Path.Combine(zipExtractPath, "v2ray.exe");
             File.Copy(exePath, programPath);
         }
