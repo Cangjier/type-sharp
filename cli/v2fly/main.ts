@@ -1,4 +1,4 @@
-import { args, exec, execAsync, cmd, cmdAsync, start, startCmd, copyDirectory, deleteDirectory } from "../.tsc/context";
+import { args, exec, execAsync, cmd, cmdAsync, start, startCmd, copyDirectory, deleteDirectory, script_path } from "../.tsc/context";
 import { Environment } from "../.tsc/System/Environment";
 import { Directory } from "../.tsc/System/IO/Directory";
 import { Path } from "../.tsc/System/IO/Path";
@@ -9,6 +9,8 @@ import { axios } from "../.tsc/TypeSharp/System/axios";
 import { zip } from "../.tsc/TypeSharp/System/zip";
 import { PlatformID } from "../.tsc/System/PlatformID";
 import { Guid } from "../.tsc/System/Guid";
+import { Convert } from "../.tsc/System/Convert";
+import { Json } from "../.tsc/TidyHPC/LiteJson/Json";
 let utf8 = new UTF8Encoding(false);
 let parameters = {} as { [key: string]: string };
 for (let i = 0; i < args.length; i++) {
@@ -35,10 +37,19 @@ let help = () => {
 };
 
 let startClient = async (programPath: string) => {
-    let templatePath = Path.Combine(Path.GetDirectoryName(Environment.ProcessPath), 'client.json');
+    let templatePath = Path.Combine(Path.GetDirectoryName(script_path), 'client.json');
     let template = await File.ReadAllTextAsync(templatePath, utf8);
     let configPath = Path.Combine(Path.GetTempPath(), `${Guid.NewGuid().ToString("N")}.json`);
-    let vmess= Con
+    let vmess = Json.Parse(utf8.GetString(Convert.FromBase64String(vmessUrl.substring(8))));
+    let config = template.replace("${address}", vmess.add)
+        .replace("<port>", port)
+        .replace("<vmess-address>", vmess.add)
+        .replace("<vmess-port>", vmess.port)
+        .replace("<vmess-id>", vmess.id)
+        .replace("<vmess-alterId>", vmess.aid)
+        .replace("<vmess-security>", vmess.type);
+    await File.WriteAllTextAsync(configPath, config, utf8);
+    await execAsync(programPath, "run", "-config", configPath);
 };
 
 let main = async () => {
