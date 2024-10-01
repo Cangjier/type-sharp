@@ -1,4 +1,4 @@
-import { args, exec, execAsync, cmd, cmdAsync, start, startCmd, copyDirectory } from "../.tsc/context";
+import { args, exec, execAsync, cmd, cmdAsync, start, startCmd, copyDirectory, deleteDirectory } from "../.tsc/context";
 import { Environment } from "../.tsc/System/Environment";
 import { Directory } from "../.tsc/System/IO/Directory";
 import { Path } from "../.tsc/System/IO/Path";
@@ -8,9 +8,45 @@ import { Server } from "../.tsc/TypeSharp/System/Server";
 import { axios } from "../.tsc/TypeSharp/System/axios";
 import { zip } from "../.tsc/TypeSharp/System/zip";
 import { PlatformID } from "../.tsc/System/PlatformID";
+import { Guid } from "../.tsc/System/Guid";
+let utf8 = new UTF8Encoding(false);
+let parameters = {} as { [key: string]: string };
+for (let i = 0; i < args.length; i++) {
+    let arg = args[i];
+    if (arg.startsWith("--")) {
+        let key = arg.substring(2);
+        let value = args[i + 1];
+        parameters[key] = value;
+        i++;
+    }
+    else if (arg.startsWith("-")) {
+        let key = arg.substring(1);
+        let value = args[i + 1];
+        parameters[key] = value;
+        i++;
+    }
+}
+console.log(`parameters: ${parameters}`);
+let port = parameters.port ?? "8080";
+let vmessUrl = parameters.vmessUrl;
 
-console.log(args);
+let help = () => {
+    console.log("Usage: v2fly client --port 8080 --vmessUrl vmess://xxx");
+};
+
+let startClient = async (programPath: string) => {
+    let templatePath = Path.Combine(Path.GetDirectoryName(Environment.ProcessPath), 'client.json');
+    let template = await File.ReadAllTextAsync(templatePath, utf8);
+    let configPath = Path.Combine(Path.GetTempPath(), `${Guid.NewGuid().ToString("N")}.json`);
+    let vmess= Con
+};
+
 let main = async () => {
+    if (vmessUrl == undefined) {
+        console.error("vmessUrl is required");
+        help();
+        return;
+    }
     let programId = "FE8826DC-18F9-411A-A851-5DC68A12F5BF";
     let programPath;
     if (Environment.OSVersion.Platform == PlatformID.Win32NT) {
@@ -33,11 +69,12 @@ let main = async () => {
         }
         // 根据平台自动下载
         let zipPath = Path.Combine(Path.GetTempPath(), `${programId}.zip`);
-        console.log(Environment.OSVersion);
         if (Environment.OSVersion.Platform == PlatformID.Win32NT) {
+            console.log(`download ${windowsUrl}`);
             await axios.download(windowsUrl, zipPath);
         }
         else {
+            console.log(`download ${linuxUrl}`);
             await axios.download(linuxUrl, zipPath);
         }
         let zipExtractPath = Path.Combine(Path.GetTempPath(), programId);
@@ -50,6 +87,12 @@ let main = async () => {
             let exePath = Path.Combine(zipExtractPath, "v2ray");
             File.Copy(exePath, programPath);
         }
+        deleteDirectory(zipExtractPath);
+        File.Delete(zipPath);
     };
+    console.log(`programPath: ${programPath}`);
+    if (args[0] == 'client') {
+        await startClient(programPath);
+    }
 };
 await main();

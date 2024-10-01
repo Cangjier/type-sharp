@@ -1,0 +1,58 @@
+{
+    "log": {
+      "loglevel": "none"
+    },
+    "inbounds": [
+      {
+        "port": <port>,
+        "listen": "127.0.0.1",
+        "protocol": "http"
+      }
+    ],
+    "outbounds": [
+      {
+    "protocol": "vmess",
+    "settings": {
+      "vnext": [
+        {
+          "address": "<vmess-address>",
+          "port": <vmess-port>,
+          "users": [
+            {
+              "id": "<vmess-id>",
+              "alterId": <vmess-alterId>,
+              "security": "<vmess-security>"
+            }
+          ]
+        }
+      ]
+    },
+    "streamSettings": {
+      "network": "tcp",
+      "security": "none",
+      "tlsSettings": null,
+      "wsSettings": null
+    }
+  },
+      {
+        "protocol": "freedom",
+        "settings": {},
+        "tag": "direct"
+      }
+    ],
+    "routing": {
+      "domainStrategy": "IPIfNonMatch",
+      "rules": [
+        {
+          "type": "field",
+          "domains": [
+              "localhost"
+          ],
+          "ip": [
+            "127.0.0.1"
+          ],
+          "outboundTag": "direct"
+        }
+      ]
+    }
+  }

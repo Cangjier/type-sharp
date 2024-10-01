@@ -696,7 +696,7 @@ let main = () => {
             "(System\\.IO\\.(Path|Directory|File)$)",
             "(System\\.Text\\.UTF8Encoding$)",
             "(System\\.Text\\.RegularExpressions\\.(Regex|RegexOptions)$)",
-            "(System\\.(Console|Type|Environment|OperatingSystem|PlatformID|Version)$)",
+            "(System\\.(Console|Type|Environment|OperatingSystem|PlatformID|Version|Convert)$)",
             "(TidyHPC\\.(LiteJson|LiteXml|Routers)\\..*)",
             "(System\\.Reflection\\.(Assembly|ConstructorInfo|FieldInfo|MemberInfo|MemberTypes|MethodInfo|ParameterInfo)$)",
             "(TypeSharp\\.(System|FullNameScript)\\..*)"
