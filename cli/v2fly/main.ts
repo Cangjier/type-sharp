@@ -30,7 +30,7 @@ for (let i = 0; i < args.length; i++) {
 }
 console.log(`parameters: ${parameters}`);
 let port = parameters.port ?? "8080";
-let vmessUrl = parameters.vmessUrl;
+let vmessUrl = parameters.vmess;
 
 let help = () => {
     console.log("Usage: v2fly client --port 8080 --vmessUrl vmess://xxx");
