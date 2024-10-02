@@ -118,13 +118,15 @@ let main = async () => {
         }
         // 根据平台自动下载
         let zipPath = Path.Combine(Path.GetTempPath(), `${programId}.zip`);
-        if (Environment.OSVersion.Platform == PlatformID.Win32NT) {
-            console.log(`download ${windowsUrl} -> ${zipPath}`);
-            await axios.download(windowsUrl, zipPath);
-        }
-        else {
-            console.log(`download ${linuxUrl} -> ${zipPath}`);
-            await axios.download(linuxUrl, zipPath);
+        if (File.Exists(zipPath) == false) {
+            if (Environment.OSVersion.Platform == PlatformID.Win32NT) {
+                console.log(`download ${windowsUrl} -> ${zipPath}`);
+                await axios.download(windowsUrl, zipPath);
+            }
+            else {
+                console.log(`download ${linuxUrl} -> ${zipPath}`);
+                await axios.download(linuxUrl, zipPath);
+            }
         }
         let zipExtractPath = Path.Combine(Path.GetTempPath(), programId);
         await zip.extract(zipPath, zipExtractPath);
