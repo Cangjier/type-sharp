@@ -128,7 +128,7 @@ let main = async () => {
                 await axios.download(linuxUrl, zipPath);
             }
         }
-        let zipExtractPath = Path.Combine(Path.GetTempPath(), programId);
+        let zipExtractPath = Path.Combine(Path.GetTempPath(), `${programId}.extract`);
         await zip.extract(zipPath, zipExtractPath);
         if (Environment.OSVersion.Platform == PlatformID.Win32NT) {
             let exePath = Path.Combine(zipExtractPath, "v2ray.exe");
