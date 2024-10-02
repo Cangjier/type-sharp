@@ -153,4 +153,9 @@ let main = async () => {
     }
 };
 
-await main();
+try {
+    await main();
+}
+catch (e) {
+    console.log(e);
+}
