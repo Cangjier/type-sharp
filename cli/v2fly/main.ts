@@ -40,6 +40,7 @@ let help = () => {
 let generateClientConfig = async (configPath: string) => {
     let templatePath = Path.Combine(Path.GetDirectoryName(script_path), 'client.json');
     let template = await File.ReadAllTextAsync(templatePath, utf8);
+    console.log(`vmessUrl: ${vmessUrl}`);
     let vmess = Json.Parse(utf8.GetString(Convert.FromBase64String(vmessUrl.substring(8))));
     let config = template.replace("${address}", vmess.add)
         .replace("<port>", port)
