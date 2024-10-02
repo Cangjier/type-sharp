@@ -36,7 +36,12 @@ let main = async () => {
         let index = 0;
         for (let file of toDelete) {
             console.log(`Deleting ${index++}/${toDelete.length} ${file}`);
-            File.Delete(file);
+            try {
+                File.Delete(file);
+            }
+            catch (e) {
+                console.log(`Failed to delete ${file}`);
+            }
         }
     }
 };
