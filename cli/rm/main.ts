@@ -32,7 +32,7 @@ let main = async () => {
     console.log(`Total ${toDelete.length} files to delete.`);
     console.log(`Are you sure to delete these files? (Y/N)`);
     let answer = Console.ReadLine();
-    if (answer.toLowerCase() === "y") {
+    if (answer.toLowerCase() == "y") {
         let index = 0;
         for (let file of toDelete) {
             console.log(`Deleting ${index++}/${toDelete.length} ${file}`);
