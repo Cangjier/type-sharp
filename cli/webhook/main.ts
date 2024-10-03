@@ -30,9 +30,16 @@ for (let i = 0; i < args.length; i++) {
     }
 }
 console.log(`parameters: ${parameters}`);
+let help = () => {
+    console.log("Usage: webhook --port 8080 --git xxx --nuget xxx");
+    console.log(`--port: default 8080`);
+    console.log(`--git: github token`);
+    console.log(`--nuget: nuget token`);
+};
 let port = parameters.port ?? "8080";
 let gitSecret = parameters.git ?? "";
 let nugetSecret = parameters.nuget ?? "";
+
 
 let isNodeJs = (tempDirectory: string) => {
     // 判断是否存在package.json
@@ -245,8 +252,11 @@ let gitClone = async (tempDirectory: string, cloneUrl: string, commit: string) =
 };
 
 let main = async () => {
+    if (parameters.help) {
+        help();
+        return;
+    }
     let server = new Server();
-
     server.useStatic(staticFrontPath);
     console.log(`Static Path: ${staticFrontPath}`);
     server.use("/api/v1/webhook", async (session: Session) => {
