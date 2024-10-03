@@ -85,6 +85,13 @@ let startClient = async (programPath: string) => {
         help();
         return;
     }
+    if(Environment.OSVersion.Platform== PlatformID.Win32NT){
+
+    }
+    else{
+        // 给程序权限
+        await cmdAsync(Environment.CurrentDirectory, `chmod +x ${programPath}`);
+    }
     await execAsync(programPath, "run", "-config", configPath);
 };
 
