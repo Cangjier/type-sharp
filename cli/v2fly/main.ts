@@ -76,7 +76,7 @@ let subscribeVmess = async (url: string) => {
 
 let startClient = async (programPath: string) => {
     let configGuid = "D5DFCD26946440B194805F932A5324F4.client";
-    let configPath = Path.Combine(Path.GetTempPath(), `${configGuid}.json`);
+    let configPath = Path.Combine(Path.GetTempPath(), `${configGuid}.json`);;
     if (vmessUrl) {
         await generateClientConfig(configPath);
     }
@@ -85,10 +85,10 @@ let startClient = async (programPath: string) => {
         help();
         return;
     }
-    if(Environment.OSVersion.Platform== PlatformID.Win32NT){
+    if (Environment.OSVersion.Platform == PlatformID.Win32NT) {
 
     }
-    else{
+    else {
         // 给程序权限
         await cmdAsync(Environment.CurrentDirectory, `chmod +x ${programPath}`);
     }
