@@ -259,7 +259,7 @@ let main = async () => {
         let commit = data.head_commit.id;
         let repo = data.repository.name;
         let tempDirectory = Path.Combine(Path.GetTempPath(), commit);
-        gitClone(tempDirectory, cloneUrl, commit);
+        await gitClone(tempDirectory, cloneUrl, commit);
         if (isNodeJs(tempDirectory)) {
             await buildNodeJs(tempDirectory, repo);
         }
