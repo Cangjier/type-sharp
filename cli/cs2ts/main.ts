@@ -2,8 +2,8 @@ import { Path } from "../.tsc/System/IO/Path";
 import { Directory } from "../.tsc/System/IO/Directory";
 import { File } from "../.tsc/System/IO/File";
 import { args } from "../.tsc/context";
-import { reflection } from "../.tsc/TypeSharp/System/reflection";
-import { FullName } from "../.tsc/TypeSharp/FullNameScript/FullName";
+import { reflection } from "../.tsc/Cangjie/TypeSharp/System/reflection";
+import { FullName } from "../.tsc/Cangjie/TypeSharp/FullNameScript/FullName";
 import { Type } from "../.tsc/System/Type";
 import { FieldInfo } from "../.tsc/System/Reflection/FieldInfo";
 import { MethodInfo } from "../.tsc/System/Reflection/MethodInfo";
@@ -59,7 +59,6 @@ let getTaskTypeAias = (fullName: FullName) => {
         return "Promise<void>";
     }
     let genericType = genericTypes[0];
-    console.log(genericType.GetType().Name);
     let alias = getTypeAlias(genericType.ToString());
     if (alias.success == false) {
         return "Promise<any>";
@@ -709,8 +708,8 @@ let main = () => {
             "(System\\.(Console|Type|Environment|OperatingSystem|PlatformID|Version|Convert)$)",
             "(TidyHPC\\.(LiteJson|LiteXml|Routers)\\..*)",
             "(System\\.Reflection\\.(Assembly|ConstructorInfo|FieldInfo|MemberInfo|MemberTypes|MethodInfo|ParameterInfo)$)",
-            "(TypeSharp\\.(System|FullNameScript)\\..*)"
-        ].join("|"), "TypeSharp\\.System\\.context");
+            "(Cangjie\\.TypeSharp\\.(System|FullNameScript)\\..*)"
+        ].join("|"), "Cangjie\\.TypeSharp\\.System\\.context");
     }
     else if (args.length == 2) {
         let cmd = args[0];

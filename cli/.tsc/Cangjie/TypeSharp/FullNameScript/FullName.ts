@@ -1,4 +1,4 @@
-import { Type } from "../../System/Type";
+import { Type } from "../../../System/Type";
 export class FullName {
     public get NameSpace(): string {
         return {} as any;

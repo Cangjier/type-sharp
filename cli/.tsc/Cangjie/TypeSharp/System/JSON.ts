@@ -1,4 +1,4 @@
-import { Type } from "../../System/Type";
+import { Type } from "../../../System/Type";
 export class JSON {
     public GetType(): Type {
         return {} as any;

@@ -1,5 +1,5 @@
-import { Type } from "../../System/Type";
-import { ParameterInfo } from "../../System/Reflection/ParameterInfo";
+import { Type } from "../../../System/Type";
+import { ParameterInfo } from "../../../System/Reflection/ParameterInfo";
 import { FullName } from "../FullNameScript/FullName";
 export class reflection {
     public GetType(): Type {

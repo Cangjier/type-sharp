@@ -1,4 +1,4 @@
-import { Type } from "../../System/Type";
+import { Type } from "../../../System/Type";
 export class axiosResponse {
     public get data(): any {
         return {} as any;

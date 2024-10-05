@@ -1,5 +1,5 @@
-import { Guid } from "../../System/Guid";
-import { Type } from "../../System/Type";
+import { Guid } from "../../../System/Guid";
+import { Type } from "../../../System/Type";
 export class context {
     public args: string[];
     public manifest: any;
@@ -49,6 +49,9 @@ export class context {
         return {} as any;
     }
     public static copyDirectory(sourceDirectory?: string, destinationDirectory?: string): void {
+        return {} as any;
+    }
+    public static deleteFile(sourcePath?: string): void {
         return {} as any;
     }
     public static deleteDirectory(sourceDirectory?: string): void {

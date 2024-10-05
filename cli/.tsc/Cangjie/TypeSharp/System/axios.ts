@@ -1,5 +1,5 @@
 import { axiosConfig } from "./axiosConfig";
-import { Type } from "../../System/Type";
+import { Type } from "../../../System/Type";
 export class axios {
     public GetType(): Type {
         return {} as any;

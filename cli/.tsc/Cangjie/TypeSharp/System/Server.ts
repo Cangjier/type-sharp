@@ -1,5 +1,5 @@
-import { Delegate } from "../../System/Delegate";
-import { Type } from "../../System/Type";
+import { Delegate } from "../../../System/Delegate";
+import { Type } from "../../../System/Type";
 export class Server {
     public useStatic(directory?: string): void {
         return {} as any;

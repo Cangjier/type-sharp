@@ -1,5 +1,6 @@
-import { Type } from "../../System/Type";
-export class zip {
+import { Process } from "../../../System/Diagnostics/Process";
+import { Type } from "../../../System/Type";
+export class process {
     public GetType(): Type {
         return {} as any;
     }
@@ -14,10 +15,10 @@ export class zip {
     }
     public constructor() {
     }
-    public static extract(zipPath?: string, extractDirectory?: string): Promise<void> {
+    public static list(): Process[] {
         return {} as any;
     }
-    public static compress(directoryPath?: string, zipPath?: string): Promise<void> {
+    public static cli(process?: Process): string {
         return {} as any;
     }
 }

@@ -1,5 +1,5 @@
-import { Type } from "../../System/Type";
-export class console {
+import { Type } from "../../../System/Type";
+export class zip {
     public GetType(): Type {
         return {} as any;
     }
@@ -14,13 +14,10 @@ export class console {
     }
     public constructor() {
     }
-    public static log(values?: any[]): void {
+    public static extract(zipPath?: string, extractDirectory?: string): Promise<void> {
         return {} as any;
     }
-    public static error(values?: any[]): void {
-        return {} as any;
-    }
-    public static debug(values?: any[]): void {
+    public static compress(directoryPath?: string, zipPath?: string): Promise<void> {
         return {} as any;
     }
 }
