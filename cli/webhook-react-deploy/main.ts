@@ -1,4 +1,4 @@
-import { Server } from '../.tsc/TypeSharp/System/Server';
+import { Server } from '../.tsc/Cangjie/TypeSharp/System/Server';
 import { Session } from '../.tsc/TidyHPC/Routers/Urls/Session';
 import { args, cmd, cmdAsync, copyDirectory } from '../.tsc/context';
 import { Path } from '../.tsc/System/IO/Path';

@@ -4,9 +4,9 @@ import { Directory } from "../.tsc/System/IO/Directory";
 import { Path } from "../.tsc/System/IO/Path";
 import { File } from "../.tsc/System/IO/File";
 import { UTF8Encoding } from "../.tsc/System/Text/UTF8Encoding";
-import { Server } from "../.tsc/TypeSharp/System/Server";
-import { axios } from "../.tsc/TypeSharp/System/axios";
-import { zip } from "../.tsc/TypeSharp/System/zip";
+import { Server } from "../.tsc/Cangjie/TypeSharp/System/Server";
+import { axios } from "../.tsc/Cangjie/TypeSharp/System/axios";
+import { zip } from "../.tsc/Cangjie/TypeSharp/System/zip";
 
 console.log(args);
 let main = async () => {
