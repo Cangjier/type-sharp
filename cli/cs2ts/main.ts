@@ -59,6 +59,7 @@ let getTaskTypeAias = (fullName: FullName) => {
         return "Promise<void>";
     }
     let genericType = genericTypes[0];
+    console.log(genericType.GetType().Name);
     let alias = getTypeAlias(genericType.ToString());
     if (alias.success == false) {
         return "Promise<any>";

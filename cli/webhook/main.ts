@@ -222,6 +222,7 @@ let buildDotNet = async (tempDirectory: string, repo: string) => {
 
 let gitClone = async (tempDirectory: string, cloneUrl: string, commit: string) => {
     if (gitSecret != "") {
+        // 支持多个secret，以逗号分隔
         // 下一步，将secret添加到cloneUrl中
         //https://username:your_token@github.com/username/repo.git
         let index = cloneUrl.indexOf("//");
