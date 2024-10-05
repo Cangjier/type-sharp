@@ -33,7 +33,6 @@ export class NetMessageInterface {
     }
     public set Trace(value: TraceInterface) {
     }
-    public Target: any;
     public Error(message?: string, exception?: Exception): void {
         return {} as any;
     }
@@ -63,4 +62,5 @@ export class NetMessageInterface {
     public static New(): NetMessageInterface {
         return {} as any;
     }
+    public Target: any;
 }

@@ -1,11 +1,6 @@
 import { Guid } from "../../../System/Guid";
 import { Type } from "../../../System/Type";
 export class context {
-    public args: string[];
-    public manifest: any;
-    public script_path: string;
-    public null: any;
-    public undefined: any;
     public GetType(): Type {
         return {} as any;
     }
@@ -72,4 +67,9 @@ export class context {
     public static unlock(id?: Guid): void {
         return {} as any;
     }
+    public static args: string[];
+    public static manifest: any;
+    public static script_path: string;
+    public static null: any;
+    public static undefined: any;
 }

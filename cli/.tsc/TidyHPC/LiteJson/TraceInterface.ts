@@ -16,7 +16,6 @@ export class TraceInterface {
     public get DebugLogger(): any {
         return {} as any;
     }
-    public Target: any;
     public Error(message?: string, exception?: Exception): void {
         return {} as any;
     }
@@ -46,4 +45,5 @@ export class TraceInterface {
     public static op_Implicit(trace_or_target?: TraceInterface | any): any | TraceInterface {
         return {} as any;
     }
+    public Target: any;
 }

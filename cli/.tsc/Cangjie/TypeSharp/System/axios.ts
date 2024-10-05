@@ -1,3 +1,4 @@
+import { axiosResponse } from "./axiosResponse";
 import { axiosConfig } from "./axiosConfig";
 import { Type } from "../../../System/Type";
 export class axios {

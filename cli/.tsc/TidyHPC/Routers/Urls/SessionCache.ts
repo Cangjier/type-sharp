@@ -13,6 +13,9 @@ export class SessionCache {
     }
     public set FilterStatus(value: UrlFilterStatus) {
     }
+    public get Data(): { [key: string]: any } {
+        return {} as any;
+    }
     public TrySetUrlRegexMatchGroups(groupCollection?: GroupCollection): void {
         return {} as any;
     }

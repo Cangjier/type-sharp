@@ -140,7 +140,6 @@ export class Json {
     }
     public set Item(index: any, value: any) {
     }
-    public Null: any;
     public GetValueKind(): JsonValueKind {
         return {} as any;
     }
@@ -281,7 +280,7 @@ export class Json {
     public static Validate(json_or_stream?: string | Stream): boolean {
         return {} as any;
     }
-    public static op_Implicit(value?: string | JsonNode | JsonElement | number | SByte | Int16 | UInt16 | boolean | DateTime | TimeSpan | Guid): any {
+    public static op_Implicit(value?: string | JsonNode | { [key: string]: any } | JsonElement | number | SByte | Int16 | UInt16 | boolean | DateTime | TimeSpan | Guid): any {
         return {} as any;
     }
     public static op_ImplicitFrom(value?: any): any {
@@ -338,4 +337,5 @@ export class Json {
     public static op_Modulus(left?: any, right?: any): any {
         return {} as any;
     }
+    public static Null: any;
 }

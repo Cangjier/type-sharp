@@ -244,12 +244,6 @@ export class Type {
     public get MetadataToken(): number {
         return {} as any;
     }
-    public Delimiter: string;
-    public EmptyTypes: Type[];
-    public Missing: any;
-    public FilterAttribute: MemberFilter;
-    public FilterName: MemberFilter;
-    public FilterNameIgnoreCase: MemberFilter;
     public GetType(): Type {
         return {} as any;
     }
@@ -448,4 +442,10 @@ export class Type {
     public static ReflectionOnlyGetType(typeName?: string, throwIfNotFound?: boolean, ignoreCase?: boolean): Type {
         return {} as any;
     }
+    public static Delimiter: string;
+    public static EmptyTypes: Type[];
+    public static Missing: any;
+    public static FilterAttribute: MemberFilter;
+    public static FilterName: MemberFilter;
+    public static FilterNameIgnoreCase: MemberFilter;
 }

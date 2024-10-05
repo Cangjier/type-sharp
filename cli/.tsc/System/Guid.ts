@@ -3,7 +3,6 @@ import { Type } from "./Type";
 import { UInt16 } from "./UInt16";
 import { Int16 } from "./Int16";
 export class Guid {
-    public Empty: Guid;
     public ToByteArray(bigEndian?: boolean): number[] {
         return {} as any;
     }
@@ -51,4 +50,5 @@ export class Guid {
     public static NewGuid(): Guid {
         return {} as any;
     }
+    public static Empty: Guid;
 }

@@ -7,7 +7,6 @@ import { UInt16 } from "./UInt16";
 import { DateTime } from "./DateTime";
 import { Base64FormattingOptions } from "./Base64FormattingOptions";
 export class Convert {
-    public DBNull: any;
     public GetType(): Type {
         return {} as any;
     }
@@ -92,4 +91,5 @@ export class Convert {
     public static ToHexString(inArray?: number[], offset?: number, length?: number): string {
         return {} as any;
     }
+    public static DBNull: any;
 }

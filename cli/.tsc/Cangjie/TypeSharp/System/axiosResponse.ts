@@ -5,6 +5,9 @@ export class axiosResponse {
     }
     public set data(value: any) {
     }
+    public get headers(): { [key: string]: string } {
+        return {} as any;
+    }
     public get status(): number {
         return {} as any;
     }

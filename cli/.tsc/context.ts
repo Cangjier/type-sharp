@@ -1,5 +1,5 @@
-import { Guid } from "./System/Guid";
-import { Type } from "./System/Type";
+import { Guid } from "../../../System/Guid";
+import { Type } from "../../../System/Type";
 export const args: string[] = 0 as any;
 export const manifest: any = 0 as any;
 export const script_path: string = 0 as any;

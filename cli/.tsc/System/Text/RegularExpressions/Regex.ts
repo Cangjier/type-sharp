@@ -21,7 +21,6 @@ export class Regex {
     public get MatchTimeout(): TimeSpan {
         return {} as any;
     }
-    public InfiniteMatchTimeout: TimeSpan;
     public ToString(): string {
         return {} as any;
     }
@@ -93,4 +92,5 @@ export class Regex {
     public static Split(input?: string, pattern?: string, options?: RegexOptions, matchTimeout?: TimeSpan): string[] {
         return {} as any;
     }
+    public static InfiniteMatchTimeout: TimeSpan;
 }

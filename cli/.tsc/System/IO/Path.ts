@@ -1,10 +1,5 @@
 import { Type } from "../Type";
 export class Path {
-    public DirectorySeparatorChar: string;
-    public AltDirectorySeparatorChar: string;
-    public VolumeSeparatorChar: string;
-    public PathSeparator: string;
-    public InvalidPathChars: string[];
     public GetType(): Type {
         return {} as any;
     }
@@ -80,4 +75,9 @@ export class Path {
     public static GetPathRoot(path?: string): string {
         return {} as any;
     }
+    public static DirectorySeparatorChar: string;
+    public static AltDirectorySeparatorChar: string;
+    public static VolumeSeparatorChar: string;
+    public static PathSeparator: string;
+    public static InvalidPathChars: string[];
 }

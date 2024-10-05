@@ -104,8 +104,6 @@ export class ConstructorInfo {
     public get MetadataToken(): number {
         return {} as any;
     }
-    public ConstructorName: string;
-    public TypeConstructorName: string;
     public Invoke(parameters_or_invokeAttr_or_obj?: any[] | BindingFlags | any, binder_or_parameters_or_invokeAttr?: Binder | any[] | BindingFlags, parameters_or_binder?: any[] | Binder, culture_or_parameters?: CultureInfo | any[], culture?: CultureInfo): any {
         return {} as any;
     }
@@ -148,4 +146,6 @@ export class ConstructorInfo {
     public static op_Inequality(left?: ConstructorInfo, right?: ConstructorInfo): boolean {
         return {} as any;
     }
+    public static ConstructorName: string;
+    public static TypeConstructorName: string;
 }

@@ -40,7 +40,13 @@ let getTypeAlias = (typeName: string) => {
     return {
         success: true,
         data: typeName,
-        containsAlias: false
+        containsAlias: false,
+        toImport: []
+    } as {
+        success: boolean,
+        data: string,
+        containsAlias: boolean,
+        toImport?: Type[]
     };
 };
 
@@ -52,19 +58,44 @@ let isTaskType = (fullName: FullName) => {
 };
 let getTaskTypeAias = (fullName: FullName) => {
     if (fullName.IsGeneric == false) {
-        return "Promise<void>";
+        return {
+            data: "Promise<void>",
+            toImport: []
+        };
     }
     let genericTypes = fullName.GenericTypes;
     if (genericTypes.length == 0) {
-        return "Promise<void>";
+        return {
+            data: "Promise<void>",
+            toImport: []
+        };
     }
     let genericType = genericTypes[0];
     let alias = getTypeAlias(genericType.ToString());
     if (alias.success == false) {
-        return "Promise<any>";
+        return {
+            data: "Promise<any>",
+            toImport: []
+        };
     }
-    return `Promise<${alias.data}>`;
+    let result = {
+        data: `Promise<${alias.data}>`,
+        toImport: (alias.containsAlias ? [] : [reflection.getType(`${genericType.NameSpace}.${genericType.TypeName}`)])
+    };
+    return result;
 };
+let isDicttionary = (fullName: FullName) => {
+    return fullName.TypeName == "Dictionary" && fullName.GenericTypes.length == 2;
+};
+let getDictionaryTypeAlias = (fullName: FullName) => {
+    let genericTypes = fullName.GenericTypes;
+    let keyType = getTypeAlias(genericTypes[0].ToString());
+    let valueType = getTypeAlias(genericTypes[1].ToString());
+    if (keyType.success == false || valueType.success == false) {
+        return "{ [key: string]: any }";
+    }
+    return `{ [key: ${keyType.data}]: ${valueType.data} }`;
+}
 getTypeAlias = (typeFullName: string) => {
     if (typeFullName.includes("&") || typeFullName.includes("*")) {
         return {
@@ -82,9 +113,18 @@ getTypeAlias = (typeFullName: string) => {
         throw `typeFullName=${typeFullName}`;
     }
     if (isTaskType(fullName)) {
+        let taskTypeAlias = getTaskTypeAias(fullName);
         return {
             success: true,
-            data: getTaskTypeAias(fullName),
+            data: taskTypeAlias.data,
+            containsAlias: true,
+            toImport: taskTypeAlias.toImport
+        };
+    }
+    else if (isDicttionary(fullName)) {
+        return {
+            success: true,
+            data: getDictionaryTypeAlias(fullName),
             containsAlias: true
         };
     }
@@ -343,6 +383,12 @@ let exportClass = (type: Type) => {
             isConstructor: boolean
         }
     };
+    let fields = {} as {
+        [key: string]: {
+            type: string,
+            isStatic: boolean
+        }
+    };
     members.forEach(member => {
         let types = [] as Type[];
         if (member.MemberType == "Field") {
@@ -362,6 +408,14 @@ let exportClass = (type: Type) => {
         let isValid = true as boolean;
         types.forEach(itemType => {
             let alias = getTypeAlias(itemType.FullName);
+            if (alias.toImport) {
+                for (let toImportItemType of alias.toImport) {
+                    if (toImportItemType == null) continue;
+                    if (toImport.includes(toImportItemType)) continue;
+                    if (toImportItemType.Name.includes("[")) continue;
+                    toImport.push(toImportItemType);
+                }
+            }
             if (alias.success == false) {
                 isValid = false;
             }
@@ -376,7 +430,11 @@ let exportClass = (type: Type) => {
         }
 
         if (member.MemberType == "Field") {
-            lines.push(`    public ${member.Name}: ${getTypeAlias((member as FieldInfo).FieldType.FullName).data};`);
+            fields[member.Name] = {
+                type: getTypeAlias((member as FieldInfo).FieldType.FullName).data,
+                isStatic: (member as FieldInfo).IsStatic
+            };
+            // lines.push(`    public ${member.Name}: ${getTypeAlias((member as FieldInfo).FieldType.FullName).data};`);
         }
         else if (member.MemberType == "Method") {
             let method = member as MethodInfo;
@@ -540,6 +598,33 @@ let exportClass = (type: Type) => {
         lines.push(`        return {} as any;`);
         lines.push(`    }`);
     });
+
+    let fieldKeys = Object.keys(fields);
+    if (isContainsOpImplicit && firstLetterIsLowerCase) {
+        // 如果包含op_Implicit方法，并且类名的首字母是小写，则该类是一个接口描述类
+        fieldKeys.forEach(key => {
+            let field = fields[key];
+            if (field.isStatic) {
+                // lines.push(`    public static ${key}: ${field.type};`);
+            }
+            else {
+                lines.push(`    public ${key}?: ${field.type};`);
+            }
+        });
+    }
+    else {
+        fieldKeys.forEach(key => {
+            let field = fields[key];
+            if (field.isStatic) {
+                lines.push(`    public static ${key}: ${field.type};`);
+            }
+            else {
+                lines.push(`    public ${key}: ${field.type};`);
+            }
+        });
+    }
+
+
     lines.push(`}`);
     let importLines = [] as string[];
     toImport.forEach(item => {
@@ -548,6 +633,8 @@ let exportClass = (type: Type) => {
         if (relativePath.startsWith(".") == false) relativePath = "./" + relativePath;
         importLines.push(`import { ${item.Name} } from "${relativePath}";`);
     });
+
+
     return [...importLines, ...lines].join("\n");
 };
 

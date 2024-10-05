@@ -40,6 +40,9 @@ export class FullName {
     }
     public set GenericTypes(value: FullName[]) {
     }
+    public get Attributes(): { [key: string]: string } {
+        return {} as any;
+    }
     public ToString(): string {
         return {} as any;
     }
