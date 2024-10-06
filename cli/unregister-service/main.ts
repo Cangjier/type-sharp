@@ -9,7 +9,14 @@ import { axios } from "../.tsc/Cangjie/TypeSharp/System/axios";
 import { zip } from "../.tsc/Cangjie/TypeSharp/System/zip";
 
 console.log(args);
+let help = () => {
+    console.log("Usage: tscl run unregister-service <service-name>");
+};
 let main = async () => {
+    if (args.length < 1) {
+        help();
+        return;
+    }
     let utf8 = new UTF8Encoding(false);
     let name = args[0];
     let detectScript = `SERVICE="${name}.service"
