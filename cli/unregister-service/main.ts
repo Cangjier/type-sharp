@@ -33,6 +33,7 @@ let main = async () => {
     let script_directory = Path.GetDirectoryName(script_path);
     await cmdAsync(script_directory, `sudo chmod +x ${detectScriptPath}`);
     await cmdAsync(script_directory, `sudo bash ${detectScriptPath}`);
+    await cmdAsync(script_directory, `sudo rm ${detectScriptPath}`);
     await cmdAsync(script_directory, `sudo systemctl disable ${name}.service`);
     await cmdAsync(script_directory, `sudo rm /etc/systemd/system/${name}.service`);
     await cmdAsync(script_directory, `sudo systemctl daemon-reload`);
