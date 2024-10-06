@@ -32,6 +32,7 @@ for (let i = 0; i < args.length; i++) {
 console.log(`parameters: ${parameters}`);
 let help = () => {
     console.log("Usage: webhook --port 8080 --git xxx --nuget xxx");
+    console.log("Usage: webhook --port 8080 --git github.com:xxx1,gitee.com:xxx2 --nuget xxx");
     console.log(`--port: default 8080`);
     console.log(`--git: github token`);
     console.log(`--nuget: nuget token`);
@@ -221,12 +222,31 @@ let buildDotNet = async (tempDirectory: string, repo: string) => {
 };
 
 let gitClone = async (tempDirectory: string, cloneUrl: string, commit: string) => {
+    let gitSite = cloneUrl.split("/")[2];
     if (gitSecret != "") {
+        // moodlee:ghp_9WSBjtwVsBGcKRID6PnVBzxgNAZTaE3D0j3B
+        let gitSecrets = gitSecret.split(",").map(secret => secret.trim());
+        let targetSecret;
+        if (gitSecrets.length == 1) {
+            targetSecret = gitSecrets[0];
+            if (targetSecret.includes("=")) {
+                targetSecret = targetSecret.split("=")[1];
+            }
+        }
+        else {
+            targetSecret = gitSecrets.find(secret => secret.startsWith(gitSite));
+            if (targetSecret == undefined || targetSecret == null) {
+                throw "No secret found for " + gitSite;
+            }
+            if (targetSecret.includes("=")) {
+                targetSecret = targetSecret.split("=")[1];
+            }
+        }
         // 支持多个secret，以逗号分隔
         // 下一步，将secret添加到cloneUrl中
         //https://username:your_token@github.com/username/repo.git
         let index = cloneUrl.indexOf("//");
-        cloneUrl = cloneUrl.substring(0, index + 2) + gitSecret + "@" + cloneUrl.substring(index + 2);
+        cloneUrl = cloneUrl.substring(0, index + 2) + targetSecret + "@" + cloneUrl.substring(index + 2);
     }
     // 下一步，使用cloneUrl和commit下载代码
     console.log(`Create temp directory: ${tempDirectory}`);
