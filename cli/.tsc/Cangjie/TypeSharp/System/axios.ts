@@ -25,7 +25,16 @@ export class axios {
     public static get(url?: string, config?: axiosConfig): Promise<axiosResponse> {
         return {} as any;
     }
+    public static delete(url?: string, config?: axiosConfig): Promise<axiosResponse> {
+        return {} as any;
+    }
     public static post(url?: string, data?: any, config?: axiosConfig): Promise<axiosResponse> {
+        return {} as any;
+    }
+    public static put(url?: string, data?: any, config?: axiosConfig): Promise<axiosResponse> {
+        return {} as any;
+    }
+    public static patch(url?: string, data?: any, config?: axiosConfig): Promise<axiosResponse> {
         return {} as any;
     }
     public static download(url?: string, path?: string): Promise<void> {
