@@ -5,6 +5,8 @@ proxy=$(git config --get http.proxy)
 
 # 2. 下载最新版本
 if [ -n "$proxy" ]; then
+    # 输出日志
+    echo "use proxy: $proxy"
     wget -e "http_proxy=$proxy" --no-cache https://github.com/Cangjier/type-sharp/releases/download/latest/tscl
 else
     wget --no-cache https://github.com/Cangjier/type-sharp/releases/download/latest/tscl
