@@ -15,24 +15,34 @@ let publishCsproj = async (csprojPath: string) => {
     // 判断csproj所在目录下Properties/PublishProfiles/是否存在pubxml文件
     // 如果存在，则使用dotnet publish --publish-profile xxx
     let currentDirectory = Path.GetDirectoryName(csprojPath);
+    let binDirectory = Path.Combine(currentDirectory, "bin");
+    if (Directory.Exists(binDirectory) == false) {
+        Directory.CreateDirectory(binDirectory);
+    }
     let publishProfilesDirectory = Path.Combine(currentDirectory, "Properties", "PublishProfiles");
-    let pubxmlFiles = Directory.GetFiles(publishProfilesDirectory, "*.pubxml");
-    for (let pubXmlFile of pubxmlFiles) {
-        // 将pubXmlFile中的PublishDir设置为/bin/{Guid}
-        let publishDir = Path.Combine(currentDirectory, "bin", Guid.NewGuid().ToString());
-        await execAsync(Environment.ProcessPath, "run", "vs-pubxml", pubXmlFile, "PublishDir", publishDir);
-        let cmd = `dotnet publish --publish-profile ${Path.GetFileNameWithoutExtension(pubXmlFile)}`;
+    let pubxmlFiles = Directory.Exists(publishProfilesDirectory) ?
+        Directory.GetFiles(publishProfilesDirectory, "*.pubxml") :
+        [];
+    if (pubxmlFiles.length == 0) {
+        let cmd = `dotnet publish -c Release -f net8.0`;
         console.log(cmd);
         if (await cmdAsync(currentDirectory, cmd) != 0) {
             console.log(`dotnet publish failed`);
             return false;
         }
     }
-    let cmd = `dotnet publish -c Release -f net8.0`;
-    console.log(cmd);
-    if (await cmdAsync(currentDirectory, cmd) != 0) {
-        console.log(`dotnet publish failed`);
-        return false;
+    else {
+        for (let pubXmlFile of pubxmlFiles) {
+            // 将pubXmlFile中的PublishDir设置为/bin/{Guid}
+            let publishDir = Path.Combine(currentDirectory, "bin", Guid.NewGuid().ToString());
+            await execAsync(Environment.ProcessPath, "run", "vs-pubxml", pubXmlFile, "PublishDir", publishDir);
+            let cmd = `dotnet publish --publish-profile ${Path.GetFileNameWithoutExtension(pubXmlFile)}`;
+            console.log(cmd);
+            if (await cmdAsync(currentDirectory, cmd) != 0) {
+                console.log(`dotnet publish failed`);
+                return false;
+            }
+        }
     }
     return true;
 };
