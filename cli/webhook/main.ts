@@ -1,6 +1,6 @@
 import { Server } from '../.tsc/Cangjie/TypeSharp/System/Server';
 import { Session } from '../.tsc/TidyHPC/Routers/Urls/Session';
-import { args, cmd, cmdAsync, copyDirectory, deleteDirectory } from '../.tsc/context';
+import { args, cmd, cmdAsync, copyDirectory, deleteDirectory, execAsync } from '../.tsc/context';
 import { Path } from '../.tsc/System/IO/Path';
 import { File } from '../.tsc/System/IO/File';
 import { Directory } from '../.tsc/System/IO/Directory';
@@ -8,6 +8,8 @@ import { UTF8Encoding } from '../.tsc/System/Text/UTF8Encoding';
 import { Json } from '../.tsc/TidyHPC/LiteJson/Json';
 import { Regex } from '../.tsc/System/Text/RegularExpressions/Regex';
 import { Environment } from '../.tsc/System/Environment';
+import { Guid } from '../.tsc/System/Guid';
+import { Xml } from '../.tsc/TidyHPC/LiteXml/Xml';
 
 let utf8 = new UTF8Encoding(false);
 let staticFrontPath = Path.Combine(Path.GetTempPath(), "webhook-front");
@@ -157,14 +159,7 @@ let buildNugetPackage = async (csprojPath: string) => {
 };
 
 let publishCsproj = async (csprojPath: string) => {
-    let currentDirectory = Path.GetDirectoryName(csprojPath);
-    let cmd = `dotnet publish -c Release -f net8.0`;
-    console.log(cmd);
-    if (await cmdAsync(currentDirectory, cmd) != 0) {
-        console.log(`dotnet publish failed`);
-        return false;
-    }
-    return true;
+    return await execAsync(Environment.ProcessPath, "run", "vs-publish", csprojPath) == 0;
 };
 
 let uploadNugetPackage = async (nugetPackagePath: string) => {
@@ -305,4 +300,4 @@ let main = async () => {
     await server.start(Number(port));
 };
 
-await main();
+// await main();
