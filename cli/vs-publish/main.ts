@@ -33,8 +33,8 @@ let publishCsproj = async (csprojPath: string) => {
     }
     else {
         for (let pubXmlFile of pubxmlFiles) {
-            // 将pubXmlFile中的PublishDir设置为/bin/{Guid}
-            let publishDir = Path.Combine(currentDirectory, "bin", Guid.NewGuid().ToString());
+            // 将pubXmlFile中的PublishDir设置为/bin/publish/publish-profile-name
+            let publishDir = Path.Combine(currentDirectory, "bin", "publish", Path.GetFileNameWithoutExtension(pubXmlFile));
             await execAsync(Environment.ProcessPath, "run", "vs-pubxml", pubXmlFile, "PublishDir", publishDir);
             let cmd = `dotnet publish --publish-profile ${Path.GetFileNameWithoutExtension(pubXmlFile)}`;
             console.log(cmd);

@@ -1,0 +1,6 @@
+{
+	"enable": false,
+	"git-url": "https://github.com/Cangjier/cangjie-typesharp-cli.git",
+	"tag-name": "v1.0.0",
+	"files": "^.*tscl$"
+}

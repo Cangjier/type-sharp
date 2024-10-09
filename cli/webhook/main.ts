@@ -216,6 +216,32 @@ let buildDotNet = async (tempDirectory: string, repo: string) => {
     }
 };
 
+let gitRelease = async (tempDirectory: string, cloneUrl: string) => {
+    let releaseConfig = Path.Combine(tempDirectory, ".gitrelease.json");
+    if(!File.Exists(releaseConfig)){
+        console.log(`No release.json found`);
+        return;
+    }
+    let releaseJson = Json.Load(releaseConfig);
+
+    let pubxmlDirectory = Path.Combine(tempDirectory, "Properties", "PublishProfiles");
+    let pubxmlFiles = Directory.GetFiles(pubxmlDirectory, "*.pubxml");
+    if (pubxmlFiles.length == 0) {
+        console.log(`No pubxml file found`);
+        return;
+    }
+    for (let pubxmlFile of pubxmlFiles) {
+        let publishDir = Path.Combine(tempDirectory, "bin", "publish", Path.GetFileNameWithoutExtension(pubxmlFile));
+        await execAsync(Environment.ProcessPath, "run", "vs-pubxml", pubxmlFile, "PublishDir", publishDir);
+        let cmd = `dotnet publish --publish-profile ${Path.GetFileNameWithoutExtension(pubxmlFile)}`;
+        if (await cmdAsync(tempDirectory, cmd) != 0) {
+            console.log(`dotnet publish failed`);
+            return;
+        }
+        
+    }
+};
+
 let gitClone = async (tempDirectory: string, cloneUrl: string, commit: string) => {
     let gitSite = cloneUrl.split("/")[2];
     if (gitSecret != "") {
@@ -266,6 +292,8 @@ let gitClone = async (tempDirectory: string, cloneUrl: string, commit: string) =
     }
     return true;
 };
+
+
 
 let main = async () => {
     if (parameters.help) {
