@@ -10,6 +10,7 @@ import { Regex } from '../.tsc/System/Text/RegularExpressions/Regex';
 import { Environment } from '../.tsc/System/Environment';
 import { Guid } from '../.tsc/System/Guid';
 import { Xml } from '../.tsc/TidyHPC/LiteXml/Xml';
+import { axios } from '../.tsc/Cangjie/TypeSharp/System/axios';
 
 let utf8 = new UTF8Encoding(false);
 let staticFrontPath = Path.Combine(Path.GetTempPath(), "webhook-front");
@@ -40,9 +41,35 @@ let help = () => {
     console.log(`--nuget: nuget token`);
 };
 let port = parameters.port ?? "8080";
-let gitSecret = parameters.git ?? "";
+let gitTokens = parameters.git ?? "";
 let nugetSecret = parameters.nuget ?? "";
+let gitTokenMap = {} as { [key: string]: string };
+if (gitTokens != "") {
+    let gitTokenPairs = gitTokens.split(",");
+    for (let gitTokenPair of gitTokenPairs) {
+        if (gitTokenPair.includes(":") == false) {
+            gitTokenMap.default = gitTokenPair;
+            continue;
+        }
+        let gitSite = gitTokenPair.split(":")[0];
+        let gitToken = gitTokenPair.split(":")[1];
+        gitTokenMap[gitSite] = gitToken;
+    }
+}
 
+let getGitToken = (gitUrl: string) => {
+    let gitSite = gitUrl.split("/")[2];
+    if (gitTokenMap[gitSite]) {
+        return gitTokenMap[gitSite];
+    }
+    return gitTokenMap.default;
+};
+
+let insertGitToken = (gitUrl: string) => {
+    let index = gitUrl.indexOf("//");
+    let token = getGitToken(gitUrl);
+    return gitUrl.substring(0, index + 2) + token + "@" + gitUrl.substring(index + 2);
+};
 
 let isNodeJs = (tempDirectory: string) => {
     // 判断是否存在package.json
@@ -216,59 +243,75 @@ let buildDotNet = async (tempDirectory: string, repo: string) => {
     }
 };
 
-let gitRelease = async (tempDirectory: string, cloneUrl: string) => {
-    let releaseConfig = Path.Combine(tempDirectory, ".gitrelease.json");
-    if(!File.Exists(releaseConfig)){
-        console.log(`No release.json found`);
-        return;
+let getLatestTag = async (gitUrl: string, token: string) => {
+    let owner = gitUrl.split("/")[3];
+    let repo = gitUrl.split("/")[4].split(".")[0];
+    let response = await axios.get(`https://api.github.com/repos/${owner}/${repo}/tags`, {
+        headers: {
+            Authorization: `token ${token}`,
+            "User-Agent": "tscl"
+        }
+    });
+    if (response.data.length == 0) {
+        return "";
     }
-    let releaseJson = Json.Load(releaseConfig);
+    return response.data[0].name;
+};
 
-    let pubxmlDirectory = Path.Combine(tempDirectory, "Properties", "PublishProfiles");
-    let pubxmlFiles = Directory.GetFiles(pubxmlDirectory, "*.pubxml");
-    if (pubxmlFiles.length == 0) {
-        console.log(`No pubxml file found`);
-        return;
-    }
-    for (let pubxmlFile of pubxmlFiles) {
-        let publishDir = Path.Combine(tempDirectory, "bin", "publish", Path.GetFileNameWithoutExtension(pubxmlFile));
-        await execAsync(Environment.ProcessPath, "run", "vs-pubxml", pubxmlFile, "PublishDir", publishDir);
-        let cmd = `dotnet publish --publish-profile ${Path.GetFileNameWithoutExtension(pubxmlFile)}`;
-        if (await cmdAsync(tempDirectory, cmd) != 0) {
-            console.log(`dotnet publish failed`);
+let gitRelease = async (tempDirectory: string, gitUrl: string) => {
+    try {
+        let releaseConfig = Path.Combine(tempDirectory, ".gitrelease.json");
+        if (!File.Exists(releaseConfig)) {
+            console.log(`No release.json found`);
             return;
         }
-        
+        let releaseJson = Json.Load(releaseConfig);
+        if (releaseJson.enable != true) {
+            console.log(`Release is disabled`);
+            return;
+        }
+        let filesRegexString = releaseJson.files;
+        let filesRegex = new Regex(filesRegexString);
+
+        let pubxmlDirectory = Path.Combine(tempDirectory, "Properties", "PublishProfiles");
+        let pubxmlFiles = Directory.GetFiles(pubxmlDirectory, "*.pubxml");
+        if (pubxmlFiles.length == 0) {
+            console.log(`No pubxml file found`);
+            return;
+        }
+        let toReleaseFiles = [] as string[];
+        for (let pubxmlFile of pubxmlFiles) {
+            let publishDir = Path.Combine(tempDirectory, "bin", "publish", Path.GetFileNameWithoutExtension(pubxmlFile));
+            await execAsync(Environment.ProcessPath, "run", "vs-pubxml", pubxmlFile, "PublishDir", publishDir);
+            let cmd = `dotnet publish --publish-profile ${Path.GetFileNameWithoutExtension(pubxmlFile)}`;
+            if (await cmdAsync(tempDirectory, cmd) != 0) {
+                console.log(`dotnet publish failed`);
+                return;
+            }
+            let files = Directory.GetFiles(publishDir);
+            for (let file of files) {
+                if (filesRegex.IsMatch(file)) {
+                    toReleaseFiles.push(file);
+                }
+            }
+        }
+        let tagName = releaseJson.tag ?? await getLatestTag(gitUrl, getGitToken(gitUrl));
+        if (tagName == "" || tagName == null || tagName == undefined) {
+            console.log(`No tag found`);
+            return;
+        }
+        await execAsync(Environment.ProcessPath,
+            "run", "gitapis", "release", gitUrl, tagName,
+            "--files", toReleaseFiles.join(","),
+            "--token", getGitToken(gitUrl));
+    }
+    catch (e) {
+        console.log(e);
     }
 };
 
 let gitClone = async (tempDirectory: string, cloneUrl: string, commit: string) => {
-    let gitSite = cloneUrl.split("/")[2];
-    if (gitSecret != "") {
-        // moodlee:ghp_9WSBjtwVsBGcKRID6PnVBzxgNAZTaE3D0j3B
-        let gitSecrets = gitSecret.split(",").map(secret => secret.trim());
-        let targetSecret;
-        if (gitSecrets.length == 1) {
-            targetSecret = gitSecrets[0];
-            if (targetSecret.includes("=")) {
-                targetSecret = targetSecret.split("=")[1];
-            }
-        }
-        else {
-            targetSecret = gitSecrets.find(secret => secret.startsWith(gitSite));
-            if (targetSecret == undefined || targetSecret == null) {
-                throw "No secret found for " + gitSite;
-            }
-            if (targetSecret.includes("=")) {
-                targetSecret = targetSecret.split("=")[1];
-            }
-        }
-        // 支持多个secret，以逗号分隔
-        // 下一步，将secret添加到cloneUrl中
-        //https://username:your_token@github.com/username/repo.git
-        let index = cloneUrl.indexOf("//");
-        cloneUrl = cloneUrl.substring(0, index + 2) + targetSecret + "@" + cloneUrl.substring(index + 2);
-    }
+    cloneUrl = insertGitToken(cloneUrl);
     // 下一步，使用cloneUrl和commit下载代码
     console.log(`Create temp directory: ${tempDirectory}`);
     if (Directory.Exists(tempDirectory)) {
@@ -293,7 +336,29 @@ let gitClone = async (tempDirectory: string, cloneUrl: string, commit: string) =
     return true;
 };
 
-
+let webhook = async (session: Session) => {
+    let data = await session.Cache.GetRequstBodyJson();
+    if ((data.ref == "refs/heads/main" || data.ref == "refs/heads/master") == false) {
+        console.log(`Skip: ${data.ref}`);
+        return;
+    }
+    let cloneUrl = data.repository.clone_url;
+    let commit = data.head_commit.id;
+    let repo = data.repository.name;
+    let tempDirectory = Path.Combine(Path.GetTempPath(), commit);
+    await gitClone(tempDirectory, cloneUrl, commit);
+    if (isNodeJs(tempDirectory)) {
+        await buildNodeJs(tempDirectory, repo);
+    }
+    else if (isDotNet(tempDirectory)) {
+        await buildDotNet(tempDirectory, repo);
+    }
+    await gitRelease(tempDirectory, cloneUrl);
+    if (Directory.Exists(tempDirectory)) {
+        deleteDirectory(tempDirectory);
+        console.log(`Delete temp directory: ${tempDirectory}`);
+    }
+};
 
 let main = async () => {
     if (parameters.help) {
@@ -303,29 +368,8 @@ let main = async () => {
     let server = new Server();
     server.useStatic(staticFrontPath);
     console.log(`Static Path: ${staticFrontPath}`);
-    server.use("/api/v1/webhook", async (session: Session) => {
-        let data = await session.Cache.GetRequstBodyJson();
-        if ((data.ref == "refs/heads/main" || data.ref == "refs/heads/master") == false) {
-            console.log(`Skip: ${data.ref}`);
-            return;
-        }
-        let cloneUrl = data.repository.clone_url;
-        let commit = data.head_commit.id;
-        let repo = data.repository.name;
-        let tempDirectory = Path.Combine(Path.GetTempPath(), commit);
-        await gitClone(tempDirectory, cloneUrl, commit);
-        if (isNodeJs(tempDirectory)) {
-            await buildNodeJs(tempDirectory, repo);
-        }
-        else if (isDotNet(tempDirectory)) {
-            await buildDotNet(tempDirectory, repo);
-        }
-        if (Directory.Exists(tempDirectory)) {
-            deleteDirectory(tempDirectory);
-            console.log(`Delete temp directory: ${tempDirectory}`);
-        }
-    });
+    server.use("/api/v1/webhook", webhook);
     await server.start(Number(port));
 };
 
-// await main();
+await main();

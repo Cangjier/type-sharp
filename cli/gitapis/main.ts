@@ -4,7 +4,9 @@ import { axios } from "../.tsc/Cangjie/TypeSharp/System/axios";
 import { args } from "../.tsc/context";
 import { File } from "../.tsc/System/IO/File";
 import { Path } from "../.tsc/System/IO/Path";
+import { UTF8Encoding } from "../.tsc/System/Text/UTF8Encoding";
 
+let utf8 = new UTF8Encoding(false);
 let parameters = {} as { [key: string]: string };
 for (let i = 0; i < args.length; i++) {
     let arg = args[i];
@@ -25,6 +27,8 @@ console.log(`parameters: ${parameters}`);
 
 let help = () => {
     console.log("Usage: tscl run gitapis release <git-url> <tag-name> --files <file1>,<file2> --token <token>");
+    console.log("Usage: tscl run gitapis latest-release <git-url> --token <token> --output <output-file>");
+    console.log("Usage: tscl run gitapis latest-tag <git-url> --token <token> --output <output-file>");
 };
 
 let getDefaultBranch = async (gitUrl: string, token: string) => {
@@ -76,7 +80,7 @@ let deleteAsset = async (gitUrl: string, assetId: string, token: string) => {
     let owner = gitUrl.split("/")[3];
     let repo = gitUrl.split("/")[4].split(".")[0];
     let response = await axios.delete(`https://api.github.com/repos/${owner}/${repo}/releases/assets/${assetId}`, {
-        responseType:'text',
+        responseType: 'text',
         headers: {
             Authorization: `token ${token}`,
             "User-Agent": "tscl"
@@ -142,6 +146,50 @@ let cmd_release = async () => {
     }
 };
 
+let cmd_latest_release = async () => {
+    if (args.length < 2 || parameters.token == undefined) {
+        help();
+        return;
+    }
+    let gitUrl = args[1]; // such as https://github.com/Cangjier/type-sharp.git
+    let token = parameters.token;
+    let owner = gitUrl.split("/")[3];
+    let repo = gitUrl.split("/")[4].split(".")[0];
+    let response = await axios.get(`https://api.github.com/repos/${owner}/${repo}/releases/latest`, {
+        headers: {
+            Authorization: `token ${token}`,
+            "User-Agent": "tscl"
+        }
+    });
+    console.log(response.data);
+    if (parameters.output) {
+        let output = parameters.output;
+        await File.WriteAllTextAsync(output, JSON.stringify(response.data),utf8);
+    }
+};
+
+let cmd_latest_tag = async () => {
+    if (args.length < 2 || parameters.token == undefined) {
+        help();
+        return;
+    }
+    let gitUrl = args[1]; // such as
+    let token = parameters.token;
+    let owner = gitUrl.split("/")[3];
+    let repo = gitUrl.split("/")[4].split(".")[0];
+    let response = await axios.get(`https://api.github.com/repos/${owner}/${repo}/tags`, {
+        headers: {
+            Authorization: `token ${token}`,
+            "User-Agent": "tscl"
+        }
+    });
+    console.log(response.data[0]);
+    if (parameters.output) {
+        let output = parameters.output;
+        await File.WriteAllTextAsync(output, JSON.stringify(response.data[0]),utf8);
+    }
+};
+
 let main = async () => {
     if (args.length < 1) {
         help();
@@ -150,6 +198,12 @@ let main = async () => {
     let command = args[0];
     if (command == "release") {
         await cmd_release();
+    }
+    else if (command == "latest-release") {
+        await cmd_latest_release();
+    }
+    else if (command == "latest-tag") {
+        await cmd_latest_tag();
     }
     else {
         help();
