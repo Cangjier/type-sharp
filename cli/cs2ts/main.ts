@@ -788,7 +788,7 @@ let main = () => {
     console.log(`args:${args}`);
     if (args.length == 0) {
         exportInitialTypes([
-            "(System\\.(Guid)$)",
+            "(System\\.(Guid|DateTime|TimeSpan)$)",
             "(System\\.IO\\.(Path|Directory|File)$)",
             "(System\\.Text\\.UTF8Encoding$)",
             "(System\\.Text\\.RegularExpressions\\.(Regex|RegexOptions)$)",
