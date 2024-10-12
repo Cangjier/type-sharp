@@ -146,7 +146,7 @@ let GitManager = () => {
         return response.data[0].name as string;
     };
     let createTag = async (owner: string, repo: string, tagName: string, commit: string, token: string) => {
-        await axios.post(`https://api.github.com/repos/${owner}/${repo}/git/tags`, {
+        let response = await axios.post(`https://api.github.com/repos/${owner}/${repo}/git/tags`, {
             tag: tagName,
             message: tagName,
             object: commit,
@@ -157,6 +157,11 @@ let GitManager = () => {
                 "User-Agent": "tscl"
             }
         });
+        if (response.status != 201) {
+            console.log(`Create tag ${tagName} failed`);
+            return false;
+        }
+        return true;
     };
     let gitClone = async (tempDirectory: string, gitUrl: string, commit: string) => {
         gitUrl = gitTokenManager.insertGitUserToken(gitUrl);
@@ -198,7 +203,7 @@ let GitManager = () => {
         }
         let version = Version.Parse(latestTag.substring(1));
         let newVersion = new Version(version.Major, version.Minor, version.Build + 1);
-        let newTag = `v${newVersion.toString()}`;
+        let newTag = `v${newVersion}`;
         console.log(`New tag: ${newTag}`);
         await createTag(info.owner, info.repo, newTag, commit, gitTokenManager.getGitToken(gitUrl));
         return {
@@ -554,6 +559,9 @@ let dotNetManager = DotNetManager();
 
 let webhook = async (session: Session) => {
     let data = await session.Cache.GetRequstBodyJson();
+    if (data.ref) {
+        console.log(`Received: ${data.ref}`);
+    }
     let branchName = Path.GetFileName(data.ref);
     if (branches.includes(branchName) == false) {
         console.log(`Skip: ${data.ref}`);
@@ -564,10 +572,12 @@ let webhook = async (session: Session) => {
     let repo = data.repository.name;
     let tempDirectory = Path.Combine(Path.GetTempPath(), commit);
     // 克隆代码
+    console.log(`Clone ${cloneUrl} ${commit}`);
     if (await gitManager.gitClone(tempDirectory, cloneUrl, commit) == false) {
         console.log(`git clone failed`);
         return;
     }
+    console.log(`Clone success`);
     // 升版本号
     let tagResult = await gitManager.increaseTag(cloneUrl, commit);
     if (tagResult.success == false) {
