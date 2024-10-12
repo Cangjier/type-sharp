@@ -13,7 +13,7 @@ fi
 
 # 3. 找到并杀掉所有tscl进程
 for pid in $(ps -ef | grep tscl | grep -v grep | awk '{print $2}'); do
-    kill -9 $pid
+    sudo kill -9 $pid
 done
 
 # 4. 移动到/usr/local/bin
