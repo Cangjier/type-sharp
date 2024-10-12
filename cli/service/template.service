@@ -7,7 +7,7 @@ WorkingDirectory=/home/ubuntu
 EnvironmentFile=<EnvironmentFile>
 ExecStart=<ExecStart>
 Restart=always
-User=root
+User=<User>
 
 [Install]
 WantedBy=multi-user.target

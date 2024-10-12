@@ -46,10 +46,12 @@ fi`;
         Console.WriteLine("Export env failed.");
         return;
     }
+    
     let serviceFileContent = template
         .replace("<Description>", description)
         .replace("<EnvironmentFile>", `${serviceFilePath}.env`)
-        .replace("<ExecStart>", execStart);
+        .replace("<ExecStart>", execStart)
+        .replace("<User>", Environment.UserName);
     await File.WriteAllTextAsync(serviceFilePath, serviceFileContent, utf8);
     // 将服务拷贝到 /etc/systemd/system
     await cmdAsync(script_directory, `sudo mv ${serviceFilePath} ${systemdPath}`);
