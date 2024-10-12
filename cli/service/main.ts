@@ -41,6 +41,7 @@ fi`;
     let template = await File.ReadAllTextAsync(Path.Combine(script_directory, "template.service"), utf8);
     // 将env输出至tmp文件
     let envCmd = `sudo env > ${serviceFilePath}.env`;
+    console.log(envCmd);
     if (await cmdAsync(script_directory, envCmd) != 0) {
         Console.WriteLine("Export env failed.");
         return;
