@@ -174,6 +174,7 @@ let GitManager = () => {
         console.log(`Working Directory : ${tempDirectory}, Existing: ${Directory.Exists(tempDirectory)}`);
         console.log(`git clone ${gitUrl} .`);
         let gitCloneResult = await cmdAsync(tempDirectory, `git clone ${gitUrl} .`);
+        console.log(`gitCloneResult=${gitCloneResult}`);
         if (gitCloneResult != 0) {
             console.log(`git clone ${gitUrl} failed, delete temp directory: ${tempDirectory}`);
             deleteDirectory(tempDirectory);
