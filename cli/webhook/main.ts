@@ -173,7 +173,8 @@ let GitManager = () => {
         Directory.CreateDirectory(tempDirectory);
         console.log(`Working Directory : ${tempDirectory}, Existing: ${Directory.Exists(tempDirectory)}`);
         console.log(`git clone ${gitUrl} .`);
-        if (await cmdAsync(tempDirectory, `git clone ${gitUrl} .`) != 0) {
+        let gitCloneResult = await cmdAsync(tempDirectory, `git clone ${gitUrl} .`);
+        if (gitCloneResult != 0) {
             console.log(`git clone ${gitUrl} failed, delete temp directory: ${tempDirectory}`);
             deleteDirectory(tempDirectory);
             return false;
@@ -574,7 +575,8 @@ let webhook = async (session: Session) => {
     let tempDirectory = Path.Combine(Path.GetTempPath(), commit);
     // 克隆代码
     console.log(`Clone ${cloneUrl} ${commit}`);
-    if (await gitManager.gitClone(tempDirectory, cloneUrl, commit) == false) {
+    let gitCloneResult = await gitManager.gitClone(tempDirectory, cloneUrl, commit);
+    if ( gitCloneResult == false) {
         console.log(`git clone failed`);
         return;
     }
