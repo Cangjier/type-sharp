@@ -12,6 +12,8 @@ import { Guid } from "../.tsc/System/Guid";
 import { Convert } from "../.tsc/System/Convert";
 import { Json } from "../.tsc/TidyHPC/LiteJson/Json";
 let utf8 = new UTF8Encoding(false);
+let homeDirectory = Environment.GetEnvironmentVariable("HOME");
+let v2flyDirectory = Path.Combine(homeDirectory, ".v2fly");
 let parameters = {} as { [key: string]: string };
 for (let i = 0; i < args.length; i++) {
     let arg = args[i];
@@ -76,7 +78,7 @@ let subscribeVmess = async (url: string) => {
 
 let startClient = async (programPath: string) => {
     let configGuid = "D5DFCD26946440B194805F932A5324F4.client";
-    let configPath = Path.Combine("~/.v2fly", `${configGuid}.json`);;
+    let configPath = Path.Combine(v2flyDirectory, `${configGuid}.json`);;
     if (vmessUrl) {
         await generateClientConfig(configPath);
     }
@@ -97,7 +99,7 @@ let startClient = async (programPath: string) => {
 
 let startServer = async (programPath: string) => {
     let configGuid = "D5DFCD26946440B194805F932A5324F4.server";
-    let configPath = Path.Combine("~/.v2fly", `${configGuid}.json`);
+    let configPath = Path.Combine(v2flyDirectory, `${configGuid}.json`);
     if (File.Exists(configPath) == false) {
         await generateServerConfig(configPath);
     }
@@ -107,15 +109,15 @@ let startServer = async (programPath: string) => {
 let main = async () => {
     let programId = "FE8826DC-18F9-411A-A851-5DC68A12F5BF";
     let programPath;
-
+    
     if (Environment.OSVersion.Platform == PlatformID.Win32NT) {
-        programPath = Path.Combine("~/.v2fly", `${programId}.exe`);
+        programPath = Path.Combine(v2flyDirectory, `${programId}.exe`);
     }
     else {
-        if (Directory.Exists("~/.v2fly") == false) {
-            Directory.CreateDirectory("~/.v2fly");
+        if (Directory.Exists(v2flyDirectory) == false) {
+            Directory.CreateDirectory(v2flyDirectory);
         }
-        programPath = Path.Combine("~/.v2fly", programId);
+        programPath = Path.Combine(v2flyDirectory, programId);
     }
     if (File.Exists(programPath) == false) {
         let linuxUrl = "https://github.com/v2fly/v2ray-core/releases/download/v5.19.0/v2ray-linux-64.zip";
@@ -130,7 +132,7 @@ let main = async () => {
             }
         }
         // 根据平台自动下载
-        let zipPath = Path.Combine("~/.v2fly", `${programId}.zip`);
+        let zipPath = Path.Combine(v2flyDirectory, `${programId}.zip`);
         if (File.Exists(zipPath) == false) {
             if (Environment.OSVersion.Platform == PlatformID.Win32NT) {
                 console.log(`download ${windowsUrl} -> ${zipPath}`);
@@ -141,7 +143,7 @@ let main = async () => {
                 await axios.download(linuxUrl, zipPath);
             }
         }
-        let zipExtractPath = Path.Combine("~/.v2fly", `${programId}.extract`);
+        let zipExtractPath = Path.Combine(v2flyDirectory, `${programId}.extract`);
         await zip.extract(zipPath, zipExtractPath);
         if (Environment.OSVersion.Platform == PlatformID.Win32NT) {
             let exePath = Path.Combine(zipExtractPath, "v2ray.exe");
