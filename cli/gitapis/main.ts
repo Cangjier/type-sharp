@@ -151,7 +151,7 @@ let cmd_latest_release = async () => {
         help();
         return;
     }
-    let gitUrl = args[1]; // such as https://github.com/Cangjier/type-sharp.git
+    let gitUrl = args[1];
     let token = parameters.token;
     let owner = gitUrl.split("/")[3];
     let repo = gitUrl.split("/")[4].split(".")[0];
@@ -164,7 +164,7 @@ let cmd_latest_release = async () => {
     console.log(response.data);
     if (parameters.output) {
         let output = parameters.output;
-        await File.WriteAllTextAsync(output, JSON.stringify(response.data),utf8);
+        await File.WriteAllTextAsync(output, JSON.stringify(response.data), utf8);
     }
 };
 
@@ -173,7 +173,7 @@ let cmd_latest_tag = async () => {
         help();
         return;
     }
-    let gitUrl = args[1]; // such as
+    let gitUrl = args[1];
     let token = parameters.token;
     let owner = gitUrl.split("/")[3];
     let repo = gitUrl.split("/")[4].split(".")[0];
@@ -186,7 +186,40 @@ let cmd_latest_tag = async () => {
     console.log(response.data[0]);
     if (parameters.output) {
         let output = parameters.output;
-        await File.WriteAllTextAsync(output, JSON.stringify(response.data[0]),utf8);
+        await File.WriteAllTextAsync(output, JSON.stringify(response.data[0]), utf8);
+    }
+};
+
+let cmd_create_tag = async () => {
+    if (args.length < 4 || parameters.token === undefined) {
+        help();
+        return;
+    }
+
+    let gitUrl = args[1];
+    let tagName = args[2];
+    let commitSha = args[3];
+    let token = parameters.token;
+    let owner = gitUrl.split("/")[3];
+    let repo = gitUrl.split("/")[4].split(".")[0];
+
+    // 创建 tag
+    let response = await axios.post(`https://api.github.com/repos/${owner}/${repo}/git/tags`, {
+        tag: tagName,
+        message: tagName,
+        object: commitSha,  // 使用动态获取的默认分支名称
+        type: "commit"
+    }, {
+        headers: {
+            Authorization: `token ${token}`,
+            "User-Agent": "tscl"
+        }
+    });
+
+    console.log(response.data);
+    if (parameters.output) {
+        let output = parameters.output;
+        await File.WriteAllTextAsync(output, JSON.stringify(response.data), utf8);
     }
 };
 
@@ -204,6 +237,9 @@ let main = async () => {
     }
     else if (command == "latest-tag") {
         await cmd_latest_tag();
+    }
+    else if (command == "create-tag") {
+        await cmd_create_tag();
     }
     else {
         help();

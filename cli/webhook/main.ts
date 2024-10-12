@@ -11,6 +11,7 @@ import { Environment } from '../.tsc/System/Environment';
 import { Guid } from '../.tsc/System/Guid';
 import { Xml } from '../.tsc/TidyHPC/LiteXml/Xml';
 import { axios } from '../.tsc/Cangjie/TypeSharp/System/axios';
+import { Version } from '../.tsc/System/Version';
 
 let utf8 = new UTF8Encoding(false);
 let staticFrontPath = Path.Combine(Path.GetTempPath(), "webhook-front");
@@ -34,232 +35,376 @@ for (let i = 0; i < args.length; i++) {
 }
 console.log(`parameters: ${parameters}`);
 let help = () => {
-    console.log("Usage: webhook --port 8080 --git xxx --nuget xxx");
-    console.log("Usage: webhook --port 8080 --git github.com:xxx1,gitee.com:xxx2 --nuget xxx");
+    console.log("Usage: webhook --port 8080 --git xxx --nuget xxx --branch master,main");
     console.log(`--port: default 8080`);
     console.log(`--git: github token`);
+    console.log(`  --sample 1: github.com=xiaoming:ghp_xxxxx,gitee.com=xiaoli:ghp_xxxxx`);
+    console.log(`  --sample 2: xiaoming:ghp_xxxxx`);
     console.log(`--nuget: nuget token`);
+    console.log(`--branch: default master,main`);
 };
 let port = parameters.port ?? "8080";
 let gitTokens = parameters.git ?? "";
 let nugetSecret = parameters.nuget ?? "";
-let gitTokenMap = {} as { [key: string]: string };
-if (gitTokens != "") {
-    let gitTokenPairs = gitTokens.split(",");
-    for (let gitTokenPair of gitTokenPairs) {
-        if (gitTokenPair.includes(":") == false) {
-            gitTokenMap.default = gitTokenPair;
-            continue;
+let branches = (parameters.branch ?? "master,main").split(',');
+
+let Util = () => {
+    let getSystemName = async () => {
+        // 判断是linux-x64还是linux-arm64
+        let output = {} as {
+            lines: string[],
+        };
+        await cmdAsync(Environment.CurrentDirectory, "uname -m", output);
+        if (output.lines.length == 0) {
+            return "";
         }
-        let gitSite = gitTokenPair.split(":")[0];
-        let gitToken = gitTokenPair.split(":")[1];
-        gitTokenMap[gitSite] = gitToken;
-    }
-}
-
-let getGitToken = (gitUrl: string) => {
-    let gitSite = gitUrl.split("/")[2];
-    if (gitTokenMap[gitSite]) {
-        return gitTokenMap[gitSite];
-    }
-    return gitTokenMap.default;
+        let arch = output.lines[0];
+        if (arch.includes("aarch64")) {
+            return "linux-arm64";
+        }
+        else if (arch.includes("x86_64")) {
+            return "linux-x64";
+        }
+        return "";
+    };
+    return {
+        getSystemName
+    };
 };
 
-let insertGitToken = (gitUrl: string) => {
-    let index = gitUrl.indexOf("//");
-    let token = getGitToken(gitUrl);
-    return gitUrl.substring(0, index + 2) + token + "@" + gitUrl.substring(index + 2);
+let util = Util();
+
+let GitTokenManager = (gitTokens: string) => {
+    // gitTokens:github.com=moodlee:ghp_xxxxx,gitee.com=ghp_xxxxx
+    let gitUserTokenMap = {} as { [key: string]: string };
+    if (gitTokens != "") {
+        let gitTokenPairs = gitTokens.split(",");
+        for (let gitTokenPair of gitTokenPairs) {
+            if (gitTokenPair.includes("=") == false) {
+                gitUserTokenMap.default = gitTokenPair;
+                continue;
+            }
+            let gitSite = gitTokenPair.split("=")[0];
+            let gitUserToken = gitTokenPair.split("=")[1];
+            gitUserTokenMap[gitSite] = gitUserToken;
+        }
+    }
+    console.log(`gitToken: ${gitUserTokenMap}`);
+    let getGitUserToken = (gitUrl: string) => {
+        let gitSite = gitUrl.split("/")[2];
+        if (gitUserTokenMap[gitSite]) {
+            return gitUserTokenMap[gitSite];
+        }
+        return gitUserTokenMap.default;
+    };
+    let getGitToken = (gitUrl: string) => {
+        let userToken = getGitUserToken(gitUrl);
+        if (userToken.includes(":") == false) {
+            return userToken;
+        }
+        return userToken.split(":")[1];
+    };
+    let getGitUser = (gitUrl: string) => {
+        let userToken = getGitUserToken(gitUrl);
+        if (userToken.includes(":") == false) {
+            return "";
+        }
+        return userToken.split(":")[0];
+    };
+    let insertGitUserToken = (gitUrl: string) => {
+        let index = gitUrl.indexOf("//");
+        let userToken = getGitUserToken(gitUrl);
+        return gitUrl.substring(0, index + 2) + userToken + "@" + gitUrl.substring(index + 2);
+    };
+
+    return {
+        getGitToken,
+        getGitUserToken,
+        getGitUser,
+        insertGitUserToken
+    };
 };
 
-let isNodeJs = (tempDirectory: string) => {
-    // 判断是否存在package.json
-    let packageJsonPath = Path.Combine(tempDirectory, "package.json");
-    if (!Path.Exists(packageJsonPath)) {
-        console.log(`No package.json, the project is not a nodejs project`);
-        return false;
-    }
-    let packageJson = Json.Load(packageJsonPath);
-    if (packageJson.scripts && packageJson.scripts.build) {
-        console.log(`Found build script`);
+let gitTokenManager = GitTokenManager(gitTokens);
+
+let GitManager = () => {
+    let getGitUrlInfo = (gitUrl: string) => {
+        let owner = gitUrl.split("/")[3];
+        let repo = gitUrl.split("/")[4].split(".")[0];
+        return { owner, repo };
+    };
+    let getLatestTag = async (owner: string, repo: string, token: string) => {
+        let response = await axios.get(`https://api.github.com/repos/${owner}/${repo}/tags`, {
+            headers: {
+                Authorization: `token ${token}`,
+                "User-Agent": "tscl"
+            }
+        });
+        if (response.data.length == 0) {
+            return "";
+        }
+        return response.data[0].name as string;
+    };
+    let createTag = async (owner: string, repo: string, tagName: string, commit: string, token: string) => {
+        await axios.post(`https://api.github.com/repos/${owner}/${repo}/git/tags`, {
+            tag: tagName,
+            message: tagName,
+            object: commit,
+            type: "commit"
+        }, {
+            headers: {
+                Authorization: `token ${token}`,
+                "User-Agent": "tscl"
+            }
+        });
+    };
+    let gitClone = async (tempDirectory: string, gitUrl: string, commit: string) => {
+        gitUrl = gitTokenManager.insertGitUserToken(gitUrl);
+        // 下一步，使用cloneUrl和commit下载代码
+        console.log(`Create temp directory: ${tempDirectory}`);
+        if (Directory.Exists(tempDirectory)) {
+            deleteDirectory(tempDirectory);
+        }
+        Directory.CreateDirectory(tempDirectory);
+        console.log(`Working Directory : ${tempDirectory}, Existing: ${Directory.Exists(tempDirectory)}`);
+        console.log(`git clone ${gitUrl} .`);
+        if (await cmdAsync(tempDirectory, `git clone ${gitUrl} .`) != 0) {
+            console.log(`git clone ${gitUrl} failed, delete temp directory: ${tempDirectory}`);
+            deleteDirectory(tempDirectory);
+            return false;
+        }
+        if (commit != "") {
+            console.log(`git checkout ${commit}`);
+            if (await cmdAsync(tempDirectory, `git checkout ${commit}`) != 0) {
+                console.log(`git checkout ${commit} failed, delete temp directory: ${tempDirectory}`);
+                deleteDirectory(tempDirectory);
+                return false;
+            }
+        }
         return true;
-    }
-    else {
-        console.log(`No build script`);
-        return false;
-    }
+    };
+
+    // tag such as v1.0.0
+    let regex_TagName = new Regex("v\\d+\\.\\d+\\.\\d+");
+    let increaseTag = async (gitUrl: string, commit: string) => {
+        let info = getGitUrlInfo(gitUrl);
+        let latestTag = await getLatestTag(info.owner, info.repo, gitTokenManager.getGitToken(gitUrl));
+        if (!regex_TagName.IsMatch(latestTag)) {
+            console.log(`Latest tag is not a valid version: ${latestTag}`);
+            return {
+                success: false,
+                tag: ""
+            };
+        }
+        let version = Version.Parse(latestTag.substring(1));
+        let newVersion = new Version(version.Major, version.Minor, version.Build + 1);
+        let newTag = `v${newVersion.toString()}`;
+        console.log(`New tag: ${newTag}`);
+        await createTag(info.owner, info.repo, newTag, commit, gitTokenManager.getGitToken(gitUrl));
+        return {
+            success: true,
+            tag: newTag
+        };
+    };
+
+    return {
+        getGitUrlInfo,
+        getLatestTag,
+        createTag,
+        gitClone,
+        increaseTag
+    };
 };
 
-let buildNodeJs = async (tempDirectory: string, repo: string) => {
-    // 设置镜像源
-    // npm config set registry https://mirrors.cloud.tencent.com/npm/
-    console.log(`npm config set registry https://mirrors.cloud.tencent.com/npm/`);
-    if (await cmdAsync(tempDirectory, `npm config set registry https://mirrors.cloud.tencent.com/npm/`) != 0) {
-        console.log(`npm config set registry https://mirrors.cloud.tencent.com/npm/ failed`);
-        Directory.Delete(tempDirectory, true);
-        return;
-    }
-    // 下一步，使用npm install安装依赖
-    console.log(`npm install`);
-    if (await cmdAsync(tempDirectory, `npm install`) != 0) {
-        console.log(`npm install failed, delete temp directory: ${tempDirectory}`);
-        Directory.Delete(tempDirectory, true);
-        return;
-    }
-    // 在.env文件中设置PUBLIC_URL为/repo
-    console.log(`Set PUBLIC_URL=/${repo}`);
-    let envFile = Path.Combine(tempDirectory, ".env");
-    let envContent = `PUBLIC_URL=/${repo}
+let gitManager = GitManager();
+
+let NodeJsManager = () => {
+    let isNodeJs = (tempDirectory: string) => {
+        // 判断是否存在package.json
+        let packageJsonPath = Path.Combine(tempDirectory, "package.json");
+        if (!Path.Exists(packageJsonPath)) {
+            console.log(`No package.json, the project is not a nodejs project`);
+            return false;
+        }
+        let packageJson = Json.Load(packageJsonPath);
+        if (packageJson.scripts && packageJson.scripts.build) {
+            console.log(`Found build script`);
+            return true;
+        }
+        else {
+            console.log(`No build script`);
+            return false;
+        }
+    };
+    let build = async (tempDirectory: string, repo: string) => {
+        // 设置镜像源
+        // npm config set registry https://mirrors.cloud.tencent.com/npm/
+        console.log(`npm config set registry https://mirrors.cloud.tencent.com/npm/`);
+        if (await cmdAsync(tempDirectory, `npm config set registry https://mirrors.cloud.tencent.com/npm/`) != 0) {
+            console.log(`npm config set registry https://mirrors.cloud.tencent.com/npm/ failed`);
+            Directory.Delete(tempDirectory, true);
+            return;
+        }
+        // 下一步，使用npm install安装依赖
+        console.log(`npm install`);
+        if (await cmdAsync(tempDirectory, `npm install`) != 0) {
+            console.log(`npm install failed, delete temp directory: ${tempDirectory}`);
+            Directory.Delete(tempDirectory, true);
+            return;
+        }
+        // 在.env文件中设置PUBLIC_URL为/repo
+        console.log(`Set PUBLIC_URL=/${repo}`);
+        let envFile = Path.Combine(tempDirectory, ".env");
+        let envContent = `PUBLIC_URL=/${repo}
 GENERATE_SOURCEMAP=false`;
-    File.WriteAllText(envFile, envContent, utf8);
+        File.WriteAllText(envFile, envContent, utf8);
 
-    // 下一步，使用npm run build打包
-    console.log(`npm run build`);
-    if (await cmdAsync(tempDirectory, `npm run build`) != 0) {
-        console.log(`npm run build failed, delete temp directory: ${tempDirectory}`);
-        Directory.Delete(tempDirectory, true);
-        return;
-    }
-    // 下一步，将打包后的文件复制到指定目录
-    let destDirectory = Path.Combine(staticFrontPath, repo);
-    console.log(`Copy to ${destDirectory}`);
-    if (Directory.Exists(destDirectory)) {
-        Directory.Delete(destDirectory, true);
-    }
-    copyDirectory(Path.Combine(tempDirectory, "build"), destDirectory);
-    console.log(`Deploy success`);
+        // 下一步，使用npm run build打包
+        console.log(`npm run build`);
+        if (await cmdAsync(tempDirectory, `npm run build`) != 0) {
+            console.log(`npm run build failed, delete temp directory: ${tempDirectory}`);
+            Directory.Delete(tempDirectory, true);
+            return;
+        }
+        // 下一步，将打包后的文件复制到指定目录
+        let destDirectory = Path.Combine(staticFrontPath, repo);
+        console.log(`Copy to ${destDirectory}`);
+        if (Directory.Exists(destDirectory)) {
+            Directory.Delete(destDirectory, true);
+        }
+        copyDirectory(Path.Combine(tempDirectory, "build"), destDirectory);
+        console.log(`Deploy success`);
+    };
+    return {
+        isNodeJs,
+        build
+    };
 };
 
-let isDotNet = (tempDirectory: string) => {
-    // 判断是否存在.csproj文件
-    let csprojFiles = Directory.GetFiles(tempDirectory, "*.csproj");
-    if (csprojFiles.length == 0) {
-        console.log(`No .csproj file, the project is not a .NET project`);
-        return false;
-    }
-    console.log(`Found .csproj file`);
-    return true;
-};
+let nodeJsManager = NodeJsManager();
 
-let regex_GeneratePackageOnBuild = new Regex("<GeneratePackageOnBuild>\\s*(true|True)\\s*</GeneratePackageOnBuild>");
-let isNuget = (csprojPath: string) => {
-    let csprojContent = File.ReadAllText(csprojPath, utf8);
-    if (regex_GeneratePackageOnBuild.IsMatch(csprojContent)) {
-        console.log(`Found <GeneratePackageOnBuild>true</GeneratePackageOnBuild> in ${csprojPath}`);
+let DotNetManager = () => {
+    let isDotNet = (tempDirectory: string) => {
+        // 判断是否存在.csproj文件
+        let csprojFiles = Directory.GetFiles(tempDirectory, "*.csproj");
+        if (csprojFiles.length == 0) {
+            console.log(`No .csproj file, the project is not a .NET project`);
+            return false;
+        }
+        console.log(`Found .csproj file`);
         return true;
-    }
-    console.log(`No <GeneratePackageOnBuild>true</GeneratePackageOnBuild> found in any .csproj file`);
-    return false;
-};
-
-let regex_Version = new Regex("<Version>\\s*(\\d+\\.\\d+\\.\\d+)\\s*</Version>");
-
-let getCurrentNugetVersion = async (csprojPath: string) => {
-    let csprojContent = File.ReadAllText(csprojPath, utf8);
-    let match = regex_Version.Match(csprojContent);
-    if (match.Success) {
-        return match.Groups[1].Value;
-    }
-    return "";
-};
-
-let buildNugetPackage = async (csprojPath: string) => {
-    let currentDirectory = Path.GetDirectoryName(csprojPath);
-    let version = await getCurrentNugetVersion(csprojPath);
-    let nugetPackageDirectory = Path.Combine(currentDirectory, "bin", "Release", version);
-    if (Directory.Exists(nugetPackageDirectory)) {
-        Directory.Delete(nugetPackageDirectory, true);
-    }
-    console.log(`dotnet pack -c Release -o ${nugetPackageDirectory}`);
-    if (await cmdAsync(currentDirectory, `dotnet pack -c Release -o ${nugetPackageDirectory}`) != 0) {
-        console.log(`dotnet pack failed, delete nuget package directory: ${nugetPackageDirectory}`);
+    };
+    let regex_Version = new Regex("<Version>\\s*(\\d+\\.\\d+\\.\\d+)\\s*</Version>");
+    let getVersion = async (csprojPath: string) => {
+        let csprojContent = await File.ReadAllTextAsync(csprojPath, utf8);
+        let match = regex_Version.Match(csprojContent);
+        if (match.Success) {
+            return match.Groups[1].Value;
+        }
+        return "";
+    };
+    let pack = async (csprojPath: string) => {
+        let currentDirectory = Path.GetDirectoryName(csprojPath);
+        let version = await getVersion(csprojPath);
+        let nugetPackageDirectory = Path.Combine(currentDirectory, "bin", "Release", version);
         if (Directory.Exists(nugetPackageDirectory)) {
             Directory.Delete(nugetPackageDirectory, true);
         }
-        return "";
-    }
-    let files = Directory.GetFiles(nugetPackageDirectory, "*.nupkg");
-    if (files.length == 0) {
-        console.log(`No .nupkg file found`);
-        return "";
-    }
-    return files[0];
-};
-
-let publishCsproj = async (csprojPath: string) => {
-    return await execAsync(Environment.ProcessPath, "run", "vs-publish", csprojPath) == 0;
-};
-
-let uploadNugetPackage = async (nugetPackagePath: string) => {
-    // 通过dotnet上传nuget包
-    let cmd = `dotnet nuget push ${Path.GetFileName(nugetPackagePath)} --api-key ${nugetSecret} --source https://api.nuget.org/v3/index.json`;
-    console.log(cmd);
-    if (await cmdAsync(Path.GetDirectoryName(nugetPackagePath), cmd) != 0) {
-        console.log(`dotnet nuget push failed`);
+        console.log(`dotnet pack -c Release -o ${nugetPackageDirectory}`);
+        if (await cmdAsync(currentDirectory, `dotnet pack -c Release -o ${nugetPackageDirectory}`) != 0) {
+            console.log(`dotnet pack failed, delete nuget package directory: ${nugetPackageDirectory}`);
+            if (Directory.Exists(nugetPackageDirectory)) {
+                Directory.Delete(nugetPackageDirectory, true);
+            }
+            return "";
+        }
+        let files = Directory.GetFiles(nugetPackageDirectory, "*.nupkg");
+        if (files.length == 0) {
+            console.log(`No .nupkg file found`);
+            return "";
+        }
+        return files[0];
+    };
+    let pubxmlSet = (pubXmlFile: string, key: string, value: string) => {
+        let xml = Xml.Load(pubXmlFile);
+        let project = xml.Root;
+        let propertyGroup = project.GetOrCreateElementByName("PropertyGroup");
+        let property = propertyGroup.GetOrCreateElementByName(key);
+        property.InnerText = value;
+        xml.Save(pubXmlFile);
+    };
+    let pubxmlGet = (pubXmlFile: string, key: string) => {
+        let xml = Xml.Load(pubXmlFile);
+        let project = xml.Root;
+        let propertyGroup = project.GetOrCreateElementByName("PropertyGroup");
+        let property = propertyGroup.GetOrCreateElementByName(key);
+        return property.InnerText;
+    };
+    let csprojSet = (csprojFile: string, key: string, value: string) => {
+        let xml = Xml.Load(csprojFile);
+        let project = xml.Root;
+        let propertyGroup = project.GetOrCreateElementByName("PropertyGroup");
+        let property = propertyGroup.GetOrCreateElementByName(key);
+        property.InnerText = value;
+        xml.Save(csprojFile);
+    };
+    let publish = async (csprojPath: string) => {
+        // 判断csproj所在目录下Properties/PublishProfiles/是否存在pubxml文件
+        // 如果存在，则使用dotnet publish --publish-profile xxx
+        let currentDirectory = Path.GetDirectoryName(csprojPath);
+        let binDirectory = Path.Combine(currentDirectory, "bin");
+        if (Directory.Exists(binDirectory) == false) {
+            Directory.CreateDirectory(binDirectory);
+        }
+        let publishProfilesDirectory = Path.Combine(currentDirectory, "Properties", "PublishProfiles");
+        let pubxmlFiles = Directory.Exists(publishProfilesDirectory) ?
+            Directory.GetFiles(publishProfilesDirectory, "*.pubxml") :
+            [];
+        if (pubxmlFiles.length == 0) {
+            let cmd = `dotnet publish -c Release -f net8.0`;
+            console.log(cmd);
+            if (await cmdAsync(currentDirectory, cmd) != 0) {
+                console.log(`dotnet publish failed`);
+                return false;
+            }
+        }
+        else {
+            for (let pubXmlFile of pubxmlFiles) {
+                // 将pubXmlFile中的PublishDir设置为/bin/publish/publish-profile-name
+                let publishDir = Path.Combine(currentDirectory, "bin", "publish", Path.GetFileNameWithoutExtension(pubXmlFile));
+                pubxmlSet(pubXmlFile, "PublishDir", publishDir);
+                let cmd = `dotnet publish --publish-profile ${Path.GetFileNameWithoutExtension(pubXmlFile)}`;
+                console.log(cmd);
+                if (await cmdAsync(currentDirectory, cmd) != 0) {
+                    console.log(`dotnet publish failed`);
+                    return false;
+                }
+            }
+        }
+        return true;
+    };
+    let regex_GeneratePackageOnBuild = new Regex("<GeneratePackageOnBuild>\\s*(true|True)\\s*</GeneratePackageOnBuild>");
+    let isGeneratePackageOnBuild = (csprojPath: string) => {
+        let csprojContent = File.ReadAllText(csprojPath, utf8);
+        if (regex_GeneratePackageOnBuild.IsMatch(csprojContent)) {
+            console.log(`Found <GeneratePackageOnBuild>true</GeneratePackageOnBuild> in ${csprojPath}`);
+            return true;
+        }
+        console.log(`No <GeneratePackageOnBuild>true</GeneratePackageOnBuild> found in any .csproj file`);
         return false;
-    }
-    return true;
-};
-
-let buildDotNet = async (tempDirectory: string, repo: string) => {
-    let csprojFiles = Directory.GetFiles(tempDirectory, "*.csproj");
-    if (csprojFiles.length != 1) {
-        console.log(`More than one .csproj file found or no .csproj file found`);
-        return;
-    }
-    let csprojPath = csprojFiles[0];
-    if (await publishCsproj(csprojPath) == false) {
-        console.log(`Publish failed`);
-        return;
-    }
-    if (isNuget(csprojPath)) {
-        let nugetPackagePath = await buildNugetPackage(csprojPath);
-        if (File.Exists(nugetPackagePath)) {
-            await uploadNugetPackage(nugetPackagePath);
+    };
+    let nugetPush = async (nugetPackagePath: string) => {
+        // 通过dotnet上传nuget包
+        let cmd = `dotnet nuget push ${Path.GetFileName(nugetPackagePath)} --api-key ${nugetSecret} --source https://api.nuget.org/v3/index.json`;
+        console.log(cmd);
+        if (await cmdAsync(Path.GetDirectoryName(nugetPackagePath), cmd) != 0) {
+            console.log(`dotnet nuget push failed`);
+            return false;
         }
-    }
-
-    // 如果发布目录下存在.service，说明是一个服务
-    // 修改.service 文件中的WorkingDirectory为destDirectory
-    // 将服务文件拷贝到/ect/systemd/system/目录下，并重启服务
-    let serviceFiles = Directory.GetFiles(tempDirectory, "*.service");
-    if (serviceFiles.length > 0) {
-        let destDirectory = Path.Combine(staticEndPath, repo);
-
-        await cmdAsync(tempDirectory, `sudo mkdir -p ${destDirectory}`);
-        await cmdAsync(tempDirectory, `sudo cp -r ${tempDirectory}/bin/Release/net8.0/publish/* ${destDirectory}`);
-
-        let serviceFile = serviceFiles[0];
-        let serviceContent = File.ReadAllText(serviceFile, utf8);
-        serviceContent = serviceContent.replace(/^WorkingDirectory=.*$/m, `WorkingDirectory=${destDirectory}`);
-        File.WriteAllText(serviceFile, serviceContent, utf8);
-        let serviceDestFile = Path.Combine("/etc/systemd/system", Path.GetFileName(serviceFile));
-        if (await cmdAsync(tempDirectory, `sudo cp ${serviceFile} ${serviceDestFile}`) == 0) {
-            console.log(`Copy ${serviceFile} to ${serviceDestFile}`);
-            console.log(`systemctl daemon-reload`);
-            await cmdAsync(tempDirectory, `sudo systemctl daemon-reload`);
-            console.log(`systemctl restart ${Path.GetFileNameWithoutExtension(serviceFile)}`);
-            await cmdAsync(tempDirectory, `systemctl restart ${Path.GetFileNameWithoutExtension(serviceFile)}`);
-        }
-    }
-};
-
-let getLatestTag = async (gitUrl: string, token: string) => {
-    let owner = gitUrl.split("/")[3];
-    let repo = gitUrl.split("/")[4].split(".")[0];
-    let response = await axios.get(`https://api.github.com/repos/${owner}/${repo}/tags`, {
-        headers: {
-            Authorization: `token ${token}`,
-            "User-Agent": "tscl"
-        }
-    });
-    if (response.data.length == 0) {
-        return "";
-    }
-    return response.data[0].name;
-};
-
-let gitRelease = async (tempDirectory: string, gitUrl: string) => {
-    try {
+        return true;
+    };
+    let release = async (tempDirectory: string, gitUrl: string) => {
+        let info = gitManager.getGitUrlInfo(gitUrl);
         let releaseConfig = Path.Combine(tempDirectory, ".gitrelease.json");
         if (!File.Exists(releaseConfig)) {
             console.log(`No release.json found`);
@@ -273,12 +418,14 @@ let gitRelease = async (tempDirectory: string, gitUrl: string) => {
         let filesRegexString = releaseJson.files;
         let filesRegex = new Regex(filesRegexString);
 
+
         let pubxmlDirectory = Path.Combine(tempDirectory, "Properties", "PublishProfiles");
         let pubxmlFiles = Directory.GetFiles(pubxmlDirectory, "*.pubxml");
         if (pubxmlFiles.length == 0) {
-            console.log(`No pubxml file found`);
+            console.log(`Release is enabled but no .pubxml file found`);
             return;
         }
+
         let toReleaseFiles = [] as string[];
         for (let pubxmlFile of pubxmlFiles) {
             let publishDir = Path.Combine(tempDirectory, "bin", "publish", Path.GetFileNameWithoutExtension(pubxmlFile));
@@ -295,7 +442,8 @@ let gitRelease = async (tempDirectory: string, gitUrl: string) => {
                 }
             }
         }
-        let tagName = releaseJson.tag ?? await getLatestTag(gitUrl, getGitToken(gitUrl));
+        let token = gitTokenManager.getGitToken(gitUrl);
+        let tagName = releaseJson.tag ?? await gitManager.getLatestTag(info.owner, info.repo, token);
         if (tagName == "" || tagName == null || tagName == undefined) {
             console.log(`No tag found`);
             return;
@@ -303,42 +451,111 @@ let gitRelease = async (tempDirectory: string, gitUrl: string) => {
         await execAsync(Environment.ProcessPath,
             "run", "gitapis", "release", gitUrl, tagName,
             "--files", toReleaseFiles.join(","),
-            "--token", getGitToken(gitUrl));
-    }
-    catch (e) {
-        console.log(e);
-    }
+            "--token", token);
+    };
+    let service = async (tempDirectory: string, repo: string) => {
+        // 如果发布目录下存在.service，说明是一个服务
+        // 修改.service 文件中的WorkingDirectory为destDirectory
+        // 将服务文件拷贝到/ect/systemd/system/目录下，并重启服务
+        let serviceFiles = Directory.GetFiles(tempDirectory, "*.service");
+        if (serviceFiles.length != 1) {
+            console.log(`More than one .service file found or no .service file found`);
+            return;
+        }
+        let systemName = await util.getSystemName();
+        let pubxmlDirectory = Path.Combine(tempDirectory, "Properties", "PublishProfiles");
+        let pubxmlFiles = Directory.GetFiles(pubxmlDirectory, "*.pubxml").filter(item => pubxmlGet(item, "RuntimeIdentifier") == systemName);
+        if (pubxmlFiles.length == 0) {
+            console.log(`No .pubxml file found for ${systemName}`);
+            return;
+        }
+        let publishDirectory = Path.Combine(tempDirectory, "bin", "publish", Path.GetFileNameWithoutExtension(pubxmlFiles[0]));
+        // 停止服务
+        let serviceFile = serviceFiles[0];
+        let serviceName = Path.GetFileName(serviceFile);
+        console.log(`systemctl stop ${serviceName}`);
+        await cmdAsync(tempDirectory, `sudo systemctl stop ${serviceName}`);
+        // 将workingDirectory修改为部署目录
+        let destDirectory = Path.Combine(staticEndPath, repo);
+        let serviceContent = File.ReadAllText(serviceFile, utf8);
+        serviceContent = serviceContent.replace(/^WorkingDirectory=.*$/m, `WorkingDirectory=${destDirectory}`);
+        File.WriteAllText(serviceFile, serviceContent, utf8);
+        // 将发布目录下的文件拷贝到部署目录
+        if (Directory.Exists(destDirectory)) {
+            if (await cmdAsync(tempDirectory, `sudo rm -rf ${destDirectory}`) != 0) {
+                console.log(`Delete ${destDirectory} failed`);
+                return;
+            }
+        }
+        if (await cmdAsync(tempDirectory, `sudo mkdir -p ${destDirectory}`) != 0) {
+            console.log(`Create ${destDirectory} failed`);
+            return;
+        }
+        if (await cmdAsync(tempDirectory, `sudo cp -r ${publishDirectory}/* ${destDirectory}`) != 0) {
+            console.log(`Copy ${publishDirectory} to ${destDirectory} failed`);
+            return;
+        }
+        let serviceDestFile = Path.Combine("/etc/systemd/system", Path.GetFileName(serviceFile));
+        let cpServiceCommand = `sudo cp ${serviceFile} ${serviceDestFile}`;
+        console.log(cpServiceCommand);
+        if (await cmdAsync(tempDirectory, cpServiceCommand) != 0) {
+            console.log(`Copy ${serviceFile} to ${serviceDestFile} failed`);
+            return;
+        }
+        let daemonReloadCommand = `sudo systemctl daemon-reload`;
+        console.log(daemonReloadCommand);
+        if (await cmdAsync(tempDirectory, daemonReloadCommand) != 0) {
+            console.log(`Reload daemon failed`);
+            return;
+        }
+        let restartCommand = `sudo systemctl restart ${Path.GetFileNameWithoutExtension(serviceFile)}`;
+        console.log(restartCommand);
+        if (await cmdAsync(tempDirectory, restartCommand) != 0) {
+            console.log(`Restart service failed`);
+            return;
+        }
+    };
+    let build = async (tempDirectory: string, repo: string, version: string) => {
+        let csprojFiles = Directory.GetFiles(tempDirectory, "*.csproj");
+        if (csprojFiles.length != 1) {
+            console.log(`More than one .csproj file found or no .csproj file found`);
+            return;
+        }
+        let csprojPath = csprojFiles[0];
+        csprojSet(csprojPath, "Version", version);
+        if (await publish(csprojPath) == false) {
+            console.log(`Publish failed`);
+            return;
+        }
+        if (isGeneratePackageOnBuild(csprojPath)) {
+            let nugetPackagePath = await pack(csprojPath);
+            if (File.Exists(nugetPackagePath)) {
+                await nugetPush(nugetPackagePath);
+            }
+        }
+        await release(tempDirectory, repo);
+        await service(tempDirectory, repo);
+    };
+
+    return {
+        isDotNet,
+        getVersion,
+        pack,
+        pubxmlSet,
+        publish,
+        isGeneratePackageOnBuild,
+        nugetPush,
+        build
+    };
 };
 
-let gitClone = async (tempDirectory: string, cloneUrl: string, commit: string) => {
-    cloneUrl = insertGitToken(cloneUrl);
-    // 下一步，使用cloneUrl和commit下载代码
-    console.log(`Create temp directory: ${tempDirectory}`);
-    if (Directory.Exists(tempDirectory)) {
-        deleteDirectory(tempDirectory);
-    }
-    Directory.CreateDirectory(tempDirectory);
-    console.log(`Working Directory : ${tempDirectory}, Existing: ${Directory.Exists(tempDirectory)}`);
-    console.log(`git clone ${cloneUrl} .`);
-    if (await cmdAsync(tempDirectory, `git clone ${cloneUrl} .`) != 0) {
-        console.log(`git clone ${cloneUrl} failed, delete temp directory: ${tempDirectory}`);
-        deleteDirectory(tempDirectory);
-        return false;
-    }
-    if (commit != "") {
-        console.log(`git checkout ${commit}`);
-        if (await cmdAsync(tempDirectory, `git checkout ${commit}`) != 0) {
-            console.log(`git checkout ${commit} failed, delete temp directory: ${tempDirectory}`);
-            deleteDirectory(tempDirectory);
-            return false;
-        }
-    }
-    return true;
-};
+let dotNetManager = DotNetManager();
+
 
 let webhook = async (session: Session) => {
     let data = await session.Cache.GetRequstBodyJson();
-    if ((data.ref == "refs/heads/main" || data.ref == "refs/heads/master") == false) {
+    let branchName = Path.GetFileName(data.ref);
+    if (branches.includes(branchName) == false) {
         console.log(`Skip: ${data.ref}`);
         return;
     }
@@ -346,14 +563,23 @@ let webhook = async (session: Session) => {
     let commit = data.head_commit.id;
     let repo = data.repository.name;
     let tempDirectory = Path.Combine(Path.GetTempPath(), commit);
-    await gitClone(tempDirectory, cloneUrl, commit);
-    if (isNodeJs(tempDirectory)) {
-        await buildNodeJs(tempDirectory, repo);
+    // 克隆代码
+    if (await gitManager.gitClone(tempDirectory, cloneUrl, commit) == false) {
+        console.log(`git clone failed`);
+        return;
     }
-    else if (isDotNet(tempDirectory)) {
-        await buildDotNet(tempDirectory, repo);
+    // 升版本号
+    let tagResult = await gitManager.increaseTag(cloneUrl, commit);
+    if (tagResult.success == false) {
+        console.log(`Increase tag failed`);
+        return;
     }
-    await gitRelease(tempDirectory, cloneUrl);
+    if (nodeJsManager.isNodeJs(tempDirectory)) {
+        await nodeJsManager.build(tempDirectory, repo);
+    }
+    else if (dotNetManager.isDotNet(tempDirectory)) {
+        await dotNetManager.build(tempDirectory, repo, tagResult.tag.substring(1));
+    }
     if (Directory.Exists(tempDirectory)) {
         deleteDirectory(tempDirectory);
         console.log(`Delete temp directory: ${tempDirectory}`);
