@@ -186,6 +186,7 @@ let GitManager = () => {
                 return false;
             }
         }
+        console.log(`git clone success`);
         return true;
     };
 
