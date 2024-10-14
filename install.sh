@@ -6,7 +6,7 @@ proxy=$(git config --get http.proxy)
 if [ -n "$proxy" ]; then
     # 输出日志
     echo "use proxy: $proxy"
-    wget -e "http_proxy=$proxy;https_proxy=$proxy;use_proxy=on" --no-cache https://github.com/Cangjier/type-sharp/releases/download/latest/tscl
+    wget -e -k "http_proxy=$proxy;https_proxy=$proxy;use_proxy=on" --no-cache https://github.com/Cangjier/type-sharp/releases/download/latest/tscl
 else
     wget --no-cache https://github.com/Cangjier/type-sharp/releases/download/latest/tscl
 fi

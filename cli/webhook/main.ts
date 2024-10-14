@@ -173,9 +173,7 @@ let GitManager = () => {
         Directory.CreateDirectory(tempDirectory);
         console.log(`Working Directory : ${tempDirectory}, Existing: ${Directory.Exists(tempDirectory)}`);
         console.log(`git clone ${gitUrl} .`);
-        let gitCloneResult = await cmdAsync(tempDirectory, `git clone ${gitUrl} .`);
-        console.log(`gitCloneResult=${gitCloneResult}`);
-        if (gitCloneResult != 0) {
+        if (await cmdAsync(tempDirectory, `git clone ${gitUrl} .`) != 0) {
             console.log(`git clone ${gitUrl} failed, delete temp directory: ${tempDirectory}`);
             deleteDirectory(tempDirectory);
             return false;
@@ -188,10 +186,8 @@ let GitManager = () => {
                 return false;
             }
         }
-        console.log(`git clone success`);
         return true;
     };
-
     // tag such as v1.0.0
     let regex_TagName = new Regex("v\\d+\\.\\d+\\.\\d+");
     let increaseTag = async (gitUrl: string, commit: string) => {
@@ -576,8 +572,7 @@ let webhook = async (session: Session) => {
     let tempDirectory = Path.Combine(Path.GetTempPath(), commit);
     // 克隆代码
     console.log(`Clone ${cloneUrl} ${commit}`);
-    let gitCloneResult = await gitManager.gitClone(tempDirectory, cloneUrl, commit);
-    if ( gitCloneResult == false) {
+    if (await gitManager.gitClone(tempDirectory, cloneUrl, commit) == false) {
         console.log(`git clone failed`);
         return;
     }
