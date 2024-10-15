@@ -16,6 +16,11 @@ import { Version } from '../.tsc/System/Version';
 let utf8 = new UTF8Encoding(false);
 let staticFrontPath = Path.Combine(Path.GetTempPath(), "webhook-front");
 let staticEndPath = Path.Combine(Path.GetTempPath(), "webhook-end");
+let homeDirectory = Environment.GetEnvironmentVariable("HOME");
+let homeTempDirectory = Path.Combine(homeDirectory, "tmp");
+if (Directory.Exists(homeTempDirectory) == false) {
+    Directory.CreateDirectory(homeTempDirectory);
+}
 
 let parameters = {} as { [key: string]: string };
 for (let i = 0; i < args.length; i++) {
@@ -574,7 +579,7 @@ let webhook = async (session: Session) => {
     let cloneUrl = data.repository.clone_url;
     let commit = data.head_commit.id;
     let repo = data.repository.name;
-    let tempDirectory = Path.Combine(Path.GetTempPath(), commit);
+    let tempDirectory = Path.Combine(homeTempDirectory, commit);
     // 克隆代码
     console.log(`Clone ${cloneUrl} ${commit}`);
     if (await gitManager.gitClone(tempDirectory, cloneUrl, commit) == false) {
@@ -594,8 +599,8 @@ let webhook = async (session: Session) => {
         await dotNetManager.build(tempDirectory, repo, tagResult.tag.substring(1));
     }
     if (Directory.Exists(tempDirectory)) {
-        // deleteDirectory(tempDirectory);
-        // console.log(`Delete temp directory: ${tempDirectory}`);
+        deleteDirectory(tempDirectory);
+        console.log(`Delete temp directory: ${tempDirectory}`);
     }
 };
 
