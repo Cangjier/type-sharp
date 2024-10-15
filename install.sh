@@ -13,10 +13,18 @@ else
 fi
 
 # 停止所有ExecStart带有tscl的服务
-systemctl list-units --type=service | grep tscl | awk '{print $1}' | xargs -r systemctl stop
+systemctl list-units --type=service | grep 'tscl run' | awk '{print $1}' | xargs -r systemctl stop
 
 # 延迟3秒
 sleep 3
+
+# 找到并杀掉所有tscl进程
+for pid in $(ps -ef | grep tscl | grep -v grep | awk '{print $2}'); do
+    sudo kill -9 $pid
+done
+
+# 延迟1秒
+sleep 1
 
 # 4. 移动到/usr/local/bin
 sudo mv tscl /usr/local/bin
@@ -25,7 +33,7 @@ sudo mv tscl /usr/local/bin
 sudo chmod +x /usr/local/bin/tscl
 
 # 启动所有ExecStart带有tscl的服务
-systemctl list-units --type=service | grep tscl | awk '{print $1}' | xargs -r systemctl start
+systemctl list-units --type=service | grep 'tscl run' | awk '{print $1}' | xargs -r systemctl start
 
 # 6. 退出
 exit
