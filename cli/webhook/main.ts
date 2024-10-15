@@ -169,6 +169,7 @@ let GitManager = () => {
                 "User-Agent": "tscl"
             }
         });
+        console.log(`Create tag ${tagName} response: ${response}`);
         if (response.status != 201) {
             console.log(`Create tag ${tagName} failed`);
             return false;
