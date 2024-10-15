@@ -379,7 +379,7 @@ let DotNetManager = () => {
         if (pubxmlFiles.length == 0) {
             let cmd = `dotnet publish -c Release -f net8.0`;
             console.log(cmd);
-            util.printEnv();
+            await util.printEnv();
             if (await cmdAsync(currentDirectory, cmd) != 0) {
                 console.log(`dotnet publish failed`);
                 return false;
