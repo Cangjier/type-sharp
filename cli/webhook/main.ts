@@ -71,8 +71,16 @@ let Util = () => {
         }
         return "";
     };
+    let printEnv=async ()=>{
+        let output = {} as {
+            lines: string[],
+        };
+        await cmdAsync(Environment.CurrentDirectory, "env", output);
+        console.log(`env: ${output.lines}`);
+    };
     return {
-        getSystemName
+        getSystemName,
+        printEnv
     };
 };
 
@@ -371,6 +379,7 @@ let DotNetManager = () => {
         if (pubxmlFiles.length == 0) {
             let cmd = `dotnet publish -c Release -f net8.0`;
             console.log(cmd);
+            util.printEnv();
             if (await cmdAsync(currentDirectory, cmd) != 0) {
                 console.log(`dotnet publish failed`);
                 return false;
