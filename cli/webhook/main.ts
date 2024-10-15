@@ -16,7 +16,7 @@ import { Version } from '../.tsc/System/Version';
 let utf8 = new UTF8Encoding(false);
 let staticFrontPath = Path.Combine(Path.GetTempPath(), "webhook-front");
 let staticEndPath = Path.Combine(Path.GetTempPath(), "webhook-end");
-let homeDirectory = Environment.GetEnvironmentVariable("HOME");
+let homeDirectory = Environment.GetEnvironmentVariable("HOME") ?? Path.GetTempPath();
 let homeTempDirectory = Path.Combine(homeDirectory, "tmp");
 if (Directory.Exists(homeTempDirectory) == false) {
     Directory.CreateDirectory(homeTempDirectory);
@@ -27,9 +27,14 @@ for (let i = 0; i < args.length; i++) {
     let arg = args[i];
     if (arg.startsWith("--")) {
         let key = arg.substring(2);
-        let value = args[i + 1];
-        parameters[key] = value;
-        i++;
+        if (i + 1 < args.length) {
+            let value = args[i + 1];
+            parameters[key] = value;
+            i++;
+        }
+        else {
+            parameters[key] = "true";
+        }
     }
     else if (arg.startsWith("-")) {
         let key = arg.substring(1);
