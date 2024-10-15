@@ -520,6 +520,11 @@ let DotNetManager = () => {
         }
     };
     let build = async (tempDirectory: string, repo: string, version: string) => {
+        console.log(`build ${{
+            tempDirectory,
+            repo,
+            version
+        }}`);
         let csprojFiles = Directory.GetFiles(tempDirectory, "*.csproj");
         if (csprojFiles.length != 1) {
             console.log(`More than one .csproj file found or no .csproj file found`);
@@ -576,7 +581,6 @@ let webhook = async (session: Session) => {
         console.log(`git clone failed`);
         return;
     }
-    console.log(`Clone success`);
     // 升版本号
     let tagResult = await gitManager.increaseTag(cloneUrl, commit);
     if (tagResult.success == false) {
@@ -590,8 +594,8 @@ let webhook = async (session: Session) => {
         await dotNetManager.build(tempDirectory, repo, tagResult.tag.substring(1));
     }
     if (Directory.Exists(tempDirectory)) {
-        deleteDirectory(tempDirectory);
-        console.log(`Delete temp directory: ${tempDirectory}`);
+        // deleteDirectory(tempDirectory);
+        // console.log(`Delete temp directory: ${tempDirectory}`);
     }
 };
 
