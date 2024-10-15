@@ -12,12 +12,14 @@ else
     wget --no-cache https://github.com/Cangjier/type-sharp/releases/download/latest/tscl
 fi
 
+echo "Stop all tscl services"
 # 停止所有ExecStart带有tscl的服务
 systemctl list-units --type=service | grep 'tscl run' | awk '{print $1}' | xargs -r systemctl stop
 
 # 延迟3秒
 sleep 3
 
+echo "Kill all tscl processes"
 # 找到并杀掉所有tscl进程
 for pid in $(ps -ef | grep tscl | grep -v grep | awk '{print $2}'); do
     sudo kill -9 $pid
