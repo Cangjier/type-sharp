@@ -599,8 +599,8 @@ let webhook = async (session: Session) => {
         await dotNetManager.build(tempDirectory, repo, tagResult.tag.substring(1));
     }
     if (Directory.Exists(tempDirectory)) {
-        deleteDirectory(tempDirectory);
-        console.log(`Delete temp directory: ${tempDirectory}`);
+        // deleteDirectory(tempDirectory);
+        // console.log(`Delete temp directory: ${tempDirectory}`);
     }
 };
 
