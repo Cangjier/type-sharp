@@ -1,4 +1,13 @@
 # webhook
+Usage: webhook --port 8080 --git xxx --nuget xxx --branch master,main
+
+- --port: default 8080
+- --git: github token
+  - sample 1: github.com=xiaoming:ghp_xxxxx,gitee.com=xiaoli:ghp_xxxxx
+  - sample 2: xiaoming:ghp_xxxxx
+- --nuget: nuget token
+- --branch: default master,main
+
 该命令行工具用于创建一个 webhook 服务，用于接收来自 github 的 webhook 事件。目前支持以下功能：
 - 接收push事件
   - 自动 git clone 代码

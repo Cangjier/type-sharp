@@ -1,6 +1,6 @@
 import { Server } from '../.tsc/Cangjie/TypeSharp/System/Server';
 import { Session } from '../.tsc/TidyHPC/Routers/Urls/Session';
-import { args, cmd, cmdAsync, copyDirectory, deleteDirectory, execAsync } from '../.tsc/context';
+import { args, cmd, cmdAsync, copyDirectory, deleteDirectory, execAsync, script_path } from '../.tsc/context';
 import { Path } from '../.tsc/System/IO/Path';
 import { File } from '../.tsc/System/IO/File';
 import { Directory } from '../.tsc/System/IO/Directory';
@@ -40,13 +40,7 @@ for (let i = 0; i < args.length; i++) {
 }
 console.log(`parameters: ${parameters}`);
 let help = () => {
-    console.log("Usage: webhook --port 8080 --git xxx --nuget xxx --branch master,main");
-    console.log(`--port: default 8080`);
-    console.log(`--git: github token`);
-    console.log(`  --sample 1: github.com=xiaoming:ghp_xxxxx,gitee.com=xiaoli:ghp_xxxxx`);
-    console.log(`  --sample 2: xiaoming:ghp_xxxxx`);
-    console.log(`--nuget: nuget token`);
-    console.log(`--branch: default master,main`);
+    console.log(File.ReadAllText(Path.Combine(Path.GetDirectoryName(script_path), "README.md"), utf8));
 };
 let port = parameters.port ?? "8080";
 let gitTokens = parameters.git ?? "";
