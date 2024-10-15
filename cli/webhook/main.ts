@@ -157,8 +157,10 @@ let GitManager = () => {
         }
         return response.data[0].name as string;
     };
+    
     let createTag = async (owner: string, repo: string, tagName: string, commit: string, token: string) => {
-        let response = await axios.post(`https://api.github.com/repos/${owner}/${repo}/git/tags`, {
+        // 创建标签对象
+        let tagObjectResponse = await axios.post(`https://api.github.com/repos/${owner}/${repo}/git/tags`, {
             tag: tagName,
             message: tagName,
             object: commit,
@@ -169,11 +171,28 @@ let GitManager = () => {
                 "User-Agent": "tscl"
             }
         });
-        console.log(`Create tag ${tagName} response: ${response}`);
-        if (response.status != 201) {
-            console.log(`Create tag ${tagName} failed`);
+    
+        if (tagObjectResponse.status != 201) {
+            console.log(`Create tag object ${tagName} failed`);
             return false;
         }
+    
+        // 创建引用指向标签对象
+        let refResponse = await axios.post(`https://api.github.com/repos/${owner}/${repo}/git/refs`, {
+            ref: `refs/tags/${tagName}`,
+            sha: tagObjectResponse.data.sha
+        }, {
+            headers: {
+                Authorization: `token ${token}`,
+                "User-Agent": "tscl"
+            }
+        });
+    
+        if (refResponse.status != 201) {
+            console.log(`Create tag ref ${tagName} failed`);
+            return false;
+        }
+    
         return true;
     };
     let gitClone = async (tempDirectory: string, gitUrl: string, commit: string) => {
