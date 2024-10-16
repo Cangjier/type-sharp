@@ -453,7 +453,7 @@ let DotNetManager = () => {
             return;
         }
         let releaseJson = Json.Load(releaseConfig);
-        if (releaseJson.enable != true) {
+        if (releaseJson.enable == false) {
             console.log(`Release is disabled`);
             return;
         }
