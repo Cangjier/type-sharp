@@ -577,6 +577,7 @@ let DotNetManager = () => {
         }
         let csprojPath = csprojFiles[0];
         csprojSet(csprojPath, "Version", version);
+        console.log("000");
         if (await publish(csprojPath) == false) {
             console.log(`Publish failed`);
             return;
