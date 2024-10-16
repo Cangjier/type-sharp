@@ -416,20 +416,20 @@ let DotNetManager = () => {
         }
         else {
             console.log(`Publish Profiles: ${pubxmlFiles}`);
-            for (let i = 0; i < pubxmlFiles.length; i++) {
-                let item = pubxmlFiles[i];
-                console.log(`Publish Profile: ${item}`);
-                let publishDir = Path.Combine(currentDirectory, "bin", "publish", Path.GetFileNameWithoutExtension(item));
-                pubxmlSet(item, "PublishDir", publishDir);
-                let cmd = `dotnet publish --publish-profile ${Path.GetFileNameWithoutExtension(item)}`;
-                console.log(cmd);
-                let publishResult = await cmdAsync(currentDirectory, cmd);
-                console.log(`dotnet publish result: ${publishResult}`);
-                if (publishResult != 0) {
-                    console.log(`dotnet publish failed`);
-                    return false;
-                }
-            }
+            // for (let i = 0; i < pubxmlFiles.length; i++) {
+            //     let item = pubxmlFiles[i];
+            //     console.log(`Publish Profile: ${item}`);
+            //     let publishDir = Path.Combine(currentDirectory, "bin", "publish", Path.GetFileNameWithoutExtension(item));
+            //     pubxmlSet(item, "PublishDir", publishDir);
+            //     let cmd = `dotnet publish --publish-profile ${Path.GetFileNameWithoutExtension(item)}`;
+            //     console.log(cmd);
+            //     let publishResult = await cmdAsync(currentDirectory, cmd);
+            //     console.log(`dotnet publish result: ${publishResult}`);
+            //     if (publishResult != 0) {
+            //         console.log(`dotnet publish failed`);
+            //         return false;
+            //     }
+            // }
             console.log(`Publish success`);
         }
         return true;
