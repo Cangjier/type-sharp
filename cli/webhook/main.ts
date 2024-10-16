@@ -430,6 +430,7 @@ let DotNetManager = () => {
                     return false;
                 }
             }
+            console.log(`Publish success`);
         }
         return true;
     };
