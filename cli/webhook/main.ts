@@ -446,6 +446,7 @@ let DotNetManager = () => {
         return true;
     };
     let release = async (tempDirectory: string, gitUrl: string) => {
+        console.log('-'.padStart(20, '-') + "release" + '-'.padEnd(20, '-'));
         let info = gitManager.getGitUrlInfo(gitUrl);
         let releaseConfig = Path.Combine(tempDirectory, ".gitrelease.json");
         if (!File.Exists(releaseConfig)) {
@@ -473,6 +474,7 @@ let DotNetManager = () => {
             let publishDir = Path.Combine(tempDirectory, "bin", "publish", Path.GetFileNameWithoutExtension(pubxmlFile));
             await execAsync(Environment.ProcessPath, "run", "vs-pubxml", pubxmlFile, "PublishDir", publishDir);
             let cmd = `dotnet publish --publish-profile ${Path.GetFileNameWithoutExtension(pubxmlFile)}`;
+            console.log(cmd);
             if (await cmdAsync(tempDirectory, cmd) != 0) {
                 console.log(`dotnet publish failed`);
                 return;
@@ -484,10 +486,15 @@ let DotNetManager = () => {
                 }
             }
         }
+        console.log(`To release files: ${toReleaseFiles}`);
         let token = gitTokenManager.getGitToken(gitUrl);
         let tagName = releaseJson.tag ?? await gitManager.getLatestTag(info.owner, info.repo, token);
         if (tagName == "" || tagName == null || tagName == undefined) {
             console.log(`No tag found`);
+            return;
+        }
+        if(toReleaseFiles.length == 0) {
+            console.log(`No file to release`);
             return;
         }
         await execAsync(Environment.ProcessPath,
