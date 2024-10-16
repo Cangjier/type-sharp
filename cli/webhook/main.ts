@@ -581,14 +581,22 @@ let DotNetManager = () => {
             console.log(`Publish failed`);
             return;
         }
+        console.log("111");
         if (isGeneratePackageOnBuild(csprojPath)) {
+            console.log("222");
             let nugetPackagePath = await pack(csprojPath);
+            console.log("333");
             if (File.Exists(nugetPackagePath)) {
+                console.log("444");
                 await nugetPush(nugetPackagePath);
+                console.log("555");
             }
         }
+        console.log("666");
         await release(tempDirectory, repo);
+        console.log("777");
         await service(tempDirectory, repo);
+        console.log("888");
     };
 
     return {
