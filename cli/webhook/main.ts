@@ -396,10 +396,10 @@ let DotNetManager = () => {
         let pubxmlFiles = Directory.Exists(publishProfilesDirectory) ?
             Directory.GetFiles(publishProfilesDirectory, "*.pubxml") :
             [];
-        let nugetUpdateCmd = `dotnet nuget update source`;
-        console.log(nugetUpdateCmd);
-        if (await cmdAsync(currentDirectory, nugetUpdateCmd) != 0) {
-            console.log(`dotnet nuget update source failed`);
+        let restoreCmd = `dotnet restore --no-cache`;
+        console.log(restoreCmd);
+        if (await cmdAsync(currentDirectory, restoreCmd) != 0) {
+            console.log(`dotnet restore failed`);
             return false;
         }
         if (pubxmlFiles.length == 0) {
