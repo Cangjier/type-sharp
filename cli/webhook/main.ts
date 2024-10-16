@@ -402,6 +402,7 @@ let DotNetManager = () => {
             console.log(`dotnet restore failed`);
             return false;
         }
+        console.log(`Publish Profiles: ${pubxmlFiles}`);
         if (pubxmlFiles.length == 0) {
             let cmd = `dotnet publish -c Release -f net8.0`;
             console.log(cmd);
