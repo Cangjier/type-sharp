@@ -416,9 +416,10 @@ let DotNetManager = () => {
         }
         else {
             console.log(`Publish Profiles: ${pubxmlFiles}`);
+            for (let i in [1, 2, 3]) {
+                console.log(i);
+            }
             for (let pubXmlFile of pubxmlFiles) {
-                // 将pubXmlFile中的PublishDir设置为/bin/publish/publish-profile-name
-                
                 console.log(`Publish Profile: ${pubXmlFile}`);
                 let publishDir = Path.Combine(currentDirectory, "bin", "publish", Path.GetFileNameWithoutExtension(pubXmlFile));
                 pubxmlSet(pubXmlFile, "PublishDir", publishDir);
@@ -503,7 +504,7 @@ let DotNetManager = () => {
             console.log(`No tag found`);
             return;
         }
-        if(toReleaseFiles.length == 0) {
+        if (toReleaseFiles.length == 0) {
             console.log(`No file to release`);
             return;
         }
