@@ -416,12 +416,11 @@ let DotNetManager = () => {
         }
         else {
             console.log(`Publish Profiles: ${pubxmlFiles}`);
-            console.log(pubxmlFiles.GetType());
-            for (let pubXmlFile of pubxmlFiles) {
-                console.log(`Publish Profile: ${pubXmlFile}`);
-                let publishDir = Path.Combine(currentDirectory, "bin", "publish", Path.GetFileNameWithoutExtension(pubXmlFile));
-                pubxmlSet(pubXmlFile, "PublishDir", publishDir);
-                let cmd = `dotnet publish --publish-profile ${Path.GetFileNameWithoutExtension(pubXmlFile)}`;
+            for (let item of pubxmlFiles) {
+                console.log(`Publish Profile: ${item}`);
+                let publishDir = Path.Combine(currentDirectory, "bin", "publish", Path.GetFileNameWithoutExtension(item));
+                pubxmlSet(item, "PublishDir", publishDir);
+                let cmd = `dotnet publish --publish-profile ${Path.GetFileNameWithoutExtension(item)}`;
                 console.log(cmd);
                 let publishResult = await cmdAsync(currentDirectory, cmd);
                 console.log(`dotnet publish result: ${publishResult}`);
