@@ -398,7 +398,9 @@ let DotNetManager = () => {
             [];
         let restoreCmd = `dotnet restore --no-cache`;
         console.log(restoreCmd);
-        if (await cmdAsync(currentDirectory, restoreCmd) != 0) {
+        let restoreResult = await cmdAsync(currentDirectory, restoreCmd);
+        console.log(`dotnet restore result: ${restoreResult}`);
+        if (restoreResult != 0) {
             console.log(`dotnet restore failed`);
             return false;
         }
@@ -406,7 +408,9 @@ let DotNetManager = () => {
         if (pubxmlFiles.length == 0) {
             let cmd = `dotnet publish -c Release -f net8.0`;
             console.log(cmd);
-            if (await cmdAsync(currentDirectory, cmd) != 0) {
+            let publishResult = await cmdAsync(currentDirectory, cmd);
+            console.log(`dotnet publish result: ${publishResult}`);
+            if (publishResult != 0) {
                 console.log(`dotnet publish failed`);
                 return false;
             }
@@ -578,27 +582,18 @@ let DotNetManager = () => {
         }
         let csprojPath = csprojFiles[0];
         csprojSet(csprojPath, "Version", version);
-        console.log("000");
         if (await publish(csprojPath) == false) {
             console.log(`Publish failed`);
             return;
         }
-        console.log("111");
         if (isGeneratePackageOnBuild(csprojPath)) {
-            console.log("222");
             let nugetPackagePath = await pack(csprojPath);
-            console.log("333");
             if (File.Exists(nugetPackagePath)) {
-                console.log("444");
                 await nugetPush(nugetPackagePath);
-                console.log("555");
             }
         }
-        console.log("666");
         await release(tempDirectory, repo);
-        console.log("777");
         await service(tempDirectory, repo);
-        console.log("888");
     };
 
     return {
