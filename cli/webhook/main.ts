@@ -404,7 +404,6 @@ let DotNetManager = () => {
             console.log(`dotnet restore failed`);
             return false;
         }
-        console.log(`Publish Profiles: ${pubxmlFiles}`);
         if (pubxmlFiles.length == 0) {
             let cmd = `dotnet publish -c Release -f net8.0`;
             console.log(cmd);
@@ -416,6 +415,7 @@ let DotNetManager = () => {
             }
         }
         else {
+            console.log(`Publish Profiles: ${pubxmlFiles}`);
             for (let pubXmlFile of pubxmlFiles) {
                 // 将pubXmlFile中的PublishDir设置为/bin/publish/publish-profile-name
                 console.log(`Publish Profile: ${pubXmlFile}`);
