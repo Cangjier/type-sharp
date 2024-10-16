@@ -416,7 +416,8 @@ let DotNetManager = () => {
         }
         else {
             console.log(`Publish Profiles: ${pubxmlFiles}`);
-            for (let item of pubxmlFiles) {
+            for (let i = 0; i < pubxmlFiles.length; i++) {
+                let item = pubxmlFiles[i];
                 console.log(`Publish Profile: ${item}`);
                 let publishDir = Path.Combine(currentDirectory, "bin", "publish", Path.GetFileNameWithoutExtension(item));
                 pubxmlSet(item, "PublishDir", publishDir);
