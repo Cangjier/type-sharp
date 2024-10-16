@@ -418,11 +418,14 @@ let DotNetManager = () => {
         else {
             for (let pubXmlFile of pubxmlFiles) {
                 // 将pubXmlFile中的PublishDir设置为/bin/publish/publish-profile-name
+                console.log(`Publish Profile: ${pubXmlFile}`);
                 let publishDir = Path.Combine(currentDirectory, "bin", "publish", Path.GetFileNameWithoutExtension(pubXmlFile));
                 pubxmlSet(pubXmlFile, "PublishDir", publishDir);
                 let cmd = `dotnet publish --publish-profile ${Path.GetFileNameWithoutExtension(pubXmlFile)}`;
                 console.log(cmd);
-                if (await cmdAsync(currentDirectory, cmd) != 0) {
+                let publishResult = await cmdAsync(currentDirectory, cmd);
+                console.log(`dotnet publish result: ${publishResult}`);
+                if (publishResult != 0) {
                     console.log(`dotnet publish failed`);
                     return false;
                 }
