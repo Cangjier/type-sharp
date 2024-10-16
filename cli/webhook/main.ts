@@ -71,7 +71,7 @@ let Util = () => {
         }
         return "";
     };
-    let printEnv=async ()=>{
+    let printEnv = async () => {
         let output = {} as {
             lines: string[],
         };
@@ -157,7 +157,7 @@ let GitManager = () => {
         }
         return response.data[0].name as string;
     };
-    
+
     let createTag = async (owner: string, repo: string, tagName: string, commit: string, token: string) => {
         // 创建标签对象
         let tagObjectResponse = await axios.post(`https://api.github.com/repos/${owner}/${repo}/git/tags`, {
@@ -171,12 +171,12 @@ let GitManager = () => {
                 "User-Agent": "tscl"
             }
         });
-    
+
         if (tagObjectResponse.status != 201) {
             console.log(`Create tag object ${tagName} failed`);
             return false;
         }
-    
+
         // 创建引用指向标签对象
         let refResponse = await axios.post(`https://api.github.com/repos/${owner}/${repo}/git/refs`, {
             ref: `refs/tags/${tagName}`,
@@ -187,12 +187,12 @@ let GitManager = () => {
                 "User-Agent": "tscl"
             }
         });
-    
+
         if (refResponse.status != 201) {
             console.log(`Create tag ref ${tagName} failed`);
             return false;
         }
-    
+
         return true;
     };
     let gitClone = async (tempDirectory: string, gitUrl: string, commit: string) => {
@@ -396,10 +396,15 @@ let DotNetManager = () => {
         let pubxmlFiles = Directory.Exists(publishProfilesDirectory) ?
             Directory.GetFiles(publishProfilesDirectory, "*.pubxml") :
             [];
+        let nugetUpdateCmd = `dotnet nuget update source`;
+        console.log(nugetUpdateCmd);
+        if (await cmdAsync(currentDirectory, nugetUpdateCmd) != 0) {
+            console.log(`dotnet nuget update source failed`);
+            return false;
+        }
         if (pubxmlFiles.length == 0) {
             let cmd = `dotnet publish -c Release -f net8.0`;
             console.log(cmd);
-            await util.printEnv();
             if (await cmdAsync(currentDirectory, cmd) != 0) {
                 console.log(`dotnet publish failed`);
                 return false;
