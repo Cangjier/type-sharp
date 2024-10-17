@@ -455,6 +455,7 @@ let DotNetManager = () => {
     };
     let release = async (tempDirectory: string, gitUrl: string) => {
         console.log('-'.padStart(20, '-') + "release" + '-'.padEnd(20, '-'));
+        debugger;
         let info = gitManager.getGitUrlInfo(gitUrl);
         let releaseConfig = Path.Combine(tempDirectory, ".gitrelease.json");
         if (!File.Exists(releaseConfig)) {
