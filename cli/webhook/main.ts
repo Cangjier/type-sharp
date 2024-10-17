@@ -416,6 +416,10 @@ let DotNetManager = () => {
         }
         else {
             console.log(`Publish Profiles: ${pubxmlFiles}`);
+            for (let i of [0, 1]) {
+                console.log(i);
+                console.log(`Publish Profile ${i}: ${pubxmlFiles[i]}`);
+            }
             for (let i = 0; i < pubxmlFiles.length; i++) {
                 console.log(`Publish Profile ${i}: ${pubxmlFiles[i]}`);
             }
