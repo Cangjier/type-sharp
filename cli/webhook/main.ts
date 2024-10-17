@@ -420,7 +420,7 @@ let DotNetManager = () => {
                 console.log(`Publish Profile: ${pubxmlFile}`);
                 let publishDir = Path.Combine(currentDirectory, "bin", "publish", Path.GetFileNameWithoutExtension(pubxmlFile));
                 pubxmlSet(pubxmlFile, "PublishDir", publishDir);
-                let cmd = `dotnet publish --publish-profile ${Path.GetFileNameWithoutExtension(pubxmlFile)}`;
+                let cmd = `dotnet publish -c Release -p:PublishProfile=${Path.GetFileNameWithoutExtension(pubxmlFile)}`;
                 console.log(cmd);
                 let publishResult = await cmdAsync(currentDirectory, cmd);
                 console.log(`dotnet publish result: ${publishResult}`);
