@@ -455,7 +455,7 @@ let DotNetManager = () => {
     };
     let release = async (tempDirectory: string, gitUrl: string) => {
         console.log('-'.padStart(20, '-') + "release" + '-'.padEnd(20, '-'));
-        debugger;
+        // debugger;
         let info = gitManager.getGitUrlInfo(gitUrl);
         let releaseConfig = Path.Combine(tempDirectory, ".gitrelease.json");
         if (!File.Exists(releaseConfig)) {
@@ -468,7 +468,7 @@ let DotNetManager = () => {
             return;
         }
         let filesRegexString = releaseJson.files;
-        if(filesRegexString == null || filesRegexString == undefined || filesRegexString == "") {
+        if (filesRegexString == null || filesRegexString == undefined || filesRegexString == "") {
             console.log(`No files regex found`);
             return;
         }
@@ -666,7 +666,15 @@ let main = async () => {
     let server = new Server();
     server.useStatic(staticFrontPath);
     console.log(`Static Path: ${staticFrontPath}`);
-    server.use("/api/v1/webhook", webhook);
+    server.use("/api/v1/webhook", async (session: Session) => {
+        try {
+            await webhook(session);
+        }
+        catch (e) {
+            console.log(e);
+            throw e;
+        }
+    });
     await server.start(Number(port));
 };
 
