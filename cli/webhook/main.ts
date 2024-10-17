@@ -467,11 +467,16 @@ let DotNetManager = () => {
             return;
         }
         let filesRegexString = releaseJson.files;
+        if(filesRegexString == null || filesRegexString == undefined || filesRegexString == "") {
+            console.log(`No files regex found`);
+            return;
+        }
         let filesRegex = new Regex(filesRegexString);
 
-
         let pubxmlDirectory = Path.Combine(tempDirectory, "Properties", "PublishProfiles");
+        console.log(`Publish Profiles Directory: ${pubxmlDirectory}`);
         let pubxmlFiles = Directory.GetFiles(pubxmlDirectory, "*.pubxml");
+        console.log(`Publish Profiles: ${pubxmlFiles}`);
         if (pubxmlFiles.length == 0) {
             console.log(`Release is enabled but no .pubxml file found`);
             return;
