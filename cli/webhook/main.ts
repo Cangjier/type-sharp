@@ -348,8 +348,9 @@ let DotNetManager = () => {
         if (Directory.Exists(nugetPackageDirectory)) {
             Directory.Delete(nugetPackageDirectory, true);
         }
-        console.log(`dotnet pack -c Release -o ${nugetPackageDirectory}`);
-        if (await cmdAsync(currentDirectory, `dotnet pack -c Release -o ${nugetPackageDirectory}`) != 0) {
+        let cmd = `dotnet pack -c Release -o ${nugetPackageDirectory}`;
+        console.log(cmd);
+        if (await cmdAsync(currentDirectory, cmd) != 0) {
             console.log(`dotnet pack failed, delete nuget package directory: ${nugetPackageDirectory}`);
             if (Directory.Exists(nugetPackageDirectory)) {
                 Directory.Delete(nugetPackageDirectory, true);
