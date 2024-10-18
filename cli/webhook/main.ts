@@ -580,7 +580,7 @@ let DotNetManager = () => {
             return;
         }
     };
-    let build = async (tempDirectory: string, repo: string, version: string) => {
+    let build = async (tempDirectory: string, repo: string, version: string, gitUrl: string) => {
         console.log(`build ${{
             tempDirectory,
             repo,
@@ -603,7 +603,7 @@ let DotNetManager = () => {
                 await nugetPush(nugetPackagePath);
             }
         }
-        await release(tempDirectory, repo);
+        await release(tempDirectory, gitUrl);
         await service(tempDirectory, repo);
     };
 
@@ -652,7 +652,7 @@ let webhook = async (session: Session) => {
         await nodeJsManager.build(tempDirectory, repo);
     }
     else if (dotNetManager.isDotNet(tempDirectory)) {
-        await dotNetManager.build(tempDirectory, repo, tagResult.tag.substring(1));
+        await dotNetManager.build(tempDirectory, repo, tagResult.tag.substring(1), cloneUrl);
     }
     if (Directory.Exists(tempDirectory)) {
         deleteDirectory(tempDirectory);
