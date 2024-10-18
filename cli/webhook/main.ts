@@ -489,7 +489,9 @@ let DotNetManager = () => {
         let toReleaseFiles = [] as string[];
         for (let pubxmlFile of pubxmlFiles) {
             let publishDir = Path.Combine(tempDirectory, "bin", "publish", Path.GetFileNameWithoutExtension(pubxmlFile));
+            console.log(`publishDir: ${publishDir}`);
             let files = Directory.GetFiles(publishDir);
+            console.log(`Files: ${files}`);
             for (let file of files) {
                 if (filesRegex.IsMatch(file)) {
                     toReleaseFiles.push(file);
