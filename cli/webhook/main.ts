@@ -493,7 +493,8 @@ let DotNetManager = () => {
             let files = Directory.GetFiles(publishDir);
             console.log(`Files: ${files}`);
             for (let file of files) {
-                if (filesRegex.IsMatch(file)) {
+                let fileName = Path.GetFileName(file);
+                if (filesRegex.IsMatch(fileName)) {
                     toReleaseFiles.push(file);
                 }
             }
