@@ -488,13 +488,6 @@ let DotNetManager = () => {
         let toReleaseFiles = [] as string[];
         for (let pubxmlFile of pubxmlFiles) {
             let publishDir = Path.Combine(tempDirectory, "bin", "publish", Path.GetFileNameWithoutExtension(pubxmlFile));
-            await execAsync(Environment.ProcessPath, "run", "vs-pubxml", pubxmlFile, "PublishDir", publishDir);
-            let cmd = `dotnet publish --publish-profile ${Path.GetFileNameWithoutExtension(pubxmlFile)}`;
-            console.log(cmd);
-            if (await cmdAsync(tempDirectory, cmd) != 0) {
-                console.log(`dotnet publish failed`);
-                return;
-            }
             let files = Directory.GetFiles(publishDir);
             for (let file of files) {
                 if (filesRegex.IsMatch(file)) {
