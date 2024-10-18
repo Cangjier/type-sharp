@@ -141,6 +141,8 @@ let gitTokenManager = GitTokenManager(gitTokens);
 
 let GitManager = () => {
     let getGitUrlInfo = (gitUrl: string) => {
+        console.log(`get git url info: ${gitUrl}`);
+        console.log(`split: ${gitUrl.split("/")}`);
         let owner = gitUrl.split("/")[3];
         let repo = gitUrl.split("/")[4].split(".")[0];
         return { owner, repo };
