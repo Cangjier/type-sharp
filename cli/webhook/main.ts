@@ -592,7 +592,7 @@ let DotNetManager = () => {
         console.log(envCmd);
         await cmdAsync(tempDirectory, envCmd);
         let serviceDestFile = Path.Combine("/etc/systemd/system", Path.GetFileName(serviceFile));
-        let cpServiceCommand = `cp ${serviceFile} ${serviceDestFile}`;
+        let cpServiceCommand = `sudo cp ${serviceFile} ${serviceDestFile}`;
         console.log(cpServiceCommand);
         if (await cmdAsync(tempDirectory, cpServiceCommand) != 0) {
             console.log(`Copy ${serviceFile} to ${serviceDestFile} failed`);
