@@ -565,9 +565,10 @@ let DotNetManager = () => {
         // 将workingDirectory修改为部署目录
         let destDirectory = Path.Combine(staticEndPath, repo);
         let serviceContent = File.ReadAllText(serviceFile, utf8);
+        let envFile = Path.Combine(destDirectory, ".env");
         serviceContent = serviceContent.replace(/^WorkingDirectory=.*$/m, `WorkingDirectory=${destDirectory}`);
         // 替换EnvironmentFile
-        serviceContent = serviceContent.replace(/^EnvironmentFile=.*$/m, `EnvironmentFile=${Path.Combine(destDirectory, ".env")}`);
+        serviceContent = serviceContent.replace(/^EnvironmentFile=.*$/m, `EnvironmentFile=${envFile}`);
         // 替换User
         serviceContent = serviceContent.replace(/^User=.*$/m, `User=${Environment.UserName}`);
         File.WriteAllText(serviceFile, serviceContent, utf8);
@@ -578,6 +579,7 @@ let DotNetManager = () => {
                 return;
             }
         }
+        await cmdAsync(tempDirectory, `env > ${envFile}`);
         if (await cmdAsync(tempDirectory, `sudo mkdir -p ${destDirectory}`) != 0) {
             console.log(`Create ${destDirectory} failed`);
             return;
@@ -599,7 +601,7 @@ let DotNetManager = () => {
             console.log(`Reload daemon failed`);
             return;
         }
-        let restartCommand = `sudo systemctl restart ${Path.GetFileNameWithoutExtension(serviceFile)}`;
+        let restartCommand = `sudo systemctl start ${Path.GetFileNameWithoutExtension(serviceFile)}`;
         console.log(restartCommand);
         if (await cmdAsync(tempDirectory, restartCommand) != 0) {
             console.log(`Restart service failed`);
