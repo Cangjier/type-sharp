@@ -674,6 +674,7 @@ let main = async () => {
     }
     let httpProxy = await gitManager.getHttpProxy();
     if (httpProxy != "") {
+        debugger;
         axios.setProxy(httpProxy);
     }
     let server = new Server();
