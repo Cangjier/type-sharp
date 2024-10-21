@@ -579,15 +579,16 @@ let DotNetManager = () => {
                 return;
             }
         }
-        await cmdAsync(tempDirectory, `env > ${envFile}`);
         if (await cmdAsync(tempDirectory, `sudo mkdir -p ${destDirectory}`) != 0) {
             console.log(`Create ${destDirectory} failed`);
             return;
         }
+        
         if (await cmdAsync(tempDirectory, `sudo cp -r ${publishDirectory}/* ${destDirectory}`) != 0) {
             console.log(`Copy ${publishDirectory} to ${destDirectory} failed`);
             return;
         }
+        await cmdAsync(tempDirectory, `env > ${envFile}`);
         let serviceDestFile = Path.Combine("/etc/systemd/system", Path.GetFileName(serviceFile));
         let cpServiceCommand = `sudo cp ${serviceFile} ${serviceDestFile}`;
         console.log(cpServiceCommand);
