@@ -1,7 +1,8 @@
 // 将git的apis以命令行进行实现
 
 import { axios } from "../.tsc/Cangjie/TypeSharp/System/axios";
-import { args } from "../.tsc/context";
+import { args, cmdAsync } from "../.tsc/context";
+import { Environment } from "../.tsc/System/Environment";
 import { File } from "../.tsc/System/IO/File";
 import { Path } from "../.tsc/System/IO/Path";
 import { UTF8Encoding } from "../.tsc/System/Text/UTF8Encoding";
@@ -29,6 +30,15 @@ let help = () => {
     console.log("Usage: tscl run gitapis release <git-url> <tag-name> --files <file1>,<file2> --token <token>");
     console.log("Usage: tscl run gitapis latest-release <git-url> --token <token> --output <output-file>");
     console.log("Usage: tscl run gitapis latest-tag <git-url> --token <token> --output <output-file>");
+};
+
+let getHttpProxy = async () => {
+    let output = {} as { lines: string[] };
+    await cmdAsync(Environment.CurrentDirectory, "git config --get http.proxy", output);
+    if (output.lines && output.lines.length > 0) {
+        return output.lines[0];
+    }
+    return "";
 };
 
 let getDefaultBranch = async (gitUrl: string, token: string) => {
@@ -229,6 +239,10 @@ let main = async () => {
         return;
     }
     let command = args[0];
+    let httpProxy = await getHttpProxy();
+    if (httpProxy != "") {
+        axios.setProxy(httpProxy);
+    }
     if (command == "release") {
         await cmd_release();
     }

@@ -140,6 +140,14 @@ let GitTokenManager = (gitTokens: string) => {
 let gitTokenManager = GitTokenManager(gitTokens);
 
 let GitManager = () => {
+    let getHttpProxy = async () => {
+        let output = {} as { lines: string[] };
+        await cmdAsync(Environment.CurrentDirectory, "git config --get http.proxy", output);
+        if (output.lines && output.lines.length > 0) {
+            return output.lines[0];
+        }
+        return "";
+    };
     let getGitUrlInfo = (gitUrl: string) => {
         console.log(`get git url info: ${gitUrl}`);
         console.log(`split: ${gitUrl.split("/")}`);
@@ -250,7 +258,8 @@ let GitManager = () => {
         getLatestTag,
         createTag,
         gitClone,
-        increaseTag
+        increaseTag,
+        getHttpProxy
     };
 };
 
@@ -662,6 +671,10 @@ let main = async () => {
     if (parameters.help) {
         help();
         return;
+    }
+    let httpProxy = await gitManager.getHttpProxy();
+    if (httpProxy != "") {
+        axios.setProxy(httpProxy);
     }
     let server = new Server();
     server.useStatic(staticFrontPath);
