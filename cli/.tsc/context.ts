@@ -24,6 +24,7 @@ export const deleteFile:(sourcePath?: string) => void = 0 as any
 export const deleteDirectory:(sourceDirectory?: string) => void = 0 as any
 export const setLoggerPath:(path?: string) => void = 0 as any
 export const getLoggerPath:() => string = 0 as any
+export const locate:(searchDirectory_or_path?: string, path?: string) => string = 0 as any
 export const lock:(id?: Guid) => void = 0 as any
 export const lockAsync:(id?: Guid) => Promise<void> = 0 as any
 export const unlock:(id?: Guid) => void = 0 as any

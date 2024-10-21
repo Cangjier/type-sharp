@@ -12,11 +12,25 @@ import { Guid } from '../.tsc/System/Guid';
 import { Xml } from '../.tsc/TidyHPC/LiteXml/Xml';
 import { axios } from '../.tsc/Cangjie/TypeSharp/System/axios';
 import { Version } from '../.tsc/System/Version';
+import { Task } from '../.tsc/System/Threading/Tasks/Task';
 
 let utf8 = new UTF8Encoding(false);
-let staticFrontPath = Path.Combine(Path.GetTempPath(), "webhook-front");
-let staticEndPath = Path.Combine(Path.GetTempPath(), "webhook-end");
+
 let homeDirectory = Environment.GetEnvironmentVariable("HOME") ?? Path.GetTempPath();
+let webhookDirectory = Path.Combine(homeDirectory, ".webhook");
+if (Directory.Exists(webhookDirectory) == false) {
+    Directory.CreateDirectory(webhookDirectory);
+}
+
+let staticFrontPath = Path.Combine(webhookDirectory, "front");
+if (Directory.Exists(staticFrontPath) == false) {
+    Directory.CreateDirectory(staticFrontPath);
+}
+let staticEndPath = Path.Combine(webhookDirectory, "end");
+if (Directory.Exists(staticEndPath) == false) {
+    Directory.CreateDirectory(staticEndPath);
+}
+
 let homeTempDirectory = Path.Combine(homeDirectory, "tmp");
 if (Directory.Exists(homeTempDirectory) == false) {
     Directory.CreateDirectory(homeTempDirectory);
@@ -547,10 +561,15 @@ let DotNetManager = () => {
         let serviceName = Path.GetFileName(serviceFile);
         console.log(`systemctl stop ${serviceName}`);
         await cmdAsync(tempDirectory, `sudo systemctl stop ${serviceName}`);
+        await Task.Delay(1000);
         // 将workingDirectory修改为部署目录
         let destDirectory = Path.Combine(staticEndPath, repo);
         let serviceContent = File.ReadAllText(serviceFile, utf8);
         serviceContent = serviceContent.replace(/^WorkingDirectory=.*$/m, `WorkingDirectory=${destDirectory}`);
+        // 替换EnvironmentFile
+        serviceContent = serviceContent.replace(/^EnvironmentFile=.*$/m, `EnvironmentFile=${Path.Combine(destDirectory, ".env")}`);
+        // 替换User
+        serviceContent = serviceContent.replace(/^User=.*$/m, `User=${Environment.UserName}`);
         File.WriteAllText(serviceFile, serviceContent, utf8);
         // 将发布目录下的文件拷贝到部署目录
         if (Directory.Exists(destDirectory)) {

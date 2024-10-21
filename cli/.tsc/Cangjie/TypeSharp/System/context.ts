@@ -58,6 +58,9 @@ export class context {
     public static getLoggerPath(): string {
         return {} as any;
     }
+    public static locate(searchDirectory_or_path?: string, path?: string): string {
+        return {} as any;
+    }
     public static lock(id?: Guid): void {
         return {} as any;
     }

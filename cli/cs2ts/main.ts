@@ -790,6 +790,7 @@ let main = () => {
         exportInitialTypes([
             "(System\\.(Guid|DateTime|TimeSpan)$)",
             "(System\\.IO\\.(Path|Directory|File)$)",
+            "(System\\.Threading\\.Tasks\\.Task$)",
             "(System\\.Text\\.UTF8Encoding$)",
             "(System\\.Text\\.RegularExpressions\\.(Regex|RegexOptions)$)",
             "(System\\.(Console|Type|Environment|OperatingSystem|PlatformID|Version|Convert)$)",

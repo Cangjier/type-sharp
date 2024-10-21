@@ -218,6 +218,12 @@ export class Json {
     public LastIndexOf(value?: any): number {
         return {} as any;
     }
+    public Splice(start?: number, count?: number, items?: any[]): any {
+        return {} as any;
+    }
+    public Slice(start?: number, end?: number): any {
+        return {} as any;
+    }
     public Remove(key?: any): void {
         return {} as any;
     }
