@@ -11,6 +11,7 @@ import { Environment } from '../.tsc/System/Environment';
 import { Guid } from '../.tsc/System/Guid';
 import { Xml } from '../.tsc/TidyHPC/LiteXml/Xml';
 import { axios } from '../.tsc/Cangjie/TypeSharp/System/axios';
+import { zip } from '../.tsc/Cangjie/TypeSharp/System/zip';
 import { Version } from '../.tsc/System/Version';
 import { Task } from '../.tsc/System/Threading/Tasks/Task';
 
@@ -494,12 +495,14 @@ let DotNetManager = () => {
             console.log(`Release is disabled`);
             return;
         }
+        let filesRegex;
         let filesRegexString = releaseJson.files;
-        if (filesRegexString == null || filesRegexString == undefined || filesRegexString == "") {
-            console.log(`No files regex found`);
-            return;
+        if (filesRegexString && filesRegexString.length > 0) {
+            filesRegex = new Regex(filesRegexString);
         }
-        let filesRegex = new Regex(filesRegexString);
+        else {
+            filesRegex = null;
+        }
 
         let pubxmlDirectory = Path.Combine(tempDirectory, "Properties", "PublishProfiles");
         console.log(`Publish Profiles Directory: ${pubxmlDirectory}`);
@@ -516,11 +519,18 @@ let DotNetManager = () => {
             console.log(`publishDir: ${publishDir}`);
             let files = Directory.GetFiles(publishDir);
             console.log(`Files: ${files}`);
-            for (let file of files) {
-                let fileName = Path.GetFileName(file);
-                if (filesRegex.IsMatch(fileName)) {
-                    toReleaseFiles.push(file);
+            if (filesRegex) {
+                for (let file of files) {
+                    let fileName = Path.GetFileName(file);
+                    if (filesRegex.IsMatch(fileName)) {
+                        toReleaseFiles.push(file);
+                    }
                 }
+            }
+            else {
+                let zipPath = `${publishDir}.zip`;
+                await zip.compress(publishDir, zipPath);
+                toReleaseFiles.push(zipPath);
             }
         }
         console.log(`To release files: ${toReleaseFiles}`);
@@ -715,4 +725,9 @@ let main = async () => {
     await server.start(Number(port));
 };
 
+if (File.Exists(script_path)) {
+    console.log(File.GetLastWriteTime(script_path).ToString());
+}
+
 await main();
+
