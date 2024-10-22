@@ -581,20 +581,17 @@ let DotNetManager = () => {
         serviceContent = serviceContent.replace(/^EnvironmentFile=.*$/m, `EnvironmentFile=${envFile}`);
         // 替换User
         serviceContent = serviceContent.replace(/^User=.*$/m, `User=${Environment.UserName}`);
+        serviceContent = serviceContent.replace("<WorkingDirectory>", destDirectory);
         File.WriteAllText(serviceFile, serviceContent, utf8);
         // 将发布目录下的文件拷贝到部署目录
-        if (Directory.Exists(destDirectory)) {
-            if (await cmdAsync(tempDirectory, `sudo rm -rf ${destDirectory}`) != 0) {
-                console.log(`Delete ${destDirectory} failed`);
+        if (Directory.Exists(destDirectory) == false) {
+            if (await cmdAsync(tempDirectory, `mkdir -p ${destDirectory}`) != 0) {
+                console.log(`Create ${destDirectory} failed`);
                 return;
             }
         }
-        if (await cmdAsync(tempDirectory, `mkdir -p ${destDirectory}`) != 0) {
-            console.log(`Create ${destDirectory} failed`);
-            return;
-        }
 
-        if (await cmdAsync(tempDirectory, `cp -r ${publishDirectory}/* ${destDirectory}`) != 0) {
+        if (await cmdAsync(tempDirectory, `cp -rf ${publishDirectory}/* ${destDirectory}`) != 0) {
             console.log(`Copy ${publishDirectory} to ${destDirectory} failed`);
             return;
         }
