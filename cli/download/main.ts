@@ -3,6 +3,7 @@ import { args, cmdAsync } from "../.tsc/context";
 import { Environment } from "../.tsc/System/Environment";
 import { Path } from "../.tsc/System/IO/Path";
 
+console.log(`args: ${args}`);
 let GitManager = () => {
     let getHttpProxy = async () => {
         let output = {} as { lines: string[] };
