@@ -793,7 +793,7 @@ let main = () => {
             "(System\\.Threading\\.Tasks\\.Task$)",
             "(System\\.Text\\.UTF8Encoding$)",
             "(System\\.Text\\.RegularExpressions\\.(Regex|RegexOptions)$)",
-            "(System\\.(Console|Type|Environment|OperatingSystem|PlatformID|Version|Convert)$)",
+            "(System\\.(Console|Type|Environment|OperatingSystem|PlatformID|Version|Convert|EnvironmentVariableTarget)$)",
             "(TidyHPC\\.(LiteJson|LiteXml|Routers)\\..*)",
             "(System\\.Reflection\\.(Assembly|ConstructorInfo|FieldInfo|MemberInfo|MemberTypes|MethodInfo|ParameterInfo)$)",
             "(Cangjie\\.TypeSharp\\.(System|FullNameScript)\\..*)"
