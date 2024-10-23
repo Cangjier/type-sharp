@@ -37,4 +37,4 @@ let main = async () => {
     console.log(`Downloaded ${downloadPath}`);
 };
 
-main();
+await main();
