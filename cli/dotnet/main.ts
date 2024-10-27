@@ -23,10 +23,11 @@ let DotNetFrameworkManager = () => {
     let install4_0 = async () => {
         let downloadUrl = "https://www.nuget.org/api/v2/package/Microsoft.NETFramework.ReferenceAssemblies.net40/1.0.3";
         let downloadPath = Environment.CurrentDirectory + "/Microsoft.NETFramework.ReferenceAssemblies.net40.1.0.3.nupkg";
-        await axios.download(downloadUrl, downloadPath);
-        await zip.extract(downloadPath, Environment.CurrentDirectory + "/Microsoft.NETFramework.ReferenceAssemblies.net40.1.0.3");
         let targetPath = "C:/Program Files (x86)/Reference Assemblies/Microsoft/Framework/.NETFramework/v4.0";
-        copyDirectory(Environment.CurrentDirectory + "/Microsoft.NETFramework.ReferenceAssemblies.net40.1.0.3/lib/net40", targetPath);
+        console.log("Downloading Microsoft.NETFramework.ReferenceAssemblies.net40/1.0.3 ...");
+        await axios.download(downloadUrl, downloadPath);
+        await zip.extract(downloadPath, targetPath);
+        console.log("Microsoft.NETFramework.ReferenceAssemblies.net40/1.0.3 has been installed.");
     };
     return {
         install4_0
