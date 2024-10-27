@@ -789,7 +789,7 @@ let main = () => {
     if (args.length == 0) {
         exportInitialTypes([
             "(System\\.(Guid|DateTime|TimeSpan)$)",
-            "(System\\.IO\\.(Path|Directory|File)$)",
+            "(System\\.IO\\.(Path|Directory|File|SearchOption|EnumerationOptions)$)",
             "(System\\.Threading\\.Tasks\\.Task$)",
             "(System\\.Text\\.UTF8Encoding$)",
             "(System\\.Text\\.RegularExpressions\\.(Regex|RegexOptions)$)",
