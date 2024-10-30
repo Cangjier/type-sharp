@@ -792,7 +792,7 @@ let main = () => {
             "(System\\.IO\\.(Path|Directory|File|SearchOption|EnumerationOptions)$)",
             "(System\\.Threading\\.Tasks\\.Task$)",
             "(System\\.Text\\.UTF8Encoding$)",
-            "(System\\.Text\\.RegularExpressions\\.(Regex|RegexOptions)$)",
+            "(System\\.Text\\.RegularExpressions\\.(Regex|RegexOptions|Match|MatchCollection)$)",
             "(System\\.(Console|Type|Environment|OperatingSystem|PlatformID|Version|Convert|EnvironmentVariableTarget)$)",
             "(TidyHPC\\.(LiteJson|LiteXml|Routers)\\..*)",
             "(System\\.Reflection\\.(Assembly|ConstructorInfo|FieldInfo|MemberInfo|MemberTypes|MethodInfo|ParameterInfo)$)",
