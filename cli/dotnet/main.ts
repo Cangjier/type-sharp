@@ -5,12 +5,7 @@ import { zip } from "../.tsc/Cangjie/TypeSharp/System/zip";
 
 let GitManager = () => {
     let getHttpProxy = async () => {
-        let output = {} as { lines: string[] };
-        await cmdAsync(Environment.CurrentDirectory, "git config --get http.proxy", output);
-        if (output.lines && output.lines.length > 0) {
-            return output.lines[0];
-        }
-        return "";
+        return (await cmdAsync(Environment.CurrentDirectory, "git config --get http.proxy")).output?.trim();
     };
     return {
         getHttpProxy

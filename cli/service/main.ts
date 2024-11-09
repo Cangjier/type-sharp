@@ -52,7 +52,7 @@ fi`;
     // 将env输出至tmp文件
     let envCmd = `env > ${serviceFilePath}.env`;
     console.log(envCmd);
-    if (await cmdAsync(script_directory, envCmd) != 0) {
+    if ((await cmdAsync(script_directory, envCmd)).exitCode != 0) {
         Console.WriteLine("Export env failed.");
         return;
     }

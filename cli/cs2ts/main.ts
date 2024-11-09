@@ -349,7 +349,7 @@ let exportMembers = (type: Type) => {
     let importLines = [] as string[];
     toImport.forEach(item => {
         if (item.FullName == null) return;
-        let relativePath = Path.GetRelativePath(Path.GetDirectoryName(type.FullName.replace(".", "/")), item.FullName.replace(".", "/")).replace("\\", "/");
+        let relativePath = item.FullName.replace(".", "/");
         if (relativePath.startsWith(".") == false) relativePath = "./" + relativePath;
         importLines.push(`import { ${item.Name} } from "${relativePath}";`);
     });
@@ -387,6 +387,14 @@ let exportClass = (type: Type) => {
         [key: string]: {
             type: string,
             isStatic: boolean
+        }
+    };
+    let properties = {} as {
+        [key: string]: {
+            type: string,
+            isStatic: boolean,
+            isGet: boolean,
+            isSet: boolean
         }
     };
     members.forEach(member => {
@@ -439,27 +447,75 @@ let exportClass = (type: Type) => {
         else if (member.MemberType == "Method") {
             let method = member as MethodInfo;
             if (member.Name.startsWith("get_")) {
+                let propertyName = member.Name.substring(4);
                 if (method.IsStatic) {
-                    lines.push(`    public static get ${member.Name.substring(4)}(): ${getTypeAlias(method.ReturnType.FullName).data} {`);
-                    lines.push(`        return {} as any;`);
-                    lines.push(`    }`);
+
+                    if (properties[propertyName]) {
+                        properties[propertyName].isGet = true;
+                    }
+                    else {
+                        properties[propertyName] = {
+                            type: getTypeAlias(method.ReturnType.FullName).data,
+                            isStatic: true,
+                            isGet: true,
+                            isSet: false
+                        };
+                    }
+                    // lines.push(`    public static get ${member.Name.substring(4)}(): ${getTypeAlias(method.ReturnType.FullName).data} {`);
+                    // lines.push(`        return {} as any;`);
+                    // lines.push(`    }`);
                 }
                 else {
-                    lines.push(`    public get ${member.Name.substring(4)}(): ${getTypeAlias(method.ReturnType.FullName).data} {`);
-                    lines.push(`        return {} as any;`);
-                    lines.push(`    }`);
+
+                    if (properties[propertyName]) {
+                        properties[propertyName].isGet = true;
+                    }
+                    else {
+                        properties[propertyName] = {
+                            type: getTypeAlias(method.ReturnType.FullName).data,
+                            isStatic: false,
+                            isGet: true,
+                            isSet: false
+                        };
+                    }
+                    // lines.push(`    public get ${member.Name.substring(4)}(): ${getTypeAlias(method.ReturnType.FullName).data} {`);
+                    // lines.push(`        return {} as any;`);
+                    // lines.push(`    }`);
                 }
                 return;
             }
             else if (member.Name.startsWith("set_")) {
-                let args = method.GetParameters().map(p => `${p.Name}: ${getTypeAlias(p.ParameterType.FullName).data}`).join(", ");
+                let propertyName = member.Name.substring(4);
+                // let args = method.GetParameters().map(p => `${p.Name}: ${getTypeAlias(p.ParameterType.FullName).data}`).join(", ");
                 if (method.IsStatic) {
-                    lines.push(`    public static set ${member.Name.substring(4)}(${args}) {`);
-                    lines.push(`    }`);
+                    if (properties[propertyName]) {
+                        properties[propertyName].isSet = true;
+                    }
+                    else {
+                        properties[propertyName] = {
+                            type: getTypeAlias(method.ReturnType.FullName).data,
+                            isStatic: true,
+                            isGet: false,
+                            isSet: true
+                        };
+                    }
+                    // lines.push(`    public static set ${member.Name.substring(4)}(${args}) {`);
+                    // lines.push(`    }`);
                 }
                 else {
-                    lines.push(`    public set ${member.Name.substring(4)}(${args}) {`);
-                    lines.push(`    }`);
+                    if (properties[propertyName]) {
+                        properties[propertyName].isSet = true;
+                    }
+                    else {
+                        properties[propertyName] = {
+                            type: getTypeAlias(method.ReturnType.FullName).data,
+                            isStatic: false,
+                            isGet: false,
+                            isSet: true
+                        };
+                    }
+                    // lines.push(`    public set ${member.Name.substring(4)}(${args}) {`);
+                    // lines.push(`    }`);
                 }
                 return;
             }
@@ -620,6 +676,46 @@ let exportClass = (type: Type) => {
             }
             else {
                 lines.push(`    public ${key}: ${field.type};`);
+            }
+        });
+    }
+
+    let propertyKeys = Object.keys(properties);
+    if (isContainsOpImplicit && firstLetterIsLowerCase) {
+        propertyKeys.forEach(key => {
+            let property = properties[key];
+            if (property.isStatic) {
+                lines.push(`    public static ${key}?: ${property.type};`);
+            }
+            else {
+                lines.push(`    public ${key}?: ${property.type};`);
+            }
+        });
+    }
+    else {
+        propertyKeys.forEach(key => {
+            let property = properties[key];
+            if (property.isStatic) {
+                if (property.isGet) {
+                    lines.push(`    public static get ${key}(): ${property.type} {`);
+                    lines.push(`        return {} as any;`);
+                    lines.push(`    }`);
+                }
+                if (property.isSet) {
+                    lines.push(`    public static set ${key}(value: ${property.type}) {`);
+                    lines.push(`    }`);
+                }
+            }
+            else {
+                if (property.isGet) {
+                    lines.push(`    public get ${key}(): ${property.type} {`);
+                    lines.push(`        return {} as any;`);
+                    lines.push(`    }`);
+                }
+                if (property.isSet) {
+                    lines.push(`    public set ${key}(value: ${property.type}) {`);
+                    lines.push(`    }`);
+                }
             }
         });
     }

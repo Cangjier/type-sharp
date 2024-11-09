@@ -13,7 +13,11 @@ let main = async () => {
 
     if (Path.GetFileName(Environment.CurrentDirectory) == ".tsc") {
         console.log("Current directory is .tsc, run cs2ts");
-        await execAsync(Environment.ProcessPath, "run", "cs2ts");
+        // await execAsync(Environment.ProcessPath, "run", "cs2ts");
+        await execAsync({
+            filePath: Environment.ProcessPath,
+            arguments: ["run", "cs2ts"]
+        });
         return;
     }
     let mainTs = `import { args, exec, execAsync, cmd, cmdAsync, start, startCmd, copyDirectory } from "./context";

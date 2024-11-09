@@ -21,7 +21,7 @@ let main = () => {
         Directory.CreateDirectory(projectDirectory);
     }
     console.log(`npm init -y`);
-    if (cmd(projectDirectory, `npm init -y`) != 0) {
+    if (cmd(projectDirectory, `npm init -y`).exitCode != 0) {
         return -1;
     }
     let packagePath = Path.Combine(projectDirectory, "package.json");
@@ -52,7 +52,7 @@ let main = () => {
     ];
     console.log(`npm install ${packages.join(" ")} --save-dev`);
     let installScript = `npm install ${packages.join(" ")} --save-dev`;
-    if (cmd(projectDirectory, installScript) != 0) {
+    if (cmd(projectDirectory, installScript).exitCode != 0) {
         return -1;
     }
     console.log(`modify tsconfig.json`);

@@ -1,10 +1,5 @@
-import { Session } from "./Session";
-import { UrlRouter } from "./UrlRouter";
 import { Type } from "../../../System/Type";
-export class SessionSetter {
-    public SetResponse(resultValue?: any, urlRouter?: UrlRouter): Promise<boolean> {
-        return {} as any;
-    }
+export class code {
     public GetType(): Type {
         return {} as any;
     }
@@ -17,9 +12,9 @@ export class SessionSetter {
     public GetHashCode(): number {
         return {} as any;
     }
-    public constructor(session?: Session) {
+    public constructor() {
     }
-    public get Session(): Session {
+    public static analyse(script?: string): any {
         return {} as any;
     }
 }

@@ -94,7 +94,11 @@ let startClient = async (programPath: string) => {
         // 给程序权限
         await cmdAsync(Environment.CurrentDirectory, `chmod +x ${programPath}`);
     }
-    await execAsync(programPath, "run", "-config", configPath);
+    // await execAsync(programPath, "run", "-config", configPath);
+    await execAsync({
+        filePath: programPath,
+        arguments: ["run", "-config", configPath]
+    });
 };
 
 let startServer = async (programPath: string) => {
@@ -103,13 +107,17 @@ let startServer = async (programPath: string) => {
     if (File.Exists(configPath) == false) {
         await generateServerConfig(configPath);
     }
-    await execAsync(programPath, "run", "-config", configPath);
+    // await execAsync(programPath, "run", "-config", configPath);
+    await execAsync({
+        filePath: programPath,
+        arguments: ["run", "-config", configPath]
+    });
 };
 
 let main = async () => {
     let programId = "FE8826DC-18F9-411A-A851-5DC68A12F5BF";
     let programPath;
-    
+
     if (Environment.OSVersion.Platform == PlatformID.Win32NT) {
         programPath = Path.Combine(v2flyDirectory, `${programId}.exe`);
     }
@@ -122,10 +130,9 @@ let main = async () => {
     if (File.Exists(programPath) == false) {
         let linuxUrl = "https://github.com/v2fly/v2ray-core/releases/download/v5.19.0/v2ray-linux-64.zip";
         let windowsUrl = "https://github.com/v2fly/v2ray-core/releases/download/v5.19.0/v2ray-windows-64.zip";
-        let gitHttpProxy = {} as any;
-        await cmdAsync(Environment.CurrentDirectory, "git config http.proxy", gitHttpProxy);
-        if (gitHttpProxy.lines && gitHttpProxy.lines.length > 0) {
-            let proxy = gitHttpProxy.lines[0].trim();
+        let gitHttpProxyResult = await cmdAsync(Environment.CurrentDirectory, "git config http.proxy");
+        if (gitHttpProxyResult.output && gitHttpProxyResult.output.length > 0) {
+            let proxy = gitHttpProxyResult.output.trim();
             if (proxy.length > 0) {
                 console.log(`use proxy: ${proxy}`);
                 axios.setProxy(proxy);

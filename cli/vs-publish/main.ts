@@ -26,7 +26,7 @@ let publishCsproj = async (csprojPath: string) => {
     if (pubxmlFiles.length == 0) {
         let cmd = `dotnet publish -c Release -f net8.0`;
         console.log(cmd);
-        if (await cmdAsync(currentDirectory, cmd) != 0) {
+        if ((await cmdAsync(currentDirectory, cmd)).exitCode != 0) {
             console.log(`dotnet publish failed`);
             return false;
         }
@@ -35,10 +35,14 @@ let publishCsproj = async (csprojPath: string) => {
         for (let pubXmlFile of pubxmlFiles) {
             // 将pubXmlFile中的PublishDir设置为/bin/publish/publish-profile-name
             let publishDir = Path.Combine(currentDirectory, "bin", "publish", Path.GetFileNameWithoutExtension(pubXmlFile));
-            await execAsync(Environment.ProcessPath, "run", "vs-pubxml", pubXmlFile, "PublishDir", publishDir);
+            // await execAsync(Environment.ProcessPath, "run", "vs-pubxml", pubXmlFile, "PublishDir", publishDir);
+            await execAsync({
+                filePath: Environment.ProcessPath,
+                arguments: ["run", "vs-pubxml", pubXmlFile, "PublishDir", publishDir]
+            });
             let cmd = `dotnet publish --publish-profile ${Path.GetFileNameWithoutExtension(pubXmlFile)}`;
             console.log(cmd);
-            if (await cmdAsync(currentDirectory, cmd) != 0) {
+            if ((await cmdAsync(currentDirectory, cmd)).exitCode != 0) {
                 console.log(`dotnet publish failed`);
                 return false;
             }

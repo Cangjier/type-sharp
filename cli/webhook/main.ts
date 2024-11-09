@@ -70,14 +70,11 @@ let branches = (parameters.branch ?? "master,main").split(',');
 let Util = () => {
     let getSystemName = async () => {
         // 判断是linux-x64还是linux-arm64
-        let output = {} as {
-            lines: string[],
-        };
-        await cmdAsync(Environment.CurrentDirectory, "uname -m", output);
-        if (output.lines.length == 0) {
+        let result = await cmdAsync(Environment.CurrentDirectory, "uname -m");
+        if (result.output == undefined) {
             return "";
         }
-        let arch = output.lines[0];
+        let arch = result.output;
         if (arch.includes("aarch64")) {
             return "linux-arm64";
         }
@@ -87,11 +84,8 @@ let Util = () => {
         return "";
     };
     let printEnv = async () => {
-        let output = {} as {
-            lines: string[],
-        };
-        await cmdAsync(Environment.CurrentDirectory, "env", output);
-        console.log(`env: ${output.lines}`);
+        let result = await cmdAsync(Environment.CurrentDirectory, "env");
+        console.log(`env: ${result.output}`);
     };
     return {
         getSystemName,
@@ -156,12 +150,7 @@ let gitTokenManager = GitTokenManager(gitTokens);
 
 let GitManager = () => {
     let getHttpProxy = async () => {
-        let output = {} as { lines: string[] };
-        await cmdAsync(Environment.CurrentDirectory, "git config --get http.proxy", output);
-        if (output.lines && output.lines.length > 0) {
-            return output.lines[0];
-        }
-        return "";
+        return (await cmdAsync(Environment.CurrentDirectory, "git config --get http.proxy")).output?.trim();
     };
     let getGitUrlInfo = (gitUrl: string) => {
         console.log(`get git url info: ${gitUrl}`);
@@ -230,14 +219,14 @@ let GitManager = () => {
         Directory.CreateDirectory(tempDirectory);
         console.log(`Working Directory : ${tempDirectory}, Existing: ${Directory.Exists(tempDirectory)}`);
         console.log(`git clone ${gitUrl} .`);
-        if (await cmdAsync(tempDirectory, `git clone ${gitUrl} .`) != 0) {
+        if ((await cmdAsync(tempDirectory, `git clone ${gitUrl} .`)).exitCode != 0) {
             console.log(`git clone ${gitUrl} failed, delete temp directory: ${tempDirectory}`);
             deleteDirectory(tempDirectory);
             return false;
         }
         if (commit != "") {
             console.log(`git checkout ${commit}`);
-            if (await cmdAsync(tempDirectory, `git checkout ${commit}`) != 0) {
+            if ((await cmdAsync(tempDirectory, `git checkout ${commit}`)).exitCode != 0) {
                 console.log(`git checkout ${commit} failed, delete temp directory: ${tempDirectory}`);
                 deleteDirectory(tempDirectory);
                 return false;
@@ -302,14 +291,14 @@ let NodeJsManager = () => {
         // 设置镜像源
         // npm config set registry https://mirrors.cloud.tencent.com/npm/
         console.log(`npm config set registry https://mirrors.cloud.tencent.com/npm/`);
-        if (await cmdAsync(tempDirectory, `npm config set registry https://mirrors.cloud.tencent.com/npm/`) != 0) {
+        if ((await cmdAsync(tempDirectory, `npm config set registry https://mirrors.cloud.tencent.com/npm/`)).exitCode != 0) {
             console.log(`npm config set registry https://mirrors.cloud.tencent.com/npm/ failed`);
             Directory.Delete(tempDirectory, true);
             return;
         }
         // 下一步，使用npm install安装依赖
         console.log(`npm install`);
-        if (await cmdAsync(tempDirectory, `npm install`) != 0) {
+        if ((await cmdAsync(tempDirectory, `npm install`)).exitCode != 0) {
             console.log(`npm install failed, delete temp directory: ${tempDirectory}`);
             Directory.Delete(tempDirectory, true);
             return;
@@ -323,7 +312,7 @@ GENERATE_SOURCEMAP=false`;
 
         // 下一步，使用npm run build打包
         console.log(`npm run build`);
-        if (await cmdAsync(tempDirectory, `npm run build`) != 0) {
+        if ((await cmdAsync(tempDirectory, `npm run build`)).exitCode != 0) {
             console.log(`npm run build failed, delete temp directory: ${tempDirectory}`);
             Directory.Delete(tempDirectory, true);
             return;
@@ -374,7 +363,7 @@ let DotNetManager = () => {
         }
         let cmd = `dotnet pack -c Release -o ${nugetPackageDirectory}`;
         console.log(cmd);
-        if (await cmdAsync(currentDirectory, cmd) != 0) {
+        if ((await cmdAsync(currentDirectory, cmd)).exitCode != 0) {
             console.log(`dotnet pack failed, delete nuget package directory: ${nugetPackageDirectory}`);
             if (Directory.Exists(nugetPackageDirectory)) {
                 Directory.Delete(nugetPackageDirectory, true);
@@ -427,7 +416,7 @@ let DotNetManager = () => {
         console.log(restoreCmd);
         let restoreResult = await cmdAsync(currentDirectory, restoreCmd);
         console.log(`dotnet restore result: ${restoreResult}`);
-        if (restoreResult != 0) {
+        if (restoreResult.exitCode != 0) {
             console.log(`dotnet restore failed`);
             return false;
         }
@@ -436,7 +425,7 @@ let DotNetManager = () => {
             console.log(cmd);
             let publishResult = await cmdAsync(currentDirectory, cmd);
             console.log(`dotnet publish result: ${publishResult}`);
-            if (publishResult != 0) {
+            if (publishResult.exitCode != 0) {
                 console.log(`dotnet publish failed`);
                 return false;
             }
@@ -452,7 +441,7 @@ let DotNetManager = () => {
                 console.log(cmd);
                 let publishResult = await cmdAsync(currentDirectory, cmd);
                 console.log(`dotnet publish result: ${publishResult}`);
-                if (publishResult != 0) {
+                if (publishResult.exitCode != 0) {
                     console.log(`dotnet publish failed`);
                     return false;
                 }
@@ -475,7 +464,7 @@ let DotNetManager = () => {
         // 通过dotnet上传nuget包
         let cmd = `dotnet nuget push ${Path.GetFileName(nugetPackagePath)} --api-key ${nugetSecret} --source https://api.nuget.org/v3/index.json`;
         console.log(cmd);
-        if (await cmdAsync(Path.GetDirectoryName(nugetPackagePath), cmd) != 0) {
+        if ((await cmdAsync(Path.GetDirectoryName(nugetPackagePath), cmd)).exitCode != 0) {
             console.log(`dotnet nuget push failed`);
             return false;
         }
@@ -544,10 +533,16 @@ let DotNetManager = () => {
             console.log(`No file to release`);
             return;
         }
-        await execAsync(Environment.ProcessPath,
-            "run", "gitapis", "release", gitUrl, tagName,
-            "--files", toReleaseFiles.join(","),
-            "--token", token);
+        // await execAsync(Environment.ProcessPath,
+        //     "run", "gitapis", "release", gitUrl, tagName,
+        //     "--files", toReleaseFiles.join(","),
+        //     "--token", token);
+        await execAsync({
+            filePath: Environment.ProcessPath,
+            arguments: ["run", "gitapis", "release", gitUrl, tagName,
+                "--files", toReleaseFiles.join(","),
+                "--token", token]
+        });
     };
     let service = async (tempDirectory: string, repo: string) => {
         // 如果发布目录下存在.service，说明是一个服务
@@ -585,13 +580,13 @@ let DotNetManager = () => {
         File.WriteAllText(serviceFile, serviceContent, utf8);
         // 将发布目录下的文件拷贝到部署目录
         if (Directory.Exists(destDirectory) == false) {
-            if (await cmdAsync(tempDirectory, `mkdir -p ${destDirectory}`) != 0) {
+            if ((await cmdAsync(tempDirectory, `mkdir -p ${destDirectory}`)).exitCode != 0) {
                 console.log(`Create ${destDirectory} failed`);
                 return;
             }
         }
 
-        if (await cmdAsync(tempDirectory, `cp -rf ${publishDirectory}/* ${destDirectory}`) != 0) {
+        if ((await cmdAsync(tempDirectory, `cp -rf ${publishDirectory}/* ${destDirectory}`)).exitCode != 0) {
             console.log(`Copy ${publishDirectory} to ${destDirectory} failed`);
             return;
         }
@@ -601,19 +596,19 @@ let DotNetManager = () => {
         let serviceDestFile = Path.Combine("/etc/systemd/system", Path.GetFileName(serviceFile));
         let cpServiceCommand = `sudo cp ${serviceFile} ${serviceDestFile}`;
         console.log(cpServiceCommand);
-        if (await cmdAsync(tempDirectory, cpServiceCommand) != 0) {
+        if ((await cmdAsync(tempDirectory, cpServiceCommand)).exitCode != 0) {
             console.log(`Copy ${serviceFile} to ${serviceDestFile} failed`);
             return;
         }
         let daemonReloadCommand = `sudo systemctl daemon-reload`;
         console.log(daemonReloadCommand);
-        if (await cmdAsync(tempDirectory, daemonReloadCommand) != 0) {
+        if ((await cmdAsync(tempDirectory, daemonReloadCommand)).exitCode != 0) {
             console.log(`Reload daemon failed`);
             return;
         }
         let restartCommand = `sudo systemctl start ${Path.GetFileNameWithoutExtension(serviceFile)}`;
         console.log(restartCommand);
-        if (await cmdAsync(tempDirectory, restartCommand) != 0) {
+        if ((await cmdAsync(tempDirectory, restartCommand)).exitCode != 0) {
             console.log(`Restart service failed`);
             return;
         }
