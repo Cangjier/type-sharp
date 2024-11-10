@@ -363,7 +363,9 @@ let DotNetManager = () => {
         }
         let cmd = `dotnet pack -c Release -o ${nugetPackageDirectory}`;
         console.log(cmd);
-        if ((await cmdAsync(currentDirectory, cmd)).exitCode != 0) {
+        let cmdResult = await cmdAsync(currentDirectory, cmd);
+        console.log(`dotnet pack result: ${cmdResult}`);
+        if (cmdResult.exitCode != 0) {
             console.log(`dotnet pack failed, delete nuget package directory: ${nugetPackageDirectory}`);
             if (Directory.Exists(nugetPackageDirectory)) {
                 Directory.Delete(nugetPackageDirectory, true);
@@ -464,7 +466,9 @@ let DotNetManager = () => {
         // 通过dotnet上传nuget包
         let cmd = `dotnet nuget push ${Path.GetFileName(nugetPackagePath)} --api-key ${nugetSecret} --source https://api.nuget.org/v3/index.json`;
         console.log(cmd);
-        if ((await cmdAsync(Path.GetDirectoryName(nugetPackagePath), cmd)).exitCode != 0) {
+        let cmdResult = await cmdAsync(Path.GetDirectoryName(nugetPackagePath), cmd);
+        console.log(`dotnet nuget push result: ${cmdResult}`);
+        if (cmdResult.exitCode != 0) {
             console.log(`dotnet nuget push failed`);
             return false;
         }
@@ -533,10 +537,6 @@ let DotNetManager = () => {
             console.log(`No file to release`);
             return;
         }
-        // await execAsync(Environment.ProcessPath,
-        //     "run", "gitapis", "release", gitUrl, tagName,
-        //     "--files", toReleaseFiles.join(","),
-        //     "--token", token);
         await execAsync({
             filePath: Environment.ProcessPath,
             arguments: ["run", "gitapis", "release", gitUrl, tagName,
@@ -713,6 +713,7 @@ let main = async () => {
             console.log(e);
             throw e;
         }
+        console.log("Webhook success");
     });
     await server.start(Number(port));
 };
