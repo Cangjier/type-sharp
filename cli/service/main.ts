@@ -16,7 +16,7 @@ let main = async () => {
     let utf8 = new UTF8Encoding(false);
     let cliName = args[0];
     let serviceName = cliName;
-    let execStart = `tscl run ${args.join(" ")}`;
+    let execStart = `${Environment.ProcessPath} run ${args.join(" ")}`;
     let description = cliName;
     let script_directory = Path.GetDirectoryName(script_path);
     let systemdPath = "/etc/systemd/system";
