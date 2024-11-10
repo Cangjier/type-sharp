@@ -28,14 +28,19 @@ done
 # 延迟1秒
 sleep 1
 
-# 4. 移动到/usr/local/bin
-sudo mv tscl /usr/local/bin
+# 4. 移动到/home/ubuntu/.tscl/bin
+sudo mv /home/ubuntu/.tscl/bin
 
 # 5. 添加可执行权限
-sudo chmod +x /usr/local/bin/tscl
+sudo chmod +x /home/ubuntu/.tscl/bin/tscl
 
 # 启动所有ExecStart带有tscl的服务
 systemctl list-units --type=service | grep 'tscl run' | awk '{print $1}' | xargs -r systemctl start
 
-# 6. 退出
+# 6. 在.bashrc中添加环境变量，如果不存在则添加
+if [ -z "$(cat ~/.bashrc | grep 'export PATH=$PATH:/home/ubuntu/.tscl/bin')" ]; then
+    echo 'export PATH=$PATH:/home/ubuntu/.tscl/bin' >>~/.bashrc
+fi
+
+# 7. 退出
 exit
