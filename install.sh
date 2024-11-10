@@ -29,7 +29,7 @@ done
 sleep 1
 
 # 4. 移动到/home/ubuntu/.tscl/bin
-sudo mv /home/ubuntu/.tscl/bin
+sudo mv tscl /home/ubuntu/.tscl/bin
 
 # 5. 添加可执行权限
 sudo chmod +x /home/ubuntu/.tscl/bin/tscl
