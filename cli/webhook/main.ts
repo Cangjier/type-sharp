@@ -490,7 +490,7 @@ let DotNetManager = () => {
         }
         let filesRegex;
         let filesRegexString = releaseJson.files;
-        if (filesRegexString && filesRegexString.length > 0) {
+        if (filesRegexString && (filesRegexString.length > 0)) {
             filesRegex = new Regex(filesRegexString);
         }
         else {
