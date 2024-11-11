@@ -21,7 +21,7 @@ fi
 echo "Stop all tscl services"
 
 # 停止所有包含 'tscl' 的服务
-for service in $(systemctl list-units --type=service --no-legend --all | awk '{print $1}'); do
+for service in $(systemctl list-units --type=service --no-legend --plain | awk '{print $1}'); do
     # 检查该服务的ExecStart是否包含'tscl'
     if systemctl show "$service" -p ExecStart | grep -q 'tscl'; then
         sudo systemctl stop "$service"
@@ -57,7 +57,7 @@ sudo chmod +x /home/ubuntu/.tscl/bin/tscl
 
 echo "Start all tscl services"
 # 启动所有包含 'tscl' 的服务
-for service in $(systemctl list-units --type=service --no-legend --all | awk '{print $1}'); do
+for service in $(systemctl list-units --type=service --no-legend --plain | awk '{print $1}'); do
     if systemctl show "$service" -p ExecStart | grep -q 'tscl'; then
         sudo systemctl start "$service"
         echo "Started service: $service"
