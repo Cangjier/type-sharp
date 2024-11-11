@@ -14,6 +14,7 @@ import { axios } from '../.tsc/Cangjie/TypeSharp/System/axios';
 import { zip } from '../.tsc/Cangjie/TypeSharp/System/zip';
 import { Version } from '../.tsc/System/Version';
 import { Task } from '../.tsc/System/Threading/Tasks/Task';
+import { DateTime } from '../.tsc/System/DateTime';
 
 let utf8 = new UTF8Encoding(false);
 
@@ -307,7 +308,8 @@ let NodeJsManager = () => {
         console.log(`Set PUBLIC_URL=/${repo}`);
         let envFile = Path.Combine(tempDirectory, ".env");
         let envContent = `PUBLIC_URL=/${repo}
-GENERATE_SOURCEMAP=false`;
+GENERATE_SOURCEMAP=false
+BUILD_TIME=${DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}`;
         File.WriteAllText(envFile, envContent, utf8);
 
         // 下一步，使用npm run build打包
