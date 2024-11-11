@@ -309,7 +309,7 @@ let NodeJsManager = () => {
         let envFile = Path.Combine(tempDirectory, ".env");
         let envContent = `PUBLIC_URL=/${repo}
 GENERATE_SOURCEMAP=false
-BUILD_TIME=${DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}`;
+REACT_APP_BUILD_TIME=${DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}`;
         File.WriteAllText(envFile, envContent, utf8);
 
         // 下一步，使用npm run build打包
