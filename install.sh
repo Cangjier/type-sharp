@@ -2,16 +2,20 @@
 
 # 自动下载Releases下的最新版本并更新服务
 
+# 创建临时目录
+mkdir -p /home/ubuntu/tmp
+
 # 1. 检查是否存在git配置的代理
 proxy=$(git config --get http.proxy)
 
-# 2. 下载最新版本
+# 2. 下载最新版本到 /home/ubuntu/tmp
 download_url="https://github.com/Cangjier/type-sharp/releases/download/latest/tscl"
+download_path="/home/ubuntu/tmp/tscl"
 if [ -n "$proxy" ]; then
     echo "Using proxy: $proxy"
-    wget -e "https_proxy=$proxy" --no-cache "$download_url"
+    wget -e "https_proxy=$proxy" --no-cache -O "$download_path" "$download_url"
 else
-    wget --no-cache "$download_url"
+    wget --no-cache -O "$download_path" "$download_url"
 fi
 
 echo "Stop all tscl services"
@@ -44,9 +48,9 @@ fi
 # 延迟1秒
 sleep 1
 
-# 4. 移动到/home/ubuntu/.tscl/bin
+# 4. 移动下载的文件到 /home/ubuntu/.tscl/bin
 echo "Moving downloaded tscl to /home/ubuntu/.tscl/bin"
-sudo mv tscl /home/ubuntu/.tscl/bin
+sudo mv "$download_path" /home/ubuntu/.tscl/bin
 
 # 5. 添加可执行权限
 sudo chmod +x /home/ubuntu/.tscl/bin/tscl
