@@ -84,6 +84,19 @@ let getTaskTypeAias = (fullName: FullName) => {
     };
     return result;
 };
+let isFuncType = (fullName: FullName) => {
+    return fullName.TypeName == "Func";
+};
+let getFuncTypeAlias = (fullName: FullName) => {
+    let genericTypes = fullName.GenericTypes;
+    let returnType = getTypeAlias(genericTypes[genericTypes.length - 1].ToString());
+    if (returnType.success == false) {
+        return "()=>any";
+    }
+    let parameters = genericTypes.slice(0, genericTypes.length - 1).map(p => getTypeAlias(p.ToString()));
+    let parameterTypes = parameters.map(p => p.success ? p.data : "any").join(", ");
+    return `(${parameterTypes})=>${returnType.data}`;
+}
 let isDicttionary = (fullName: FullName) => {
     return fullName.TypeName == "Dictionary" && fullName.GenericTypes.length == 2;
 };
@@ -119,6 +132,13 @@ getTypeAlias = (typeFullName: string) => {
             data: taskTypeAlias.data,
             containsAlias: true,
             toImport: taskTypeAlias.toImport
+        };
+    }
+    else if (isFuncType(fullName)) {
+        return {
+            success: true,
+            data: getFuncTypeAlias(fullName),
+            containsAlias: true
         };
     }
     else if (isDicttionary(fullName)) {
