@@ -95,7 +95,7 @@ let getFuncTypeAlias = (fullName: FullName) => {
     }
     let parameters = genericTypes.slice(0, genericTypes.length - 1).map(p => getTypeAlias(p.ToString()));
     let parameterIndex = 0;
-    let parameterTypes = parameters.map(p => p.success ? `arg${parameterIndex++}:${p.data}` : `arg${parameterIndex++}:any`).join(", ");
+    let parameterTypes = parameters.map(p => p.success ? `arg${parameterIndex++}?:${p.data}` : `arg${parameterIndex++}?:any`).join(", ");
     return `(${parameterTypes})=>${returnType.data}`;
 }
 let isDicttionary = (fullName: FullName) => {
