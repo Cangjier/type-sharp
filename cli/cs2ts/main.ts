@@ -91,12 +91,12 @@ let getFuncTypeAlias = (fullName: FullName) => {
     let genericTypes = fullName.GenericTypes;
     let returnType = getTypeAlias(genericTypes[genericTypes.length - 1].ToString());
     if (returnType.success == false) {
-        return "()=>any";
+        return "(()=>any)";
     }
     let parameters = genericTypes.slice(0, genericTypes.length - 1).map(p => getTypeAlias(p.ToString()));
     let parameterIndex = 0;
     let parameterTypes = parameters.map(p => p.success ? `arg${parameterIndex++}?:${p.data}` : `arg${parameterIndex++}?:any`).join(", ");
-    return `(${parameterTypes})=>${returnType.data}`;
+    return `((${parameterTypes})=>${returnType.data})`;
 }
 let isDicttionary = (fullName: FullName) => {
     return fullName.TypeName == "Dictionary" && fullName.GenericTypes.length == 2;
