@@ -723,8 +723,9 @@ let webhook = async (session: Session) => {
     }
     else {
         let processor = transfer.getProcessor(tempDirectory);
+        console.log(`processor: ${processor}`);
         if (processor.success) {
-            let response = await axios.post("/api/v1/tasks/run", {
+            let response = await axios.post(`http://127.0.0.1:${Number(port)}/api/v1/tasks/run`, {
                 Input: {
                     webhook: data,
                     gitUserToken: gitTokenManager.get()
