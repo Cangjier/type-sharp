@@ -731,6 +731,8 @@ let webhook = async (session: Session) => {
                     gitUserToken: gitTokenManager.get()
                 },
                 Processor: processor.Processor
+            }, {
+                useDefaultProxy: false
             });
             console.log(response);
         }
@@ -747,10 +749,7 @@ let main = async () => {
         help();
         return;
     }
-    let httpProxy = await gitManager.getHttpProxy();
-    if (httpProxy != "") {
-        axios.setProxy(httpProxy);
-    }
+    axios.setDefaultProxy();
     let server = new Server();
     server.useStatic(staticFrontPath);
     console.log(`Static Path: ${staticFrontPath}`);

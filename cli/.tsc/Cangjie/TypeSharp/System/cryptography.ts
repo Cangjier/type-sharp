@@ -1,5 +1,5 @@
 import { Type } from "../../../System/Type";
-export class fileUtils {
+export class cryptography {
     public GetType(): Type {
         return {} as any;
     }
@@ -14,10 +14,7 @@ export class fileUtils {
     }
     public constructor() {
     }
-    public static size(path?: string): number {
-        return {} as any;
-    }
-    public static md5(path?: string): string {
+    public static computeHmacSha256Hex(key?: string, message?: string): string {
         return {} as any;
     }
 }

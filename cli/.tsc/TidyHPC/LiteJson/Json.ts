@@ -84,10 +84,13 @@ export class Json {
     public Contains(value_or_key?: any): boolean {
         return {} as any;
     }
-    public IndexOf(value?: any): number {
+    public IndexOf(value?: any, startIndex?: number): number {
         return {} as any;
     }
-    public LastIndexOf(value?: any): number {
+    public LastIndexOf(value?: any, startIndex?: number): number {
+        return {} as any;
+    }
+    public Sort(onSort?: ((arg0?:any, arg1?:any)=>number)): void {
         return {} as any;
     }
     public Splice(start?: number, count?: number, items?: any[]): any {
@@ -96,10 +99,16 @@ export class Json {
     public Slice(start?: number, end?: number): any {
         return {} as any;
     }
+    public Reverse(): any {
+        return {} as any;
+    }
     public Remove(key?: any): void {
         return {} as any;
     }
     public CopyTo(array?: any[], index?: number): void {
+        return {} as any;
+    }
+    public IsStringPredicate(predicate?: ((arg0?:string)=>boolean)): boolean {
         return {} as any;
     }
     public Is(): boolean {
@@ -115,6 +124,12 @@ export class Json {
         return {} as any;
     }
     public Invoke(objects?: any[]): any {
+        return {} as any;
+    }
+    public GetOrCreate(key?: string, onDefaultValue?: (()=>any)): any {
+        return {} as any;
+    }
+    public GetOrCreateString(key?: string, onDefaultValue?: (()=>string)): string {
         return {} as any;
     }
     public GetGuid(key?: string, defaultValue?: Guid): Guid {
@@ -153,6 +168,9 @@ export class Json {
         return {} as any;
     }
     public static LoadAsync(path?: string): Promise<any> {
+        return {} as any;
+    }
+    public static TryLoad(path?: string, onDefaultValue?: (()=>any)): any {
         return {} as any;
     }
     public static Validate(json_or_stream?: string | Stream): boolean {
@@ -328,5 +346,15 @@ export class Json {
     }
     public get Values(): any[] {
         return {} as any;
+    }
+    public static get _op_Invoke(): ((arg0?:any, arg1?:string, arg2?:any[])=>any) {
+        return {} as any;
+    }
+    public static set _op_Invoke(value: ((arg0?:any, arg1?:string, arg2?:any[])=>any)) {
+    }
+    public static get _Invoke(): ((arg0?:any, arg1?:any[])=>any) {
+        return {} as any;
+    }
+    public static set _Invoke(value: ((arg0?:any, arg1?:any[])=>any)) {
     }
 }

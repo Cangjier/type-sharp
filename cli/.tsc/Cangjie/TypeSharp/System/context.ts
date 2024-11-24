@@ -21,7 +21,10 @@ export class context {
     public static execAsync(config?: processConfig): Promise<processResult> {
         return {} as any;
     }
-    public static start(config?: processConfig): void {
+    public static start(config?: processConfig): number {
+        return {} as any;
+    }
+    public static kill(pid?: number): void {
         return {} as any;
     }
     public static cmd(workingDirectory?: string, commandLine?: string): processResult {
@@ -72,7 +75,16 @@ export class context {
     public static unlock(id?: Guid): void {
         return {} as any;
     }
+    public static lockFile(filePath?: string): boolean {
+        return {} as any;
+    }
+    public static unlockFile(filePath?: string): boolean {
+        return {} as any;
+    }
     public static env(environmentVariable?: string): string {
+        return {} as any;
+    }
+    public static md5(value?: any): string {
         return {} as any;
     }
     public static args: string[];

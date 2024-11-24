@@ -1,5 +1,6 @@
+import { registryValue } from "./registryValue";
 import { Type } from "../../../System/Type";
-export class fileUtils {
+export class registry {
     public GetType(): Type {
         return {} as any;
     }
@@ -14,10 +15,10 @@ export class fileUtils {
     }
     public constructor() {
     }
-    public static size(path?: string): number {
+    public static get(registryPath?: string): registryValue {
         return {} as any;
     }
-    public static md5(path?: string): string {
+    public static set(registryPath?: string, value?: registryValue): void {
         return {} as any;
     }
 }
