@@ -140,6 +140,7 @@ let GitTokenManager = (gitTokens: string) => {
     };
 
     return {
+        get: () => gitUserTokenMap,
         getGitToken,
         getGitUserToken,
         getGitUser,
@@ -657,6 +658,36 @@ let DotNetManager = () => {
 
 let dotNetManager = DotNetManager();
 
+let Transfer = () => {
+    let getProcessor = (tempDirectory: string) => {
+        let manifestFile = Path.Combine(tempDirectory, "manifest.json");
+        if (File.Exists(manifestFile) == false) {
+            return {
+                success: false
+            };
+        }
+        let manifest = Json.Load(manifestFile);
+        if (manifest.webhook) {
+            if (manifest.webhook.plugin) {
+                return {
+                    success: true,
+                    Processor: {
+                        "Name": manifest.webhook.plugin,
+                        "Type": "Plugin"
+                    }
+                }
+            }
+        }
+        return {
+            success: false
+        };
+    };
+    return {
+        getProcessor
+    };
+};
+
+let transfer = Transfer();
 
 let webhook = async (session: Session) => {
     let data = await session.Cache.GetRequstBodyJson();
@@ -690,6 +721,20 @@ let webhook = async (session: Session) => {
     else if (dotNetManager.isDotNet(tempDirectory)) {
         await dotNetManager.build(tempDirectory, repo, tagResult.tag.substring(1), cloneUrl);
     }
+    else {
+        let processor = transfer.getProcessor(tempDirectory);
+        if (processor.success) {
+            let response = await axios.post("/api/v1/tasks/run", {
+                Input: {
+                    webhook: data,
+                    gitUserToken: gitTokenManager.get()
+                },
+                Processor: processor.Processor
+            });
+            console.log(response);
+        }
+    }
+
     if (Directory.Exists(tempDirectory)) {
         deleteDirectory(tempDirectory);
         console.log(`Delete temp directory: ${tempDirectory}`);
