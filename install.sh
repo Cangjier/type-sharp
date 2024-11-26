@@ -3,14 +3,14 @@
 # 自动下载Releases下的最新版本并更新服务
 
 # 创建临时目录
-mkdir -p %HOME/tmp
+mkdir -p $HOME/tmp
 
 # 1. 检查是否存在git配置的代理
 proxy=$(git config --get http.proxy)
 
-# 2. 下载最新版本到 %HOME/tmp
+# 2. 下载最新版本到 $HOME/tmp
 download_url="https://github.com/Cangjier/type-sharp/releases/download/latest/tscl"
-download_path="%HOME/tmp/tscl"
+download_path="$HOME/tmp/tscl"
 if [ -n "$proxy" ]; then
     echo "Using proxy: $proxy"
     wget -e "https_proxy=$proxy" --no-cache -O "$download_path" "$download_url"
@@ -48,12 +48,12 @@ fi
 # 延迟1秒
 sleep 1
 
-# 4. 移动下载的文件到 %HOME/.tscl/bin
-echo "Moving downloaded tscl to %HOME/.tscl/bin"
-sudo mv "$download_path" %HOME/.tscl/bin
+# 4. 移动下载的文件到 $HOME/.tscl/bin
+echo "Moving downloaded tscl to $HOME/.tscl/bin"
+sudo mv "$download_path" $HOME/.tscl/bin
 
 # 5. 添加可执行权限
-sudo chmod +x %HOME/.tscl/bin/tscl
+sudo chmod +x $HOME/.tscl/bin/tscl
 
 echo "Start all tscl services"
 # 启动所有包含 'tscl' 的服务
@@ -65,9 +65,9 @@ for service in $(systemctl list-units --type=service --no-legend --plain | awk '
 done
 
 # 6. 在.bashrc中添加环境变量，如果不存在则添加
-if ! grep -q 'export PATH=$PATH:%HOME/.tscl/bin' ~/.bashrc; then
-    echo 'export PATH=$PATH:%HOME/.tscl/bin' >>~/.bashrc
-    echo "Added %HOME/.tscl/bin to PATH in .bashrc"
+if ! grep -q 'export PATH=$PATH:$HOME/.tscl/bin' ~/.bashrc; then
+    echo 'export PATH=$PATH:$HOME/.tscl/bin' >>~/.bashrc
+    echo "Added $HOME/.tscl/bin to PATH in .bashrc"
 fi
 
 # 7. 退出
