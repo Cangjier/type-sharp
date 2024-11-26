@@ -50,6 +50,8 @@ sleep 1
 
 # 4. 移动下载的文件到 ${HOME}/.tscl/bin
 echo "Moving downloaded tscl to ${HOME}/.tscl/bin"
+mkdir -p ${HOME}/.tscl
+mkdir -p ${HOME}/.tscl/bin
 sudo mv "$download_path" ${HOME}/.tscl/bin
 
 # 5. 添加可执行权限
