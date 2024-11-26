@@ -517,7 +517,7 @@ let DotNetManager = () => {
             console.log(`publishDir: ${publishDir}`);
             let files = Directory.GetFiles(publishDir);
             console.log(`Files: ${files}`);
-            if (filesRegex) {
+            if (filesRegex!=null) {
                 for (let file of files) {
                     let fileName = Path.GetFileName(file);
                     if (filesRegex.IsMatch(fileName)) {
