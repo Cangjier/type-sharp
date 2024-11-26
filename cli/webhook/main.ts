@@ -492,6 +492,7 @@ let DotNetManager = () => {
             console.log(`Release is disabled`);
             return;
         }
+        console.log(`Release = ${releaseJson}`);
         let filesRegex;
         let filesRegexString = releaseJson.files;
         if (filesRegexString && (filesRegexString.length > 0)) {
@@ -500,7 +501,7 @@ let DotNetManager = () => {
         else {
             filesRegex = null;
         }
-
+        console.log(`Files Regex: ${filesRegex}`);
         let pubxmlDirectory = Path.Combine(tempDirectory, "Properties", "PublishProfiles");
         console.log(`Publish Profiles Directory: ${pubxmlDirectory}`);
         let pubxmlFiles = Directory.GetFiles(pubxmlDirectory, "*.pubxml");
