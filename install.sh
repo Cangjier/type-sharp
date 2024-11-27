@@ -73,6 +73,6 @@ if ! grep -q 'export PATH=$PATH:${HOME}/.tscl/bin' ~/.bashrc; then
     echo 'export PATH=$PATH:${HOME}/.tscl/bin' >>~/.bashrc
     echo "Added ${HOME}/.tscl/bin to PATH in .bashrc"
 fi
-
+source ~/.bashrc
 # 退出
 exit
