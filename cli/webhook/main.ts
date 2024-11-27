@@ -241,12 +241,15 @@ let GitManager = () => {
     let increaseTag = async (gitUrl: string, commit: string) => {
         let info = getGitUrlInfo(gitUrl);
         let latestTag = await getLatestTag(info.owner, info.repo, gitTokenManager.getGitToken(gitUrl));
+        // if (!regex_TagName.IsMatch(latestTag)) {
+        //     console.log(`Latest tag is not a valid version: ${latestTag}`);
+        //     return {
+        //         success: false,
+        //         tag: ""
+        //     };
+        // }
         if (!regex_TagName.IsMatch(latestTag)) {
-            console.log(`Latest tag is not a valid version: ${latestTag}`);
-            return {
-                success: false,
-                tag: ""
-            };
+            latestTag = "v0.0.0";
         }
         let version = Version.Parse(latestTag.substring(1));
         let newVersion = new Version(version.Major, version.Minor, version.Build + 1);
@@ -517,7 +520,7 @@ let DotNetManager = () => {
             console.log(`publishDir: ${publishDir}`);
             let files = Directory.GetFiles(publishDir);
             console.log(`Files: ${files}`);
-            if (filesRegex!=null) {
+            if (filesRegex != null) {
                 for (let file of files) {
                     let fileName = Path.GetFileName(file);
                     if (filesRegex.IsMatch(fileName)) {
