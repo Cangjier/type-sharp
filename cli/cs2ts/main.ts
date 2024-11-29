@@ -98,6 +98,17 @@ let getFuncTypeAlias = (fullName: FullName) => {
     let parameterTypes = parameters.map(p => p.success ? `arg${parameterIndex++}?:${p.data}` : `arg${parameterIndex++}?:any`).join(", ");
     return `((${parameterTypes})=>${returnType.data})`;
 }
+let isListType = (fullName: FullName) => {
+    return fullName.TypeName == "List";
+};
+let getListTypeAlias = (fullName: FullName) => {
+    let genericType = fullName.GenericTypes[0];
+    let alias = getTypeAlias(genericType.ToString());
+    if (alias.success == false) {
+        return "any[]";
+    }
+    return `${alias.data}[]`;
+};
 let isDicttionary = (fullName: FullName) => {
     return fullName.TypeName == "Dictionary" && fullName.GenericTypes.length == 2;
 };
@@ -139,6 +150,13 @@ getTypeAlias = (typeFullName: string) => {
         return {
             success: true,
             data: getFuncTypeAlias(fullName),
+            containsAlias: true
+        };
+    }
+    else if (isListType(fullName)) {
+        return {
+            success: true,
+            data: getListTypeAlias(fullName),
             containsAlias: true
         };
     }
