@@ -7,4 +7,6 @@ export class processConfig {
     public arguments?: any;
     public workingDirectory?: string;
     public useShellExecute?: boolean;
+    public redirect?: boolean;
+    public createNoWindow?: boolean;
 }

@@ -1,5 +1,5 @@
 import { Type } from "../../../System/Type";
-export class apis {
+export class htmlUtils {
     public GetType(): Type {
         return {} as any;
     }
@@ -14,15 +14,10 @@ export class apis {
     }
     public constructor() {
     }
-    public static runAsync(apiName?: string, args?: any): Promise<any> {
+    public static getText(html?: string): string {
         return {} as any;
     }
-    public static list(): string[] {
+    public static getAbstract(html?: string): string {
         return {} as any;
-    }
-    public static get directory(): string {
-        return {} as any;
-    }
-    public static set directory(value: string) {
     }
 }
