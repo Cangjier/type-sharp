@@ -779,7 +779,7 @@ let exportClass = (type: Type) => {
     });
 
     let fieldKeys = Object.keys(fields);
-    if (isContainsOpImplicit && firstLetterIsLowerCase) {
+    if (isContainsOpImplicit && (firstLetterIsLowerCase || type.Name.toLowerCase().endsWith("interface"))) {
         // 如果包含op_Implicit方法，并且类名的首字母是小写，则该类是一个接口描述类
         fieldKeys.forEach(key => {
             let field = fields[key];
@@ -1016,7 +1016,8 @@ let main = () => {
             "(System\\.(Console|Type|Environment|OperatingSystem|PlatformID|Version|Convert|EnvironmentVariableTarget)$)",
             "(TidyHPC\\.(LiteJson|LiteXml|Routers)\\..*)",
             "(System\\.Reflection\\.(Assembly|ConstructorInfo|FieldInfo|MemberInfo|MemberTypes|MethodInfo|ParameterInfo)$)",
-            "(Cangjie\\.TypeSharp\\.(System|FullNameScript)\\..*)"
+            "(Cangjie\\.TypeSharp\\.(System|FullNameScript)\\..*)",
+            "(VizGroup\\..*)"
         ].join("|"), "Cangjie\\.TypeSharp\\.System\\.context");
     }
     else if (args.length == 2) {
