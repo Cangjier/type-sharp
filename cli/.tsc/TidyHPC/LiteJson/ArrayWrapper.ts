@@ -1,6 +1,7 @@
+import { Object } from "../../System/Object";
 import { Type } from "../../System/Type";
 export class ArrayWrapper {
-    public Add(value?: any): ArrayWrapper {
+    public Add(value?: any): any[] {
         return {} as any;
     }
     public Insert(index?: number, value?: any): void {
@@ -9,7 +10,7 @@ export class ArrayWrapper {
     public Contains(value?: any): boolean {
         return {} as any;
     }
-    public Clear(): ArrayWrapper {
+    public Clear(): any[] {
         return {} as any;
     }
     public Dispose(): void {
@@ -41,7 +42,7 @@ export class ArrayWrapper {
     }
     public constructor(target?: any) {
     }
-    public static op_Implicit(target?: any): ArrayWrapper {
+    public static op_Implicit(target?: any): any[] {
         return {} as any;
     }
     public get Target(): any {

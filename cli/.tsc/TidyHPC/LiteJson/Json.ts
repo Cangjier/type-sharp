@@ -9,8 +9,8 @@ import { DateTime } from "../../System/DateTime";
 import { TimeSpan } from "../../System/TimeSpan";
 import { Guid } from "../../System/Guid";
 import { Type } from "../../System/Type";
-import { ObjectWrapper } from "./ObjectWrapper";
-import { ArrayWrapper } from "./ArrayWrapper";
+import { KeyValuePair`2 } from "../../System/Collections/Generic/KeyValuePair`2[[System/String, System/Private/CoreLib, Version=8/0/0/0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System/Object, System/Private/CoreLib, Version=8/0/0/0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]";
+import { Object } from "../../System/Object";
 export class Json {
     public GetValueKind(): JsonValueKind {
         return {} as any;
@@ -263,13 +263,13 @@ export class Json {
     public get IsObject(): boolean {
         return {} as any;
     }
-    public get AsObject(): ObjectWrapper {
+    public get AsObject(): System.Collections.Generic.KeyValuePair`2[System.String,System.Object][] {
         return {} as any;
     }
     public get IsArray(): boolean {
         return {} as any;
     }
-    public get AsArray(): ArrayWrapper {
+    public get AsArray(): any[] {
         return {} as any;
     }
     public get IsString(): boolean {

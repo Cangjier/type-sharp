@@ -1,5 +1,9 @@
 import { Type } from "../../../System/Type";
-export class JSON {
+import { Database } from "../../../TidyHPC/LiteDB/Database";
+export class database {
+    public register(objectInterface?: any): Promise<void> {
+        return {} as any;
+    }
     public GetType(): Type {
         return {} as any;
     }
@@ -12,12 +16,9 @@ export class JSON {
     public GetHashCode(): number {
         return {} as any;
     }
-    public constructor() {
+    public constructor(target?: Database) {
     }
-    public static stringify(value?: any, replacer?: string[], space?: number): string {
-        return {} as any;
-    }
-    public static parse(stringValue?: string): any {
+    public static open(filePath?: string): Promise<database> {
         return {} as any;
     }
 }

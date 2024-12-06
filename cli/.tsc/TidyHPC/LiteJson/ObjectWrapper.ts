@@ -1,3 +1,4 @@
+import { KeyValuePair`2 } from "../../System/Collections/Generic/KeyValuePair`2[[System/String, System/Private/CoreLib, Version=8/0/0/0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System/Object, System/Private/CoreLib, Version=8/0/0/0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]";
 import { Type } from "../../System/Type";
 export class ObjectWrapper {
     public ContainsKey(key?: string): boolean {
@@ -29,7 +30,7 @@ export class ObjectWrapper {
     }
     public constructor(target?: any) {
     }
-    public static op_Implicit(target?: any): ObjectWrapper {
+    public static op_Implicit(target?: any): System.Collections.Generic.KeyValuePair`2[System.String,System.Object][] {
         return {} as any;
     }
     public get Target(): any {

@@ -26,4 +26,10 @@ export class reflection {
     public static parseFullName(fullName?: string): FullName {
         return {} as any;
     }
+    public static getEnumarables(type?: Type): Type[] {
+        return {} as any;
+    }
+    public static isImplicitFromJson(type?: Type): boolean {
+        return {} as any;
+    }
 }

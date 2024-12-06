@@ -88,39 +88,108 @@ let isFuncType = (fullName: FullName) => {
     return fullName.TypeName == "Func";
 };
 let getFuncTypeAlias = (fullName: FullName) => {
-    let genericTypes = fullName.GenericTypes;
-    let returnType = getTypeAlias(genericTypes[genericTypes.length - 1].ToString());
-    if (returnType.success == false) {
-        return "(()=>any)";
+    let toImport = [] as Type[];
+    let genericTypeFullNames = fullName.GenericTypes;
+    let returnTypeAlias = getTypeAlias(genericTypeFullNames[genericTypeFullNames.length - 1].ToString());
+    if (returnTypeAlias.success == false) {
+        return {
+            success: true,
+            data: "(()=>any)",
+            toImport: toImport
+        }
     }
-    let parameters = genericTypes.slice(0, genericTypes.length - 1).map(p => getTypeAlias(p.ToString()));
+    let parameters = genericTypeFullNames.slice(0, genericTypeFullNames.length - 1).map(p => getTypeAlias(p.ToString()));
     let parameterIndex = 0;
     let parameterTypes = parameters.map(p => p.success ? `arg${parameterIndex++}?:${p.data}` : `arg${parameterIndex++}?:any`).join(", ");
-    return `((${parameterTypes})=>${returnType.data})`;
+    for (let genericTypeFullName of genericTypeFullNames) {
+        let genericType = reflection.getType(genericTypeFullName.ToString());
+        if (genericType) {
+            toImport.push(genericType);
+        }
+    }
+    return {
+        data: `((${parameterTypes})=>${returnTypeAlias.data})`,
+        toImport: toImport
+    }
 }
 let isListType = (fullName: FullName) => {
     return fullName.TypeName == "List";
 };
 let getListTypeAlias = (fullName: FullName) => {
-    let genericType = fullName.GenericTypes[0];
-    let alias = getTypeAlias(genericType.ToString());
-    if (alias.success == false) {
-        return "any[]";
+    let toImport = [] as Type[];
+    let genericTypeFullName = fullName.GenericTypes[0];
+    let alias = getTypeAlias(genericTypeFullName.ToString());
+    let genericType = reflection.getType(genericTypeFullName.ToString());
+    if (genericType) {
+        toImport.push(genericType);
     }
-    return `${alias.data}[]`;
+    if (alias.success == false) {
+        return {
+            data: "any[]",
+            toImport: toImport
+        };
+    }
+    return {
+        data: `${alias.data}[]`,
+        toImport: toImport
+    };
 };
 let isDicttionary = (fullName: FullName) => {
     return fullName.TypeName == "Dictionary" && fullName.GenericTypes.length == 2;
 };
 let getDictionaryTypeAlias = (fullName: FullName) => {
-    let genericTypes = fullName.GenericTypes;
-    let keyType = getTypeAlias(genericTypes[0].ToString());
-    let valueType = getTypeAlias(genericTypes[1].ToString());
-    if (keyType.success == false || valueType.success == false) {
-        return "{ [key: string]: any }";
+    let toImport = [] as Type[];
+    let genericTypeFullNames = fullName.GenericTypes;
+    let keyTypeAlias = getTypeAlias(genericTypeFullNames[0].ToString());
+    let valueTypeAlias = getTypeAlias(genericTypeFullNames[1].ToString());
+    for (let genericTypeFullName of genericTypeFullNames) {
+        let genericType = reflection.getType(genericTypeFullName.ToString());
+        if (genericType) {
+            toImport.push(genericType);
+        }
     }
-    return `{ [key: ${keyType.data}]: ${valueType.data} }`;
+    if (keyTypeAlias.success == false || valueTypeAlias.success == false) {
+        return {
+            data: "{ [key: string]: any }",
+            toImport: toImport
+        };
+    }
+    return {
+        data: `{ [key: ${keyTypeAlias.data}]: ${valueTypeAlias.data} }`,
+        toImport: toImport
+    };
 }
+let isEnumarableAndImplicitFromJson = (fullName: FullName) => {
+    try {
+        let type = reflection.getType(fullName.ToString());
+        if (reflection.isImplicitFromJson(type) == false) {
+            return false;
+        }
+        return reflection.getEnumarables(type).length > 0;
+    }
+    catch {
+        return false;
+    }
+};
+let getEnumarableTypeAlias = (fullName: FullName) => {
+    let toImport = [] as Type[];
+    let type = reflection.getType(fullName.ToString());
+    let enumarables = reflection.getEnumarables(type);
+    enumarables.forEach(item => {
+        toImport.push(item);
+    });
+    if (enumarables.length == 0) {
+        return {
+            data: "any",
+            toImport: toImport
+        };
+    }
+    let enumarable = enumarables[0];
+    return {
+        data: `${getTypeAlias(enumarable.ToString()).data}[]`,
+        toImport: toImport
+    };
+};
 getTypeAlias = (typeFullName: string) => {
     if (typeFullName.includes("&") || typeFullName.includes("*")) {
         return {
@@ -147,24 +216,39 @@ getTypeAlias = (typeFullName: string) => {
         };
     }
     else if (isFuncType(fullName)) {
+        let subTypeAlias = getFuncTypeAlias(fullName);
         return {
             success: true,
-            data: getFuncTypeAlias(fullName),
-            containsAlias: true
+            data: subTypeAlias.data,
+            containsAlias: true,
+            toImport: subTypeAlias.toImport
         };
     }
     else if (isListType(fullName)) {
+        let subTypeAlias = getListTypeAlias(fullName);
         return {
             success: true,
-            data: getListTypeAlias(fullName),
-            containsAlias: true
+            data: subTypeAlias.data,
+            containsAlias: true,
+            toImport: subTypeAlias.toImport
         };
     }
     else if (isDicttionary(fullName)) {
+        let subTypeAlias = getDictionaryTypeAlias(fullName);
         return {
             success: true,
-            data: getDictionaryTypeAlias(fullName),
-            containsAlias: true
+            data: subTypeAlias.data,
+            containsAlias: true,
+            toImport: subTypeAlias.toImport
+        };
+    }
+    else if (isEnumarableAndImplicitFromJson(fullName)) {
+        let subTypeAlias = getEnumarableTypeAlias(fullName);
+        return {
+            success: true,
+            data: subTypeAlias.data,
+            containsAlias: true,
+            toImport: subTypeAlias.toImport
         };
     }
     else if (typeFullName.includes("`") || typeFullName.includes("&") || typeFullName.includes("*")) {
@@ -764,6 +848,7 @@ let exportClass = (type: Type) => {
     let importLines = [] as string[];
     toImport.forEach(item => {
         if (item.FullName == null) return;
+        if (item == type) return;
         let relativePath = Path.GetRelativePath(Path.GetDirectoryName(type.FullName.replace(".", "/")), item.FullName.replace(".", "/")).replace("\\", "/");
         if (relativePath.startsWith(".") == false) relativePath = "./" + relativePath;
         importLines.push(`import { ${item.Name} } from "${relativePath}";`);

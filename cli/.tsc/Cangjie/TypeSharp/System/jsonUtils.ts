@@ -1,5 +1,5 @@
 import { Type } from "../../../System/Type";
-export class JSON {
+export class jsonUtils {
     public GetType(): Type {
         return {} as any;
     }
@@ -14,10 +14,7 @@ export class JSON {
     }
     public constructor() {
     }
-    public static stringify(value?: any, replacer?: string[], space?: number): string {
-        return {} as any;
-    }
-    public static parse(stringValue?: string): any {
+    public static replaceValue(value?: any, onValue?: ((arg0?:any)=>any)): void {
         return {} as any;
     }
 }

@@ -24,4 +24,7 @@ export class fileUtils {
     public static search(directory?: string, pattern?: Regex): string[] {
         return {} as any;
     }
+    public static writeLineWithShare(path?: string, content?: string): void {
+        return {} as any;
+    }
 }
