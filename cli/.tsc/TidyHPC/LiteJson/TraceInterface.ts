@@ -31,7 +31,7 @@ export class TraceInterface {
     public static op_Implicit(trace_or_target?: TraceInterface | any): any | TraceInterface {
         return {} as any;
     }
-    public Target: any;
+    public Target?: any;
     public get Success(): boolean {
         return {} as any;
     }

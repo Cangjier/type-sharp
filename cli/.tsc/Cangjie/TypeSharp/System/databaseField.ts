@@ -6,4 +6,9 @@ export class databaseField {
     public Target?: any;
     public name?: string;
     public type?: string;
+    public isIndex?: boolean;
+    public isIndeArray?: boolean;
+    public isIndexSet?: boolean;
+    public length?: number;
+    public isMaster?: boolean;
 }

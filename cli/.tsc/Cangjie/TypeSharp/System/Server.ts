@@ -1,6 +1,10 @@
+import { database } from "./database";
 import { Delegate } from "../../../System/Delegate";
 import { Type } from "../../../System/Type";
 export class Server {
+    public GetDatabase(): database {
+        return {} as any;
+    }
     public start(port?: number): Promise<void> {
         return {} as any;
     }

@@ -32,7 +32,7 @@ export class NetMessageInterface {
     public static New(): NetMessageInterface {
         return {} as any;
     }
-    public Target: any;
+    public Target?: any;
     public get id(): Guid {
         return {} as any;
     }

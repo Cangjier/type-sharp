@@ -955,6 +955,7 @@ let exportTypesByFileImports = (path: string) => {
 };
 
 let exportInitialTypes = (typeNameRegex: string, membersTypeNameRegex: string) => {
+    
     let rootDirectory = Directory.GetCurrentDirectory();
     let types = reflection.getTypes(typeNameRegex).filter(type => isValidTypeName(type.FullName));
     let memberTypes = reflection.getTypes(membersTypeNameRegex).filter(type => isValidTypeName(type.FullName));

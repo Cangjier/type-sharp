@@ -1,7 +1,36 @@
+import { databaseInterface } from "./databaseInterface";
+import { Guid } from "../../../System/Guid";
 import { Type } from "../../../System/Type";
 import { Database } from "../../../TidyHPC/LiteDB/Database";
 export class database {
-    public register(objectInterface?: any): Promise<void> {
+    public register(objectInterface?: databaseInterface): Promise<void> {
+        return {} as any;
+    }
+    public insert(interfaceName?: string, record?: any): Promise<void> {
+        return {} as any;
+    }
+    public findByMaster(interfaceName?: string, id?: Guid): Promise<any> {
+        return {} as any;
+    }
+    public findByIndex(interfaceName?: string, fieldName?: string, value?: any): Promise<any> {
+        return {} as any;
+    }
+    public findByIndexArray(interfaceName?: string, fieldName?: string, value?: any): Promise<any> {
+        return {} as any;
+    }
+    public findByIndexSet(interfaceName?: string, fieldName?: string, value?: any): Promise<any> {
+        return {} as any;
+    }
+    public containsByMaster(interfaceName?: string, id?: Guid): Promise<boolean> {
+        return {} as any;
+    }
+    public containsByIndex(interfaceName?: string, fieldName?: string, value?: any): Promise<boolean> {
+        return {} as any;
+    }
+    public updatebyMaster(interfaceName?: string, record?: any): Promise<void> {
+        return {} as any;
+    }
+    public deleteByMaster(interfaceName?: string, id?: Guid): Promise<void> {
         return {} as any;
     }
     public GetType(): Type {
