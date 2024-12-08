@@ -1011,7 +1011,7 @@ let main = () => {
         exportInitialTypes([
             "(System\\.(Guid|DateTime|TimeSpan)$)",
             "(System\\.IO\\.(Path|Directory|File|SearchOption|EnumerationOptions)$)",
-            "(System\\.Threading\\.Tasks\\.Task$)",
+            "(System\\.Threading\\.Tasks\\.(Task|TaskCompletionSource)$)",
             "(System\\.Text\\.(UTF8Encoding|Encoding)$)",
             "(System\\.Text\\.RegularExpressions\\.(Regex|RegexOptions|Match|MatchCollection|GroupCollection|Group)$)",
             "(System\\.(Console|Type|Environment|OperatingSystem|PlatformID|Version|Convert|EnvironmentVariableTarget)$)",
