@@ -36,9 +36,10 @@ let main = async () => {
     let envPath = Path.Combine(projectDirectory, ".ENV");
     File.WriteAllText(envPath, `PUBLIC_URL=${Path.GetFileName(projectDirectory)}`, utf8);
     console.log(`.ENV file created`);
-    let indexTsPath = Path.Combine(projectDirectory, "src", "index.tsx");
-    let indexTsTemplatePath = Path.Combine(templateDirectory, "index.tsx");
-    File.Copy(indexTsTemplatePath, indexTsPath, true);
+
+    let nextConfigPath = Path.Combine(projectDirectory, "next.config.ts");
+    let nextConfigTemplatePath = Path.Combine(templateDirectory, "next.config.ts");
+    File.Copy(nextConfigTemplatePath, nextConfigPath, true);
 };
 
 await main();
