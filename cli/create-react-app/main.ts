@@ -14,7 +14,7 @@ let main = async () => {
     let utf8 = new UTF8Encoding(false);
     let projectDirectory = args.length > 0 ? Path.GetFullPath(args[0]) : Directory.GetCurrentDirectory();
     let sh = shell.start({
-        filePath: OperatingSystem.IsLinux() ? "bash" : "cmd",
+        filePath: (OperatingSystem.IsLinux() ? "bash" : "cmd"),
         workingDirectory: projectDirectory
     });
     console.log(`working in : ${projectDirectory}`);
