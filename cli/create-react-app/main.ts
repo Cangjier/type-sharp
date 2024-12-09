@@ -19,7 +19,7 @@ let main = async () => {
     }
     let cmds = [
         "npm install create-react-app --global",
-        "create-react-app. --template typescript",
+        `create-react-app ${projectDirectory} --template typescript`,
         "npm install antd --save",
         "npm install @ant-design/icons --save",
         "npm install axios --save",
