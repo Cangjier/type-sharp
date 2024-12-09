@@ -13,66 +13,22 @@ let main = async () => {
     let templateDirectory = Path.Combine(script_directory, "template");
     let utf8 = new UTF8Encoding(false);
     let projectDirectory = args.length > 0 ? Path.GetFullPath(args[0]) : Directory.GetCurrentDirectory();
-    let sh = shell.start({
-        filePath: (OperatingSystem.IsLinux() ? "bash" : "cmd"),
-        workingDirectory: projectDirectory
-    });
     console.log(`working in : ${projectDirectory}`);
     if (Directory.Exists(projectDirectory) == false) {
         Directory.CreateDirectory(projectDirectory);
     }
-    sh.writeLine(`npm install create-react-app --global && echo ---`);
-    await sh.readLinesWhen(item => {
-        if (item == "---") {
-            return true;
-        }
-        console.log(item);
-        return false;
-    });
-    console.log(`create-react-app . --template typescript`);
-    sh.writeLine(`create-react-app . --template typescript && echo ---`);
-    await sh.readLinesWhen(item => {
-        if (item == "---") {
-            return true;
-        }
-        console.log(item);
-        return false;
-    });
-    sh.writeLine(`npm install antd --save && echo ---`);
-    await sh.readLinesWhen(item => {
-        if (item == "---") {
-            return true;
-        }
-        console.log(item);
-        return false;
-    });
-    console.log(`npm install @ant-design/icons --save`);
-    sh.writeLine(`npm install @ant-design/icons --save && echo ---`);
-    await sh.readLinesWhen(item => {
-        if (item == "---") {
-            return true;
-        }
-        console.log(item);
-        return false;
-    });
-    console.log(`npm install axios --save`);
-    sh.writeLine(`npm install axios --save && echo ---`);
-    await sh.readLinesWhen(item => {
-        if (item == "---") {
-            return true;
-        }
-        console.log(item);
-        return false;
-    });
-    console.log(`npm install react-router-dom --save`);
-    sh.writeLine(`npm install react-router-dom --save && echo ---`);
-    await sh.readLinesWhen(item => {
-        if (item == "---") {
-            return true;
-        }
-        console.log(item);
-        return false;
-    });
+    let cmds = [
+        "npm install create-react-app --global",
+        "create-react-app. --template typescript",
+        "npm install antd --save",
+        "npm install @ant-design/icons --save",
+        "npm install axios --save",
+        "npm install react-router-dom --save"
+    ];
+    for (let i = 0; i < cmds.length; i++) {
+        let item = cmds[i];
+        console.log(cmd(projectDirectory, item).output);
+    }
     let envPath = Path.Combine(projectDirectory, ".ENV");
     File.WriteAllText(envPath, `PUBLIC_URL=${Path.GetFileName(projectDirectory)}`, utf8);
     console.log(`.ENV file created`);
