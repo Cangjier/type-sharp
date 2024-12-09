@@ -18,8 +18,8 @@ let main = async () => {
         Directory.CreateDirectory(projectDirectory);
     }
     let cmds = [
-        "npm install create-react-app --global",
-        `create-react-app ${projectDirectory} --template typescript`,
+        "npm install create-next-app --global",
+        `create-next-app . --ts --yes`,
         "npm install antd --save",
         "npm install @ant-design/icons --save",
         "npm install axios --save",
