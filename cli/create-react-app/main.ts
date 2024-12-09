@@ -27,6 +27,7 @@ let main = async () => {
     ];
     for (let i = 0; i < cmds.length; i++) {
         let item = cmds[i];
+        console.log(item);
         let result = cmd(projectDirectory, item);
         if (result.exitCode != 0) {
             return;
