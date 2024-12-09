@@ -27,7 +27,10 @@ let main = async () => {
     ];
     for (let i = 0; i < cmds.length; i++) {
         let item = cmds[i];
-        console.log(cmd(projectDirectory, item).output);
+        let result = cmd(projectDirectory, item);
+        if (result.exitCode != 0) {
+            return;
+        }
     }
     let envPath = Path.Combine(projectDirectory, ".ENV");
     File.WriteAllText(envPath, `PUBLIC_URL=${Path.GetFileName(projectDirectory)}`, utf8);
@@ -35,7 +38,6 @@ let main = async () => {
     let indexTsPath = Path.Combine(projectDirectory, "src", "index.tsx");
     let indexTsTemplatePath = Path.Combine(templateDirectory, "index.tsx");
     File.Copy(indexTsTemplatePath, indexTsPath, true);
-    return 0;
 };
 
 await main();
