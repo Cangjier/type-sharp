@@ -29,7 +29,8 @@ let main = async () => {
         console.log(item);
         return false;
     });
-    sh.writeLine(`create-react-app. --template typescript && echo ---`);
+    console.log(`create-react-app . --template typescript`);
+    sh.writeLine(`create-react-app . --template typescript && echo ---`);
     await sh.readLinesWhen(item => {
         if (item == "---") {
             return true;
