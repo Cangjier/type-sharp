@@ -21,7 +21,7 @@ let main = async () => {
     if (Directory.Exists(projectDirectory) == false) {
         Directory.CreateDirectory(projectDirectory);
     }
-    sh.writeLine(`npm install create-react-app --global & echo ---`);
+    sh.writeLine(`npm install create-react-app --global && echo ---`);
     await sh.readLinesWhen(item => {
         if (item == "---") {
             return true;
@@ -29,7 +29,7 @@ let main = async () => {
         console.log(item);
         return false;
     });
-    sh.writeLine(`create-react-app. --template typescript & echo ---`);
+    sh.writeLine(`create-react-app. --template typescript && echo ---`);
     await sh.readLinesWhen(item => {
         if (item == "---") {
             return true;
@@ -37,7 +37,7 @@ let main = async () => {
         console.log(item);
         return false;
     });
-    sh.writeLine(`npm install antd --save & echo ---`);
+    sh.writeLine(`npm install antd --save && echo ---`);
     await sh.readLinesWhen(item => {
         if (item == "---") {
             return true;
@@ -46,7 +46,7 @@ let main = async () => {
         return false;
     });
     console.log(`npm install @ant-design/icons --save`);
-    sh.writeLine(`npm install @ant-design/icons --save & echo ---`);
+    sh.writeLine(`npm install @ant-design/icons --save && echo ---`);
     await sh.readLinesWhen(item => {
         if (item == "---") {
             return true;
@@ -55,7 +55,7 @@ let main = async () => {
         return false;
     });
     console.log(`npm install axios --save`);
-    sh.writeLine(`npm install axios --save & echo ---`);
+    sh.writeLine(`npm install axios --save && echo ---`);
     await sh.readLinesWhen(item => {
         if (item == "---") {
             return true;
@@ -64,7 +64,7 @@ let main = async () => {
         return false;
     });
     console.log(`npm install react-router-dom --save`);
-    sh.writeLine(`npm install react-router-dom --save & echo ---`);
+    sh.writeLine(`npm install react-router-dom --save && echo ---`);
     await sh.readLinesWhen(item => {
         if (item == "---") {
             return true;
