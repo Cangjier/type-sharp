@@ -51,11 +51,11 @@ let generateClientConfig = async (configPath: string) => {
         .replace("<vmess-port>", vmess.port)
         .replace("<vmess-id>", vmess.id)
         .replace("<vmess-aid>", vmess.aid ?? "0")
-        .replace("<vmess-alterId>", vmess.aid)
+        .replace("<vmess-alterId>", vmess.aid ?? "0")
         .replace("<vmess-security>", vmess.type ?? "auto")
         .replace("<streamSettings-network>", vmess.net ?? "tcp")
-        .replace("<streamSettings-grpcSettings-serviceName>", `"${vmess.path}"` ?? "null")
-        .replace("<streamSettings-tlsSettings-serverName>", `"${vmess.sni}"` ?? "null")
+        .replace("<streamSettings-grpcSettings-serviceName>", vmess.path == undefined ? "null" : `"${vmess.sni}"`)
+        .replace("<streamSettings-tlsSettings-serverName>", vmess.sni == undefined ? "null" : `"${vmess.sni}"`)
         .replace("<streamSettings-security>", vmess.tls ?? "none");
     console.log(`config=${config}`);
     await File.WriteAllTextAsync(configPath, config, utf8);
