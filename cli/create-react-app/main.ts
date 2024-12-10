@@ -19,7 +19,8 @@ let main = async () => {
     }
     let cmds = [
         "npm install vite@latest --global",
-        `npm create vite@latest . --template react-ts`,
+        "npm install create-vite@latest --global",
+        `create-vite . --template react-ts`,
         "npm install antd --save",
         "npm install @ant-design/icons --save",
         "npm install axios --save",
