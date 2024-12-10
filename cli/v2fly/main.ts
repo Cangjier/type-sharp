@@ -54,7 +54,7 @@ let generateClientConfig = async (configPath: string) => {
         .replace("<vmess-alterId>", vmess.aid ?? "0")
         .replace("<vmess-security>", vmess.type ?? "auto")
         .replace("<streamSettings-network>", vmess.net ?? "tcp")
-        .replace("<streamSettings-grpcSettings-serviceName>", (vmess.path == undefined ? "null" : `"${vmess.sni}"`))
+        .replace("<streamSettings-grpcSettings-serviceName>", (vmess.path == undefined ? "null" : `"${vmess.path}"`))
         .replace("<streamSettings-tlsSettings-serverName>", (vmess.sni == undefined ? "null" : `"${vmess.sni}"`))
         .replace("<streamSettings-security>", vmess.tls ?? "none");
     console.log(`config=${config}`);
