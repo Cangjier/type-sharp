@@ -1,8 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  basePath:process.env.PUBLIC_URL,
-  assetPrefix:process.env.PUBLIC_URL
+  basePath: __PUBLIC_URL__,
+  assetPrefix: __PUBLIC_URL__
 };
 
 export default nextConfig;

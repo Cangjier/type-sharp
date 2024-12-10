@@ -18,12 +18,12 @@ let main = async () => {
         Directory.CreateDirectory(projectDirectory);
     }
     let cmds = [
-        "npm install create-next-app --global",
-        `create-next-app . --ts --yes`,
+        "npm install vite@latest --global",
+        `npm create vite@latest . --template react-ts`,
         "npm install antd --save",
         "npm install @ant-design/icons --save",
         "npm install axios --save",
-        "npm install react-router-dom --save"
+        // "npm install react-router-dom --save"
     ];
     for (let i = 0; i < cmds.length; i++) {
         let item = cmds[i];
@@ -33,13 +33,12 @@ let main = async () => {
             return;
         }
     }
-    let envPath = Path.Combine(projectDirectory, ".ENV");
-    File.WriteAllText(envPath, `PUBLIC_URL=${Path.GetFileName(projectDirectory)}`, utf8);
-    console.log(`.ENV file created`);
 
-    let nextConfigPath = Path.Combine(projectDirectory, "next.config.ts");
-    let nextConfigTemplatePath = Path.Combine(templateDirectory, "next.config.ts");
-    File.Copy(nextConfigTemplatePath, nextConfigPath, true);
+    // let nextConfigPath = Path.Combine(projectDirectory, "next.config.ts");
+    // let nextConfig = File.ReadAllText(nextConfigPath, utf8);
+    // nextConfig = nextConfig.replace('__PUBLIC_URL__', Path.GetFileName(projectDirectory));
+    // let nextConfigTemplatePath = Path.Combine(templateDirectory, "next.config.ts");
+    // File.WriteAllText(nextConfigTemplatePath, nextConfig, utf8);
 };
 
 await main();
