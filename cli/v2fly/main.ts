@@ -1,4 +1,4 @@
-import { args, exec, execAsync, cmd, cmdAsync, start, startCmd, copyDirectory, deleteDirectory, script_path } from "../.tsc/context";
+import { args, exec, execAsync, cmd, cmdAsync, start, startCmd, copyDirectory, deleteDirectory, script_path, env } from "../.tsc/context";
 import { Environment } from "../.tsc/System/Environment";
 import { Directory } from "../.tsc/System/IO/Directory";
 import { Path } from "../.tsc/System/IO/Path";
@@ -12,7 +12,7 @@ import { Guid } from "../.tsc/System/Guid";
 import { Convert } from "../.tsc/System/Convert";
 import { Json } from "../.tsc/TidyHPC/LiteJson/Json";
 let utf8 = new UTF8Encoding(false);
-let homeDirectory = Environment.GetEnvironmentVariable("HOME");
+let homeDirectory = env("userprofile");
 let v2flyDirectory = Path.Combine(homeDirectory, ".v2fly");
 let parameters = {} as { [key: string]: string };
 for (let i = 0; i < args.length; i++) {
