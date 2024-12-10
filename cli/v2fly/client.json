@@ -35,7 +35,8 @@
         },
         "security": "<streamSettings-security>",
         "tlsSettings": {
-          "serverName": <streamSettings-tlsSettings-serverName>
+          "serverName": <streamSettings-tlsSettings-serverName>,
+          "allowInsecure":true
         },
         "wsSettings": null
       }
