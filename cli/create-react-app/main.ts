@@ -39,9 +39,9 @@ let main = async () => {
     File.WriteAllText(envPath, `PUBLIC_URL=${Path.GetFileName(projectDirectory)}`, utf8);
     console.log(`.ENV file created`);
 
-    let indexTsPath = Path.Combine(projectDirectory, "src", "index.tsx");
-    let indexTsTemplatePath = Path.Combine(templateDirectory, "index.tsx");
-    File.Copy(indexTsTemplatePath, indexTsPath, true);
+    let mainTsPath = Path.Combine(projectDirectory, "src", "main.tsx");
+    let mainTsTemplatePath = Path.Combine(templateDirectory, "main.tsx");
+    File.Copy(mainTsTemplatePath, mainTsPath, true);
 };
 
 await main();
