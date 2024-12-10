@@ -134,16 +134,9 @@ let main = async () => {
         programPath = Path.Combine(v2flyDirectory, programId);
     }
     if (File.Exists(programPath) == false) {
+        axios.setDefaultProxy();
         let linuxUrl = "https://github.com/v2fly/v2ray-core/releases/download/v5.19.0/v2ray-linux-64.zip";
         let windowsUrl = "https://github.com/v2fly/v2ray-core/releases/download/v5.19.0/v2ray-windows-64.zip";
-        let gitHttpProxyResult = await cmdAsync(Environment.CurrentDirectory, "git config http.proxy");
-        if (gitHttpProxyResult.output && gitHttpProxyResult.output.length > 0) {
-            let proxy = gitHttpProxyResult.output.trim();
-            if (proxy.length > 0) {
-                console.log(`use proxy: ${proxy}`);
-                axios.setProxy(proxy);
-            }
-        }
         // 根据平台自动下载
         let zipPath = Path.Combine(v2flyDirectory, `${programId}.zip`);
         if (File.Exists(zipPath) == false) {
