@@ -18,7 +18,6 @@ let main = async () => {
         Directory.CreateDirectory(projectDirectory);
     }
     let cmds = [
-        "npm install vite@latest --global",
         "npm install create-vite@latest --global",
         `create-vite . --template react-ts`,
         "npm install antd --save",
