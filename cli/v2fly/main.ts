@@ -14,6 +14,9 @@ import { Json } from "../.tsc/TidyHPC/LiteJson/Json";
 let utf8 = new UTF8Encoding(false);
 let homeDirectory = env("userprofile");
 let v2flyDirectory = Path.Combine(homeDirectory, ".v2fly");
+if(Directory.Exists(v2flyDirectory)==false){
+    Directory.CreateDirectory(v2flyDirectory);
+}
 let parameters = {} as { [key: string]: string };
 for (let i = 0; i < args.length; i++) {
     let arg = args[i];
