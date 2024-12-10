@@ -1,0 +1,14 @@
+{
+    "v": "2",
+    "ps": "\u9999\u6e2f 01 | \u4e13\u7ebf",
+    "add": "hk01.653ebeeb-5f60-4be5-958d-7bf4839cdccd.ef6616fd-5b06-482f-9d64-183745659cbf.byteprivatelink.com",
+    "port": "443",
+    "id": "828b669b-1c35-4a9e-8efc-5afc01c8cf64",
+    "aid": "0",
+    "net": "grpc",
+    "type": "none",
+    "host": "",
+    "path": "12306",
+    "tls": "tls",
+    "sni": "www.12306.cn"
+}
