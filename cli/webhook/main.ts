@@ -274,7 +274,7 @@ let GitManager = () => {
 
 let gitManager = GitManager();
 
-let NodeJsManager = () => {
+let CreateReactAppManager = () => {
     let isNodeJs = (tempDirectory: string) => {
         // 判断是否存在package.json
         let packageJsonPath = Path.Combine(tempDirectory, "package.json");
@@ -339,7 +339,66 @@ REACT_APP_BUILD_TIME=${DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}`;
     };
 };
 
-let nodeJsManager = NodeJsManager();
+let createReactAppManager = CreateReactAppManager();
+
+let CreateViteAppManager = () => {
+    let is = (tempDirectory: string) => {
+        // 判断是否存在vite.config.ts
+        let viteConfigJSPath = Path.Combine(tempDirectory, "vite.config.ts");
+        if (!Path.Exists(viteConfigJSPath)) {
+            console.log(`No vite.config.ts, the project is not a vite project`);
+            return false;
+        }
+        return true;
+    };
+    let build = async (tempDirectory: string, repo: string) => {
+        // 设置镜像源
+        // npm config set registry https://mirrors.cloud.tencent.com/npm/
+        console.log(`npm config set registry https://mirrors.cloud.tencent.com/npm/`);
+        if ((await cmdAsync(tempDirectory, `npm config set registry https://mirrors.cloud.tencent.com/npm/`)).exitCode != 0) {
+            console.log(`npm config set registry https://mirrors.cloud.tencent.com/npm/ failed`);
+            Directory.Delete(tempDirectory, true);
+            return;
+        }
+        // 下一步，使用npm install安装依赖
+        console.log(`npm install`);
+        if ((await cmdAsync(tempDirectory, `npm install`)).exitCode != 0) {
+            console.log(`npm install failed, delete temp directory: ${tempDirectory}`);
+            Directory.Delete(tempDirectory, true);
+            return;
+        }
+        // 在.env文件中设置VITE_PUBLIC_URL为/repo
+        console.log(`Set VITE_PUBLIC_URL=/${repo}`);
+        let envFile = Path.Combine(tempDirectory, ".env");
+        let envContent = `VITE_PUBLIC_URL=/${repo}
+GENERATE_SOURCEMAP=false
+VITE_APP_BUILD_TIME=${DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}`;
+        console.log(envContent);
+        File.WriteAllText(envFile, envContent, utf8);
+
+        // 下一步，使用npm run build打包
+        console.log(`npm run build`);
+        if ((await cmdAsync(tempDirectory, `npm run build`)).exitCode != 0) {
+            console.log(`npm run build failed, delete temp directory: ${tempDirectory}`);
+            Directory.Delete(tempDirectory, true);
+            return;
+        }
+        // 下一步，将打包后的文件复制到指定目录
+        let destDirectory = Path.Combine(staticFrontPath, repo);
+        console.log(`Copy to ${destDirectory}`);
+        if (Directory.Exists(destDirectory)) {
+            Directory.Delete(destDirectory, true);
+        }
+        copyDirectory(Path.Combine(tempDirectory, "dist"), destDirectory);
+        console.log(`Deploy success`);
+    };
+    return {
+        is,
+        build
+    };
+};
+
+let createViteAppManager = CreateViteAppManager();
 
 let DotNetManager = () => {
     let isDotNet = (tempDirectory: string) => {
@@ -719,8 +778,11 @@ let webhook = async (session: Session) => {
         console.log(`Increase tag failed`);
         return;
     }
-    if (nodeJsManager.isNodeJs(tempDirectory)) {
-        await nodeJsManager.build(tempDirectory, repo);
+    if (createViteAppManager.is(tempDirectory)) {
+        await createViteAppManager.build(tempDirectory, repo);
+    }
+    else if (createReactAppManager.isNodeJs(tempDirectory)) {
+        await createReactAppManager.build(tempDirectory, repo);
     }
     else if (dotNetManager.isDotNet(tempDirectory)) {
         await dotNetManager.build(tempDirectory, repo, tagResult.tag.substring(1), cloneUrl);

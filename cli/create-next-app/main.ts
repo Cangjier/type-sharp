@@ -18,13 +18,13 @@ let main = async () => {
         Directory.CreateDirectory(projectDirectory);
     }
     let cmds = [
-        "npm install vite@latest --global",
-        "npm install create-vite@latest --global",
-        `create-vite . --template react-ts`,
+        "npm install create-next-app@latest --global",
+        `create-next-app . --template react-ts`,
         "npm install antd --save",
         "npm install @ant-design/icons --save",
         "npm install axios --save",
-        "npm install react-router-dom --save"
+        "npm install react-router-dom --save",
+        "npm i --save-dev @types/node"
     ];
     for (let i = 0; i < cmds.length; i++) {
         let item = cmds[i];
@@ -34,7 +34,7 @@ let main = async () => {
             return;
         }
     }
-    
+
     let envPath = Path.Combine(projectDirectory, ".ENV");
     File.WriteAllText(envPath, `PUBLIC_URL=${Path.GetFileName(projectDirectory)}`, utf8);
     console.log(`.ENV file created`);
