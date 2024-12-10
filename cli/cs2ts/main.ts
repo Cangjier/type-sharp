@@ -1010,7 +1010,7 @@ let main = () => {
     if (args.length == 0) {
         exportInitialTypes([
             "(System\\.(Guid|DateTime|TimeSpan)$)",
-            "(System\\.IO\\.(Path|Directory|File|SearchOption|EnumerationOptions)$)",
+            "(System\\.IO\\.(Path|Directory|File|SearchOption|EnumerationOptions|FileStream)$)",
             "(System\\.Threading\\.Tasks\\.(Task|TaskCompletionSource)$)",
             "(System\\.Text\\.(UTF8Encoding|Encoding)$)",
             "(System\\.Text\\.RegularExpressions\\.(Regex|RegexOptions|Match|MatchCollection|GroupCollection|Group)$)",
