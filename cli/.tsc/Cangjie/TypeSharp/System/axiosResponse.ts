@@ -1,3 +1,4 @@
+import { String } from "../../../System/String";
 import { HttpResponseMessage } from "../../../System/Net/Http/HttpResponseMessage";
 import { axiosConfig } from "./axiosConfig";
 import { Type } from "../../../System/Type";

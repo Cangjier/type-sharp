@@ -1,3 +1,5 @@
+import { Int32 } from "../../../System/Int32";
+import { Byte } from "../../../System/Byte";
 import { Type } from "../../../System/Type";
 export class AuthorityGroup {
     public Mix(authorityGroup?: AuthorityGroup): void {

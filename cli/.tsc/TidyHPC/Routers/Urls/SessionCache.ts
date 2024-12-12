@@ -1,5 +1,7 @@
 import { GroupCollection } from "../../../System/Text/RegularExpressions/GroupCollection";
 import { UrlFilterStatus } from "./Responses/UrlFilterStatus";
+import { String } from "../../../System/String";
+import { Object } from "../../../System/Object";
 import { Type } from "../../../System/Type";
 import { Session } from "./Session";
 export class SessionCache {

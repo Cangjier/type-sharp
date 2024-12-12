@@ -1,7 +1,9 @@
 import { ArrayGuidInterface } from "./ArrayGuidInterface";
+import { Boolean } from "../../../System/Boolean";
 import { Guid } from "../../../System/Guid";
 import { Type } from "../../../System/Type";
 import { Database } from "../../../TidyHPC/LiteDB/Database";
+import { Task } from "../../../System/Threading/Tasks/Task";
 export class ArrayGuidVisitor {
     public ForeachArray(action?: ((arg0?:ArrayGuidInterface)=>void) | ((arg0?:ArrayGuidInterface)=>boolean)): Promise<void> {
         return {} as any;

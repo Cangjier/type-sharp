@@ -1,4 +1,6 @@
 import { Object } from "../../System/Object";
+import { Json } from "./Json";
+import { Int32 } from "../../System/Int32";
 import { Type } from "../../System/Type";
 export class ArrayWrapper {
     public Add(value?: any): any[] {

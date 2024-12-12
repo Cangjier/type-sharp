@@ -1,6 +1,7 @@
 import { Guid } from "../../../System/Guid";
 import { ObjectInterface } from "../../../TidyHPC/LiteDB/ObjectInterface";
 import { Database } from "../../../TidyHPC/LiteDB/Database";
+import { Task } from "../../../System/Threading/Tasks/Task";
 import { Type } from "../../../System/Type";
 export class DataNodeInterface {
     public Update(database?: Database): Promise<void> {

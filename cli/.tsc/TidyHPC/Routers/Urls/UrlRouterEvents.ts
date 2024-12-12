@@ -1,4 +1,8 @@
 import { UrlRouter } from "./UrlRouter";
+import { String } from "../../../System/String";
+import { Session } from "./Session";
+import { Task } from "../../../System/Threading/Tasks/Task";
+import { Json } from "../../LiteJson/Json";
 import { Type } from "../../../System/Type";
 export class UrlRouterEvents {
     public GetType(): Type {

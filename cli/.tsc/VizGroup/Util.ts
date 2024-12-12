@@ -1,3 +1,4 @@
+import { Task } from "../System/Threading/Tasks/Task";
 import { UTF8Encoding } from "../System/Text/UTF8Encoding";
 import { TimeSpan } from "../System/TimeSpan";
 import { Type } from "../System/Type";

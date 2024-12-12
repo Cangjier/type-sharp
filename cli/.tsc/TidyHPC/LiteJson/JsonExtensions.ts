@@ -1,6 +1,7 @@
 import { JsonNode } from "../../System/Text/Json/Nodes/JsonNode";
 import { Json } from "./Json";
 import { JsonPath } from "./JsonPath";
+import { Task } from "../../System/Threading/Tasks/Task";
 import { Type } from "../../System/Type";
 export class JsonExtensions {
     public GetType(): Type {

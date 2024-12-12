@@ -1,3 +1,4 @@
+import { String } from "../../../System/String";
 import { Type } from "../../../System/Type";
 export class FullName {
     public ToString(): string {

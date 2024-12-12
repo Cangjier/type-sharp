@@ -1,3 +1,4 @@
+import { String } from "../../../System/String";
 import { Regex } from "../../../System/Text/RegularExpressions/Regex";
 import { Type } from "../../../System/Type";
 export class fileUtils {

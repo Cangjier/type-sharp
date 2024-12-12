@@ -1,5 +1,6 @@
 import { HttpRequestMessage } from "../../../System/Net/Http/HttpRequestMessage";
 import { Type } from "../../../System/Type";
+import { String } from "../../../System/String";
 export class axiosConfig {
     public static op_Implicit(target?: any): axiosConfig {
         return {} as any;

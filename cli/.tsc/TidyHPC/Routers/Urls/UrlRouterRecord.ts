@@ -1,4 +1,6 @@
 import { Regex } from "../../../System/Text/RegularExpressions/Regex";
+import { Session } from "./Session";
+import { Task } from "../../../System/Threading/Tasks/Task";
 import { Type } from "../../../System/Type";
 export class UrlRouterRecord {
     public ToString(): string {

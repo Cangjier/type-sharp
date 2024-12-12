@@ -1,6 +1,9 @@
+import { AssemblyName } from "./Reflection/AssemblyName";
+import { Assembly } from "./Reflection/Assembly";
+import { String } from "./String";
+import { Boolean } from "./Boolean";
 import { RuntimeTypeHandle } from "./RuntimeTypeHandle";
 import { MemberTypes } from "./Reflection/MemberTypes";
-import { Assembly } from "./Reflection/Assembly";
 import { Module } from "./Reflection/Module";
 import { MethodBase } from "./Reflection/MethodBase";
 import { GenericParameterAttributes } from "./Reflection/GenericParameterAttributes";

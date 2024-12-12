@@ -1,5 +1,9 @@
+import { ArgsVisitor } from "./ArgsVisitor";
+import { Task } from "../../../System/Threading/Tasks/Task";
 import { Type } from "../../../System/Type";
+import { Object } from "../../../System/Object";
 import { MethodInfo } from "../../../System/Reflection/MethodInfo";
+import { String } from "../../../System/String";
 import { Delegate } from "../../../System/Delegate";
 export class ArgsRouter {
     public RegisterNative(commandPattern_or_handler?: string | ((arg0?:ArgsVisitor)=>Promise<void>), handler?: ((arg0?:ArgsVisitor)=>Promise<void>)): void {

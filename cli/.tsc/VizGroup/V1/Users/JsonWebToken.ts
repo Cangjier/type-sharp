@@ -1,5 +1,7 @@
 import { User } from "./JsonWebToken+User";
 import { TimeSpan } from "../../../System/TimeSpan";
+import { AuthorityGroup } from "../Authorities/AuthorityGroup";
+import { Boolean } from "../../../System/Boolean";
 import { Type } from "../../../System/Type";
 export class JsonWebToken {
     public GenerateToken(user?: User, expiration?: TimeSpan): string {

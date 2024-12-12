@@ -3,8 +3,10 @@ import { Stream } from "../../System/IO/Stream";
 import { ObjectWrapper } from "./ObjectWrapper";
 import { ArrayWrapper } from "./ArrayWrapper";
 import { Int32 } from "../../System/Int32";
+import { Boolean } from "../../System/Boolean";
 import { String } from "../../System/String";
 import { JsonNode } from "../../System/Text/Json/Nodes/JsonNode";
+import { Object } from "../../System/Object";
 import { JsonElement } from "../../System/Text/Json/JsonElement";
 import { SByte } from "../../System/SByte";
 import { Int16 } from "../../System/Int16";
@@ -13,7 +15,6 @@ import { DateTime } from "../../System/DateTime";
 import { TimeSpan } from "../../System/TimeSpan";
 import { Guid } from "../../System/Guid";
 import { Type } from "../../System/Type";
-import { Object } from "../../System/Object";
 import { Exception } from "../../System/Exception";
 export class Json {
     public GetValueKind(): JsonValueKind {
@@ -40,7 +41,7 @@ export class Json {
     public AssertObject(onObject?: ((arg0?:ObjectWrapper)=>void)): void {
         return {} as any;
     }
-    public AssertArray(onArray?: ((arg0?:ArrayWrapper)=>void)): void {
+    public AssertArray(onArray?: ((arg0?:any[])=>void)): void {
         return {} as any;
     }
     public Dispose(): void {

@@ -1,4 +1,6 @@
 import { processConfig } from "./processConfig";
+import { String } from "../../../System/String";
+import { Boolean } from "../../../System/Boolean";
 import { Type } from "../../../System/Type";
 import { Process } from "../../../System/Diagnostics/Process";
 export class shell {

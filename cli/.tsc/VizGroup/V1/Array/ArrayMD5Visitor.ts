@@ -1,8 +1,10 @@
 import { ArrayMD5Interface } from "./ArrayMD5Interface";
+import { Boolean } from "../../../System/Boolean";
 import { String } from "../../../System/String";
 import { Type } from "../../../System/Type";
 import { Database } from "../../../TidyHPC/LiteDB/Database";
 import { Guid } from "../../../System/Guid";
+import { Task } from "../../../System/Threading/Tasks/Task";
 export class ArrayMD5Visitor {
     public ForeachArray(action?: ((arg0?:ArrayMD5Interface)=>void) | ((arg0?:ArrayMD5Interface)=>boolean)): Promise<void> {
         return {} as any;

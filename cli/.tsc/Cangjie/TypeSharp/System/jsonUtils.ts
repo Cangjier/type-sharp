@@ -1,3 +1,4 @@
+import { Json } from "../../../TidyHPC/LiteJson/Json";
 import { Type } from "../../../System/Type";
 export class jsonUtils {
     public GetType(): Type {

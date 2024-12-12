@@ -1,3 +1,4 @@
+import { Field } from "./Metas/Field";
 import { FieldType } from "./Metas/FieldType";
 import { FieldMapType } from "./Metas/FieldMapType";
 import { ObjectInterface } from "./ObjectInterface";

@@ -1,3 +1,4 @@
+import { Authority } from "./Authority";
 import { AuthorityGroup } from "./AuthorityGroup";
 import { Type } from "../../../System/Type";
 export class AuthorityService {

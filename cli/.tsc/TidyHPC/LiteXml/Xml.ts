@@ -1,6 +1,7 @@
 import { XmlNode } from "../../System/Xml/XmlNode";
 import { XmlDocument } from "../../System/Xml/XmlDocument";
 import { XmlElement } from "../../System/Xml/XmlElement";
+import { Boolean } from "../../System/Boolean";
 import { XmlAttribute } from "../../System/Xml/XmlAttribute";
 import { XmlText } from "../../System/Xml/XmlText";
 import { XmlCDataSection } from "../../System/Xml/XmlCDataSection";

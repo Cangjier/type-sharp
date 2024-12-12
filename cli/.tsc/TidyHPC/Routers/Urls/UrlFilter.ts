@@ -1,5 +1,8 @@
 import { UrlRouter } from "./UrlRouter";
 import { MethodInfo } from "../../../System/Reflection/MethodInfo";
+import { String } from "../../../System/String";
+import { Object } from "../../../System/Object";
+import { Task } from "../../../System/Threading/Tasks/Task";
 import { Type } from "../../../System/Type";
 export class UrlFilter {
     public Register(order?: number, method_or_urlPatterns?: MethodInfo | string[], onPattern_or_method_or_func?: (()=>string) | MethodInfo | (()=>Promise<FilterResult>) | null, onInstance?: (()=>any)): void {

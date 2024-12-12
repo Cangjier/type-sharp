@@ -2,7 +2,9 @@ import { Guid } from "../../../System/Guid";
 import { ObjectInterface } from "../../../TidyHPC/LiteDB/ObjectInterface";
 import { NodeInstanceInterface } from "./NodeInstanceInterface";
 import { Database } from "../../../TidyHPC/LiteDB/Database";
+import { Task } from "../../../System/Threading/Tasks/Task";
 import { Version } from "../../../System/Version";
+import { String } from "../../../System/String";
 import { Type } from "../../../System/Type";
 export class NodeInterface {
     public CreateInstance(database?: Database, onCreate_or_version_or_attributes?: ((arg0?:NodeInstanceInterface)=>Promise<void>) | Version | { [key: string]: string }, attributes?: { [key: string]: string }, dataUris?: string[]): Promise<NodeInstanceInterface> {

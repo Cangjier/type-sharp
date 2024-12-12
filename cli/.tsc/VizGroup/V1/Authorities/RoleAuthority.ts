@@ -1,3 +1,5 @@
+import { Byte } from "../../../System/Byte";
+import { String } from "../../../System/String";
 import { Type } from "../../../System/Type";
 export class RoleAuthority {
     public HasFlag(authorityBase64?: string, flag?: number): boolean {

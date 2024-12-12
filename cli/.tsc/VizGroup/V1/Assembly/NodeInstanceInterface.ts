@@ -6,6 +6,7 @@ import { ComponentInterface } from "./ComponentInterface";
 import { DataNodeInterface } from "./DataNodeInterface";
 import { AttributeInterface } from "./AttributeInterface";
 import { ReferenceInterface } from "./ReferenceInterface";
+import { String } from "../../../System/String";
 import { Type } from "../../../System/Type";
 export class NodeInstanceInterface {
     public GetComponentsCount(database?: Database): Promise<number> {
