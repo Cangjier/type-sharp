@@ -111,6 +111,26 @@ let getFuncTypeAlias = (fullName: FullName) => {
         data: `((${parameterTypes})=>${returnTypeAlias.data})`,
         toImport: toImport
     }
+};
+let isActionType = (fullName: FullName) => {
+    return fullName.TypeName == "Action";
+};
+let getActionTypeAlias = (fullName: FullName) => {
+    let toImport = [] as Type[];
+    let genericTypeFullNames = fullName.GenericTypes;
+    let parameters = genericTypeFullNames.map(p => getTypeAlias(p.ToString()));
+    let parameterIndex = 0;
+    let parameterTypes = parameters.map(p => p.success ? `arg${parameterIndex++}?:${p.data}` : `arg${parameterIndex++}?:any`).join(", ");
+    for (let genericTypeFullName of genericTypeFullNames) {
+        let genericType = reflection.getType(genericTypeFullName.ToString());
+        if (genericType) {
+            toImport.push(genericType);
+        }
+    }
+    return {
+        data: `((${parameterTypes})=>void)`,
+        toImport: toImport
+    }
 }
 let isListType = (fullName: FullName) => {
     return fullName.TypeName == "List";
@@ -217,6 +237,15 @@ getTypeAlias = (typeFullName: string) => {
     }
     else if (isFuncType(fullName)) {
         let subTypeAlias = getFuncTypeAlias(fullName);
+        return {
+            success: true,
+            data: subTypeAlias.data,
+            containsAlias: true,
+            toImport: subTypeAlias.toImport
+        };
+    }
+    else if (isActionType(fullName)) {
+        let subTypeAlias = getActionTypeAlias(fullName);
         return {
             success: true,
             data: subTypeAlias.data,
@@ -955,7 +984,7 @@ let exportTypesByFileImports = (path: string) => {
 };
 
 let exportInitialTypes = (typeNameRegex: string, membersTypeNameRegex: string) => {
-    
+
     let rootDirectory = Directory.GetCurrentDirectory();
     let types = reflection.getTypes(typeNameRegex).filter(type => isValidTypeName(type.FullName));
     let memberTypes = reflection.getTypes(membersTypeNameRegex).filter(type => isValidTypeName(type.FullName));
