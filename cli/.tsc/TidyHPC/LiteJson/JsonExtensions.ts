@@ -1,4 +1,5 @@
 import { JsonNode } from "../../System/Text/Json/Nodes/JsonNode";
+import { Json } from "./Json";
 import { JsonPath } from "./JsonPath";
 import { Type } from "../../System/Type";
 export class JsonExtensions {

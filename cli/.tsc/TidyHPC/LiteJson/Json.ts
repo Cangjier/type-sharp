@@ -1,5 +1,9 @@
 import { JsonValueKind } from "../../System/Text/Json/JsonValueKind";
 import { Stream } from "../../System/IO/Stream";
+import { ObjectWrapper } from "./ObjectWrapper";
+import { ArrayWrapper } from "./ArrayWrapper";
+import { Int32 } from "../../System/Int32";
+import { String } from "../../System/String";
 import { JsonNode } from "../../System/Text/Json/Nodes/JsonNode";
 import { JsonElement } from "../../System/Text/Json/JsonElement";
 import { SByte } from "../../System/SByte";
@@ -9,8 +13,8 @@ import { DateTime } from "../../System/DateTime";
 import { TimeSpan } from "../../System/TimeSpan";
 import { Guid } from "../../System/Guid";
 import { Type } from "../../System/Type";
-import { KeyValuePair`2 } from "../../System/Collections/Generic/KeyValuePair`2[[System/String, System/Private/CoreLib, Version=8/0/0/0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System/Object, System/Private/CoreLib, Version=8/0/0/0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]";
 import { Object } from "../../System/Object";
+import { Exception } from "../../System/Exception";
 export class Json {
     public GetValueKind(): JsonValueKind {
         return {} as any;
@@ -272,7 +276,7 @@ export class Json {
     public get IsObject(): boolean {
         return {} as any;
     }
-    public get AsObject(): System.Collections.Generic.KeyValuePair`2[System.String,System.Object][] {
+    public get AsObject(): ObjectWrapper {
         return {} as any;
     }
     public get IsArray(): boolean {

@@ -1,5 +1,6 @@
 import { StatisticalBlock } from "./StatisticalBlock";
 import { Database } from "../Database";
+import { Int32 } from "../../../System/Int32";
 import { Type } from "../../../System/Type";
 export class UsedCountVisitor {
     public Read(table?: Database, onBuffer?: ((arg0?:number)=>void)): Promise<void> {

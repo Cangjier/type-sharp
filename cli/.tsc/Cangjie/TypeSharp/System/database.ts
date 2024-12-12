@@ -1,4 +1,5 @@
 import { databaseInterface } from "./databaseInterface";
+import { RecordIndex } from "../../../TidyHPC/LiteDB/RecordIndex";
 import { Guid } from "../../../System/Guid";
 import { Type } from "../../../System/Type";
 import { Database } from "../../../TidyHPC/LiteDB/Database";
@@ -6,7 +7,7 @@ export class database {
     public register(objectInterface?: databaseInterface): Promise<void> {
         return {} as any;
     }
-    public insert(interfaceName?: string, record?: any): Promise<void> {
+    public insert(interfaceName?: string, record?: any): Promise<RecordIndex> {
         return {} as any;
     }
     public findByMaster(interfaceName?: string, id?: Guid): Promise<any> {

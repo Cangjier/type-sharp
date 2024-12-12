@@ -1,5 +1,6 @@
 import { Block } from "./Block";
 import { Database } from "../Database";
+import { Byte } from "../../../System/Byte";
 import { Type } from "../../../System/Type";
 export class RecordRegionVisitor {
     public Read(table?: Database, onBuffer?: ((arg0?:number[])=>void) | ((arg0?:number[])=>Promise<void>)): Promise<void> {

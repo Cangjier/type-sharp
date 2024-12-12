@@ -80,7 +80,7 @@ let getTaskTypeAias = (fullName: FullName) => {
     }
     let result = {
         data: `Promise<${alias.data}>`,
-        toImport: (alias.containsAlias ? [] : [reflection.getType(`${genericType.NameSpace}.${genericType.TypeName}`)])
+        toImport: (alias.containsAlias ? [] : [reflection.getTypeByFullName(genericType)])
     };
     return result;
 };
@@ -102,7 +102,7 @@ let getFuncTypeAlias = (fullName: FullName) => {
     let parameterIndex = 0;
     let parameterTypes = parameters.map(p => p.success ? `arg${parameterIndex++}?:${p.data}` : `arg${parameterIndex++}?:any`).join(", ");
     for (let genericTypeFullName of genericTypeFullNames) {
-        let genericType = reflection.getType(genericTypeFullName.ToString());
+        let genericType = reflection.getTypeByFullName(genericTypeFullName);
         if (genericType) {
             toImport.push(genericType);
         }
@@ -122,11 +122,12 @@ let getActionTypeAlias = (fullName: FullName) => {
     let parameterIndex = 0;
     let parameterTypes = parameters.map(p => p.success ? `arg${parameterIndex++}?:${p.data}` : `arg${parameterIndex++}?:any`).join(", ");
     for (let genericTypeFullName of genericTypeFullNames) {
-        let genericType = reflection.getType(genericTypeFullName.ToString());
+        let genericType = reflection.getTypeByFullName(genericTypeFullName);
         if (genericType) {
             toImport.push(genericType);
         }
     }
+
     return {
         data: `((${parameterTypes})=>void)`,
         toImport: toImport
@@ -139,7 +140,7 @@ let getListTypeAlias = (fullName: FullName) => {
     let toImport = [] as Type[];
     let genericTypeFullName = fullName.GenericTypes[0];
     let alias = getTypeAlias(genericTypeFullName.ToString());
-    let genericType = reflection.getType(genericTypeFullName.ToString());
+    let genericType = reflection.getTypeByFullName(genericTypeFullName);
     if (genericType) {
         toImport.push(genericType);
     }
@@ -163,7 +164,7 @@ let getDictionaryTypeAlias = (fullName: FullName) => {
     let keyTypeAlias = getTypeAlias(genericTypeFullNames[0].ToString());
     let valueTypeAlias = getTypeAlias(genericTypeFullNames[1].ToString());
     for (let genericTypeFullName of genericTypeFullNames) {
-        let genericType = reflection.getType(genericTypeFullName.ToString());
+        let genericType = reflection.getTypeByFullName(genericTypeFullName);
         if (genericType) {
             toImport.push(genericType);
         }
@@ -181,11 +182,18 @@ let getDictionaryTypeAlias = (fullName: FullName) => {
 }
 let isEnumarableAndImplicitFromJson = (fullName: FullName) => {
     try {
-        let type = reflection.getType(fullName.ToString());
+        let type = reflection.getTypeByFullName(fullName);
         if (reflection.isImplicitFromJson(type) == false) {
             return false;
         }
-        return reflection.getEnumarables(type).length > 0;
+        let enumarables = reflection.getEnumarables(type);
+        if (enumarables.length == 0) {
+            return false;
+        }
+        if (enumarables.find(item => item.FullName.includes('`'))) {
+            return false;
+        }
+        return true;
     }
     catch {
         return false;
@@ -193,7 +201,7 @@ let isEnumarableAndImplicitFromJson = (fullName: FullName) => {
 };
 let getEnumarableTypeAlias = (fullName: FullName) => {
     let toImport = [] as Type[];
-    let type = reflection.getType(fullName.ToString());
+    let type = reflection.getTypeByFullName(fullName);
     let enumarables = reflection.getEnumarables(type);
     enumarables.forEach(item => {
         toImport.push(item);
@@ -211,6 +219,7 @@ let getEnumarableTypeAlias = (fullName: FullName) => {
     };
 };
 getTypeAlias = (typeFullName: string) => {
+    let debug = false;
     if (typeFullName.includes("&") || typeFullName.includes("*")) {
         return {
             success: false,
@@ -227,6 +236,7 @@ getTypeAlias = (typeFullName: string) => {
         throw `typeFullName=${typeFullName}`;
     }
     if (isTaskType(fullName)) {
+        if (debug) console.log("isTaskType", fullName);
         let taskTypeAlias = getTaskTypeAias(fullName);
         return {
             success: true,
@@ -236,6 +246,7 @@ getTypeAlias = (typeFullName: string) => {
         };
     }
     else if (isFuncType(fullName)) {
+        if (debug) console.log("isFuncType", fullName);
         let subTypeAlias = getFuncTypeAlias(fullName);
         return {
             success: true,
@@ -245,6 +256,7 @@ getTypeAlias = (typeFullName: string) => {
         };
     }
     else if (isActionType(fullName)) {
+        if (debug) console.log("isActionType", fullName);
         let subTypeAlias = getActionTypeAlias(fullName);
         return {
             success: true,
@@ -254,6 +266,7 @@ getTypeAlias = (typeFullName: string) => {
         };
     }
     else if (isListType(fullName)) {
+        if (debug) console.log("isListType", fullName);
         let subTypeAlias = getListTypeAlias(fullName);
         return {
             success: true,
@@ -263,6 +276,7 @@ getTypeAlias = (typeFullName: string) => {
         };
     }
     else if (isDicttionary(fullName)) {
+        if (debug) console.log("isDicttionary", fullName);
         let subTypeAlias = getDictionaryTypeAlias(fullName);
         return {
             success: true,
@@ -272,6 +286,7 @@ getTypeAlias = (typeFullName: string) => {
         };
     }
     else if (isEnumarableAndImplicitFromJson(fullName)) {
+        if (debug) console.log("isEnumarableAndImplicitFromJson", fullName);
         let subTypeAlias = getEnumarableTypeAlias(fullName);
         return {
             success: true,
@@ -281,6 +296,7 @@ getTypeAlias = (typeFullName: string) => {
         };
     }
     else if (typeFullName.includes("`") || typeFullName.includes("&") || typeFullName.includes("*")) {
+        if (debug) console.log("is: `&*", fullName);
         return {
             success: false,
             data: typeFullName,
@@ -288,6 +304,7 @@ getTypeAlias = (typeFullName: string) => {
         };
     }
     else if (fullName.IsArray) {
+        if (debug) console.log("IsArray", fullName);
         if (typeAlias[fullName.TypeName] != null && typeAlias[fullName.TypeName] != undefined) {
             return {
                 success: true,
@@ -304,6 +321,7 @@ getTypeAlias = (typeFullName: string) => {
         }
     }
     else if (typeAlias[fullName.TypeName] != null && typeAlias[fullName.TypeName] != undefined) {
+        if (debug) console.log("typeAlias", fullName);
         return {
             success: true,
             data: typeAlias[fullName.TypeName],
@@ -311,6 +329,7 @@ getTypeAlias = (typeFullName: string) => {
         };
     }
     else {
+        if (debug) console.log("else", fullName);
         return {
             success: true,
             data: fullName.TypeName,
@@ -597,6 +616,7 @@ let exportClass = (type: Type) => {
             // lines.push(`    public ${member.Name}: ${getTypeAlias((member as FieldInfo).FieldType.FullName).data};`);
         }
         else if (member.MemberType == "Method") {
+
             let method = member as MethodInfo;
             if (member.Name.startsWith("get_")) {
                 let propertyName = member.Name.substring(4);
@@ -606,33 +626,28 @@ let exportClass = (type: Type) => {
                         properties[propertyName].isGet = true;
                     }
                     else {
+                        let propertyTypeAlias = getTypeAlias(method.ReturnType.FullName);
                         properties[propertyName] = {
-                            type: getTypeAlias(method.ReturnType.FullName).data,
+                            type: (propertyTypeAlias.success ? propertyTypeAlias.data : "any"),
                             isStatic: true,
                             isGet: true,
                             isSet: false
                         };
                     }
-                    // lines.push(`    public static get ${member.Name.substring(4)}(): ${getTypeAlias(method.ReturnType.FullName).data} {`);
-                    // lines.push(`        return {} as any;`);
-                    // lines.push(`    }`);
                 }
                 else {
-
                     if (properties[propertyName]) {
                         properties[propertyName].isGet = true;
                     }
                     else {
+                        let propertyTypeAlias = getTypeAlias(method.ReturnType.FullName);
                         properties[propertyName] = {
-                            type: getTypeAlias(method.ReturnType.FullName).data,
+                            type: (propertyTypeAlias.success ? propertyTypeAlias.data : "any"),
                             isStatic: false,
                             isGet: true,
                             isSet: false
                         };
                     }
-                    // lines.push(`    public get ${member.Name.substring(4)}(): ${getTypeAlias(method.ReturnType.FullName).data} {`);
-                    // lines.push(`        return {} as any;`);
-                    // lines.push(`    }`);
                 }
                 return;
             }
@@ -1035,6 +1050,7 @@ let help = () => {
 };
 
 let main = () => {
+    reflection.loadDependiencies(2);
     console.log(`args:${args}`);
     if (args.length == 0) {
         exportInitialTypes([

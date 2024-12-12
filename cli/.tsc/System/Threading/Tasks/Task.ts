@@ -11,6 +11,7 @@ import { TimeSpan } from "../../TimeSpan";
 import { CancellationToken } from "../CancellationToken";
 import { TimeProvider } from "../../TimeProvider";
 import { TaskContinuationOptions } from "./TaskContinuationOptions";
+import { Object } from "../../Object";
 import { Exception } from "../../Exception";
 import { Type } from "../../Type";
 export class Task {

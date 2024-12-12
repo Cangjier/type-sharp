@@ -27,4 +27,7 @@ export class fileUtils {
     public static writeLineWithShare(path?: string, content?: string): void {
         return {} as any;
     }
+    public static isFileLocked(path?: string): boolean {
+        return {} as any;
+    }
 }

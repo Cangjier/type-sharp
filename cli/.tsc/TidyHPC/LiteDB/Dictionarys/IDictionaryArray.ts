@@ -1,3 +1,4 @@
+import { Int64 } from "../../../System/Int64";
 export class IDictionaryArray {
     public Add(key?: any, value?: number): Promise<void> {
         return {} as any;

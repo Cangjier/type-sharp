@@ -1,4 +1,5 @@
 import { TaskService } from "../TaskService";
+import { PluginInterface } from "./PluginInterface";
 import { Type } from "../../../../System/Type";
 export class PluginCollection {
     public ReloadPlugins(): void {

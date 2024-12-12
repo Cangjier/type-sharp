@@ -1,5 +1,6 @@
 import { Debugger } from "./Debuggers/Debugger";
 import { ObjectInterface } from "./ObjectInterface";
+import { Json } from "../LiteJson/Json";
 import { Guid } from "../../System/Guid";
 import { RecordIndex } from "./RecordIndex";
 import { Type } from "../../System/Type";

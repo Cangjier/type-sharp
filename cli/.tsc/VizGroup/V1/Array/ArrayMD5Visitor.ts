@@ -1,4 +1,5 @@
 import { ArrayMD5Interface } from "./ArrayMD5Interface";
+import { String } from "../../../System/String";
 import { Type } from "../../../System/Type";
 import { Database } from "../../../TidyHPC/LiteDB/Database";
 import { Guid } from "../../../System/Guid";

@@ -1,5 +1,6 @@
 import { Database } from "../../TidyHPC/LiteDB/Database";
 import { ServiceScope } from "./ServiceScope";
+import { TaskCompletionSource } from "../../System/Threading/Tasks/TaskCompletionSource";
 import { Delegate } from "../../System/Delegate";
 import { ApplicationConfig } from "./ApplicationConfig";
 import { Type } from "../../System/Type";
@@ -28,6 +29,12 @@ export class Application {
         return {} as any;
     }
     public get ServiceScope(): ServiceScope {
+        return {} as any;
+    }
+    public get OnDatabaseStepupCompleted(): TaskCompletionSource {
+        return {} as any;
+    }
+    public get OnConfigCompleted(): TaskCompletionSource {
         return {} as any;
     }
 }

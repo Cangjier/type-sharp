@@ -1,5 +1,7 @@
 import { StatisticalBlock } from "./StatisticalBlock";
 import { Database } from "../Database";
+import { Byte } from "../../../System/Byte";
+import { Int32 } from "../../../System/Int32";
 import { Type } from "../../../System/Type";
 export class StatisticalRegionVisitor {
     public Read(table?: Database, onBuffer?: ((arg0?:number[], arg1?:number)=>void)): Promise<void> {

@@ -1,5 +1,7 @@
 import { axiosResponse } from "./axiosResponse";
 import { axiosConfig } from "./axiosConfig";
+import { Int64 } from "../../../System/Int64";
+import { Nullable } from "../../../System/Nullable";
 import { Type } from "../../../System/Type";
 export class axios {
     public GetType(): Type {

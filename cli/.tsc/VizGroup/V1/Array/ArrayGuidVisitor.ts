@@ -1,5 +1,5 @@
-import { Guid } from "../../../System/Guid";
 import { ArrayGuidInterface } from "./ArrayGuidInterface";
+import { Guid } from "../../../System/Guid";
 import { Type } from "../../../System/Type";
 import { Database } from "../../../TidyHPC/LiteDB/Database";
 export class ArrayGuidVisitor {

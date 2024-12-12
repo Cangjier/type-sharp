@@ -2,7 +2,10 @@ import { Guid } from "../../../System/Guid";
 import { Version } from "../../../System/Version";
 import { ObjectInterface } from "../../../TidyHPC/LiteDB/ObjectInterface";
 import { Database } from "../../../TidyHPC/LiteDB/Database";
+import { ComponentInterface } from "./ComponentInterface";
 import { DataNodeInterface } from "./DataNodeInterface";
+import { AttributeInterface } from "./AttributeInterface";
+import { ReferenceInterface } from "./ReferenceInterface";
 import { Type } from "../../../System/Type";
 export class NodeInstanceInterface {
     public GetComponentsCount(database?: Database): Promise<number> {

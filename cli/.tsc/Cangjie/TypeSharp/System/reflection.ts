@@ -1,6 +1,6 @@
 import { Type } from "../../../System/Type";
-import { ParameterInfo } from "../../../System/Reflection/ParameterInfo";
 import { FullName } from "../FullNameScript/FullName";
+import { ParameterInfo } from "../../../System/Reflection/ParameterInfo";
 import { Assembly } from "../../../System/Reflection/Assembly";
 export class reflection {
     public GetType(): Type {
@@ -16,6 +16,9 @@ export class reflection {
         return {} as any;
     }
     public static getType(typeName?: string): Type {
+        return {} as any;
+    }
+    public static getTypeByFullName(fullName?: FullName): Type {
         return {} as any;
     }
     public static getTypes(regexString?: string): Type[] {
