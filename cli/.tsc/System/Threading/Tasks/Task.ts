@@ -35,7 +35,7 @@ export class Task {
     public WaitAsync(cancellationToken_or_timeout?: CancellationToken | TimeSpan, timeProvider_or_cancellationToken?: TimeProvider | CancellationToken, cancellationToken?: CancellationToken): Promise<void> {
         return {} as any;
     }
-    public ContinueWith(continuationFunction?: null, cancellationToken_or_scheduler_or_continuationOptions_or_state?: CancellationToken | TaskScheduler | TaskContinuationOptions | any, continuationOptions_or_cancellationToken_or_scheduler?: TaskContinuationOptions | CancellationToken | TaskScheduler, scheduler_or_continuationOptions?: TaskScheduler | TaskContinuationOptions, scheduler?: TaskScheduler): null {
+    public ContinueWith(continuationAction_or_continuationFunction?: ((arg0?:Promise<void>)=>void) | ((arg0?:Promise<void>, arg1?:any)=>void) | null, cancellationToken_or_scheduler_or_continuationOptions_or_state?: CancellationToken | TaskScheduler | TaskContinuationOptions | any, continuationOptions_or_cancellationToken_or_scheduler?: TaskContinuationOptions | CancellationToken | TaskScheduler, scheduler_or_continuationOptions?: TaskScheduler | TaskContinuationOptions, scheduler?: TaskScheduler): Promise<void> | null {
         return {} as any;
     }
     public GetType(): Type {
@@ -50,7 +50,7 @@ export class Task {
     public GetHashCode(): number {
         return {} as any;
     }
-    public constructor(action?: ()=>void, cancellationToken_or_creationOptions?: CancellationToken | TaskCreationOptions, creationOptions?: TaskCreationOptions) {
+    public constructor(action?: (()=>void) | ((arg0?:any)=>void), cancellationToken_or_creationOptions_or_state?: CancellationToken | TaskCreationOptions | any, creationOptions_or_cancellationToken?: TaskCreationOptions | CancellationToken, creationOptions?: TaskCreationOptions) {
     }
     public static Yield(): YieldAwaitable {
         return {} as any;
@@ -70,7 +70,7 @@ export class Task {
     public static FromCanceled(cancellationToken?: CancellationToken): Promise<void> | null {
         return {} as any;
     }
-    public static Run(action_or_function?: ()=>void | null | (()=>Promise<void>), cancellationToken?: CancellationToken): Promise<void> | null {
+    public static Run(action_or_function?: (()=>void) | null | (()=>Promise<void>), cancellationToken?: CancellationToken): Promise<void> | null {
         return {} as any;
     }
     public static Delay(delay_or_millisecondsDelay?: TimeSpan | number, timeProvider_or_cancellationToken?: TimeProvider | CancellationToken, cancellationToken?: CancellationToken): Promise<void> {

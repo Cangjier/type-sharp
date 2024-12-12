@@ -17,6 +17,18 @@ export class NodeInstanceInterface {
     public GetReferencesCount(database?: Database): Promise<number> {
         return {} as any;
     }
+    public ForeachComponents(database?: Database, onItem?: ((arg0?:ComponentInterface)=>void)): Promise<void> {
+        return {} as any;
+    }
+    public ForeachDataSet(database?: Database, onItem?: ((arg0?:DataNodeInterface)=>void)): Promise<void> {
+        return {} as any;
+    }
+    public ForeachAttributes(database?: Database, onItem?: ((arg0?:AttributeInterface)=>void)): Promise<void> {
+        return {} as any;
+    }
+    public ForeachReferences(database?: Database, onItem?: ((arg0?:ReferenceInterface)=>void)): Promise<void> {
+        return {} as any;
+    }
     public GetFirstDataNode(database?: Database): Promise<DataNodeInterface> {
         return {} as any;
     }

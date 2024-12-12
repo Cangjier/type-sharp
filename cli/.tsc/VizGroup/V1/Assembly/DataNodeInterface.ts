@@ -26,7 +26,7 @@ export class DataNodeInterface {
     public static New(): DataNodeInterface {
         return {} as any;
     }
-    public static Allocate(database?: Database, type_or_onInitial?: number | ((arg0?:DataNodeInterface)=>Promise<void>), uri?: string): Promise<DataNodeInterface> {
+    public static Allocate(database?: Database, type_or_onInitial?: number | ((arg0?:DataNodeInterface)=>void) | ((arg0?:DataNodeInterface)=>Promise<void>), uri?: string): Promise<DataNodeInterface> {
         return {} as any;
     }
     public Target?: any;

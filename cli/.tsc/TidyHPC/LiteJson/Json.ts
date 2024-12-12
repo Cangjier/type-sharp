@@ -15,6 +15,9 @@ export class Json {
     public GetValueKind(): JsonValueKind {
         return {} as any;
     }
+    public Process(onProcess?: ((arg0?:any)=>void)): void {
+        return {} as any;
+    }
     public Clone(): any {
         return {} as any;
     }
@@ -30,10 +33,10 @@ export class Json {
     public WriteTo(stream?: Stream): void {
         return {} as any;
     }
-    public AssertObject(): void {
+    public AssertObject(onObject?: ((arg0?:ObjectWrapper)=>void)): void {
         return {} as any;
     }
-    public AssertArray(): void {
+    public AssertArray(onArray?: ((arg0?:ArrayWrapper)=>void)): void {
         return {} as any;
     }
     public Dispose(): void {
@@ -45,7 +48,13 @@ export class Json {
     public ToArray(selector?: null): null {
         return {} as any;
     }
+    public ForeachArray(onEach_or_onIndex?: ((arg0?:any)=>void) | ((arg0?:number, arg1?:any)=>void)): void {
+        return {} as any;
+    }
     public SelectArray(selector?: null): null {
+        return {} as any;
+    }
+    public ForeachObject(onValue_or_onKeyValuePair?: ((arg0?:any)=>void) | ((arg0?:string, arg1?:any)=>void)): void {
         return {} as any;
     }
     public Equals(other?: any): boolean {

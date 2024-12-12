@@ -6,6 +6,9 @@ export class ComponentInterface {
     public GetAttributesCount(database?: Database): Promise<number> {
         return {} as any;
     }
+    public ForeachAttributes(database?: Database, onItem?: ((arg0?:AttributeInterface)=>void)): Promise<void> {
+        return {} as any;
+    }
     public Update(database?: Database): Promise<void> {
         return {} as any;
     }

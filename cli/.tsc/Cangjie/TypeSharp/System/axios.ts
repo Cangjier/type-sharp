@@ -40,7 +40,7 @@ export class axios {
     public static patch(url?: string, data?: any, config?: axiosConfig): Promise<axiosResponse> {
         return {} as any;
     }
-    public static download(url?: string, path_or_onPath?: string | ((arg0?:string)=>string)): Promise<string> {
+    public static download(url?: string, path_or_onPath?: string | ((arg0?:string)=>string), onProgress?: ((arg0?:number, arg1?:any)=>void)): Promise<string> {
         return {} as any;
     }
 }

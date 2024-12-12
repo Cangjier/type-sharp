@@ -3,10 +3,13 @@ import { Type } from "../../../System/Type";
 import { Database } from "../../../TidyHPC/LiteDB/Database";
 import { Guid } from "../../../System/Guid";
 export class ArrayMD5Visitor {
-    public ForeachArray(action?: ((arg0?:ArrayMD5Interface)=>boolean)): Promise<void> {
+    public ForeachArray(action?: ((arg0?:ArrayMD5Interface)=>void) | ((arg0?:ArrayMD5Interface)=>boolean)): Promise<void> {
         return {} as any;
     }
     public GetLength(): Promise<number> {
+        return {} as any;
+    }
+    public Foreach(onElement?: ((arg0?:string)=>void)): Promise<void> {
         return {} as any;
     }
     public Get(result?: string[]): Promise<void> {

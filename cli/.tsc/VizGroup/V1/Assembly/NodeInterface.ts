@@ -17,6 +17,9 @@ export class NodeInterface {
     public GetInstancesCount(database?: Database): Promise<number> {
         return {} as any;
     }
+    public ForeachInstances(database?: Database, onItem?: ((arg0?:NodeInstanceInterface)=>void)): Promise<void> {
+        return {} as any;
+    }
     public GetInstances(database?: Database): Promise<NodeInstanceInterface[]> {
         return {} as any;
     }

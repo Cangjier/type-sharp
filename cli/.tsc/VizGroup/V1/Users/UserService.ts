@@ -20,6 +20,9 @@ export class UserService {
     public GetWhiteUser(userName_or_id?: string | Guid): Promise<UserInterface> {
         return {} as any;
     }
+    public GetUsers(onUser?: ((arg0?:UserInterface)=>void)): Promise<void> {
+        return {} as any;
+    }
     public Login(userName?: string, secret?: string): Promise<string> {
         return {} as any;
     }

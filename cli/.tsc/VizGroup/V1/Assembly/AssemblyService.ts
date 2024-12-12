@@ -21,6 +21,9 @@ export class AssemblyService {
     public GetLatestInstance(node?: NodeInterface): Promise<NodeInstanceInterface> {
         return {} as any;
     }
+    public ForeachInstances(key?: string, onItem?: ((arg0?:NodeInstanceInterface)=>void)): Promise<void> {
+        return {} as any;
+    }
     public GetInstancesCount(key?: string): Promise<number> {
         return {} as any;
     }

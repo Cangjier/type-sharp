@@ -3,10 +3,13 @@ import { ArrayGuidInterface } from "./ArrayGuidInterface";
 import { Type } from "../../../System/Type";
 import { Database } from "../../../TidyHPC/LiteDB/Database";
 export class ArrayGuidVisitor {
-    public ForeachArray(action?: ((arg0?:ArrayGuidInterface)=>boolean)): Promise<void> {
+    public ForeachArray(action?: ((arg0?:ArrayGuidInterface)=>void) | ((arg0?:ArrayGuidInterface)=>boolean)): Promise<void> {
         return {} as any;
     }
     public GetLength(): Promise<number> {
+        return {} as any;
+    }
+    public Foreach(onElement?: ((arg0?:Guid)=>void)): Promise<void> {
         return {} as any;
     }
     public Get(result?: Guid[]): Promise<void> {
