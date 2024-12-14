@@ -469,11 +469,13 @@ let exportMembers = (type: Type) => {
                     if (names.includes(parameter.Name) == false) {
                         names.push(parameter.Name);
                     }
+                    console.log(`parameter.ParameterType.FullName = ${parameter.ParameterType.FullName}`);
                     let alias = getTypeAlias(parameter.ParameterType.FullName);
                     if (types.includes(alias.data) == false) {
                         types.push(alias.data);
                     }
                 }
+                console.log(`method.ReturnType.FullName = ${method.ReturnType.FullName}`);
                 let returnTypeAlias = getTypeAlias(method.ReturnType.FullName);
                 if (memberCombine.returnTypes.includes(returnTypeAlias.data) == false) {
                     memberCombine.returnTypes.push(returnTypeAlias.data);
