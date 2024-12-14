@@ -183,6 +183,10 @@ let getDictionaryTypeAlias = (fullName: FullName) => {
 let isEnumarableAndImplicitFromJson = (fullName: FullName) => {
     try {
         let type = reflection.getTypeByFullName(fullName);
+        if(type==null){
+            console.log(`${fullName} not found`);
+            return false;
+        }
         if (reflection.isImplicitFromJson(type) == false) {
             return false;
         }
