@@ -14,6 +14,7 @@ import { Console } from "../.tsc/System/Console";
 import { Assembly } from "../.tsc/System/Reflection/Assembly";
 import { UTF8Encoding } from "../.tsc/System/Text/UTF8Encoding";
 import { ParameterInfo } from "../.tsc/System/Reflection/ParameterInfo";
+import {stringUtils} from "../.tsc/Cangjie/TypeSharp/System/stringUtils";
 const typeAlias = {
     "Int32": "number",
     "Int64": "number",
@@ -71,7 +72,7 @@ let getTaskTypeAias = (fullName: FullName) => {
         };
     }
     let genericType = genericTypes[0];
-    let alias = getTypeAlias(genericType.ToString());
+    let alias = getTypeAlias(genericType.ToFullString());
     if (alias.success == false) {
         return {
             data: "Promise<any>",
@@ -90,7 +91,7 @@ let isFuncType = (fullName: FullName) => {
 let getFuncTypeAlias = (fullName: FullName) => {
     let toImport = [] as Type[];
     let genericTypeFullNames = fullName.GenericTypes;
-    let returnTypeAlias = getTypeAlias(genericTypeFullNames[genericTypeFullNames.length - 1].ToString());
+    let returnTypeAlias = getTypeAlias(genericTypeFullNames[genericTypeFullNames.length - 1].ToFullString());
     if (returnTypeAlias.success == false) {
         return {
             success: true,
@@ -98,7 +99,7 @@ let getFuncTypeAlias = (fullName: FullName) => {
             toImport: toImport
         }
     }
-    let parameters = genericTypeFullNames.slice(0, genericTypeFullNames.length - 1).map(p => getTypeAlias(p.ToString()));
+    let parameters = genericTypeFullNames.slice(0, genericTypeFullNames.length - 1).map(p => getTypeAlias(p.ToFullString()));
     let parameterIndex = 0;
     let parameterTypes = parameters.map(p => p.success ? `arg${parameterIndex++}?:${p.data}` : `arg${parameterIndex++}?:any`).join(", ");
     for (let genericTypeFullName of genericTypeFullNames) {
@@ -118,7 +119,7 @@ let isActionType = (fullName: FullName) => {
 let getActionTypeAlias = (fullName: FullName) => {
     let toImport = [] as Type[];
     let genericTypeFullNames = fullName.GenericTypes;
-    let parameters = genericTypeFullNames.map(p => getTypeAlias(p.ToString()));
+    let parameters = genericTypeFullNames.map(p => getTypeAlias(p.ToFullString()));
     let parameterIndex = 0;
     let parameterTypes = parameters.map(p => p.success ? `arg${parameterIndex++}?:${p.data}` : `arg${parameterIndex++}?:any`).join(", ");
     for (let genericTypeFullName of genericTypeFullNames) {
@@ -139,7 +140,7 @@ let isListType = (fullName: FullName) => {
 let getListTypeAlias = (fullName: FullName) => {
     let toImport = [] as Type[];
     let genericTypeFullName = fullName.GenericTypes[0];
-    let alias = getTypeAlias(genericTypeFullName.ToString());
+    let alias = getTypeAlias(genericTypeFullName.ToFullString());
     let genericType = reflection.getTypeByFullName(genericTypeFullName);
     if (genericType) {
         toImport.push(genericType);
@@ -161,8 +162,8 @@ let isDicttionary = (fullName: FullName) => {
 let getDictionaryTypeAlias = (fullName: FullName) => {
     let toImport = [] as Type[];
     let genericTypeFullNames = fullName.GenericTypes;
-    let keyTypeAlias = getTypeAlias(genericTypeFullNames[0].ToString());
-    let valueTypeAlias = getTypeAlias(genericTypeFullNames[1].ToString());
+    let keyTypeAlias = getTypeAlias(genericTypeFullNames[0].ToFullString());
+    let valueTypeAlias = getTypeAlias(genericTypeFullNames[1].ToFullString());
     for (let genericTypeFullName of genericTypeFullNames) {
         let genericType = reflection.getTypeByFullName(genericTypeFullName);
         if (genericType) {
@@ -218,7 +219,7 @@ let getEnumarableTypeAlias = (fullName: FullName) => {
     }
     let enumarable = enumarables[0];
     return {
-        data: `${getTypeAlias(enumarable.ToString()).data}[]`,
+        data: `${getTypeAlias(stringUtils.toString(enumarable)).data}[]`,
         toImport: toImport
     };
 };
