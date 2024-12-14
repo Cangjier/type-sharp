@@ -185,7 +185,7 @@ let isEnumarableAndImplicitFromJson = (fullName: FullName) => {
     try {
         let type = reflection.getTypeByFullName(fullName);
         if(type==null){
-            console.log(`${fullName} not found`);
+            console.log(`${fullName.ToFullString()} not found`);
             return false;
         }
         if (reflection.isImplicitFromJson(type) == false) {
