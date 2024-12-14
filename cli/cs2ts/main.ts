@@ -390,7 +390,7 @@ let exportMembers = (type: Type) => {
         }
         let isValid = true as boolean;
         types.forEach(itemType => {
-            let alias = getTypeAlias(itemType.Name);
+            let alias = getTypeAlias(itemType.FullName);
             if (alias.success == false) {
                 isValid = false;
             }
