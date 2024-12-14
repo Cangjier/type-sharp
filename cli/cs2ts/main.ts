@@ -14,7 +14,7 @@ import { Console } from "../.tsc/System/Console";
 import { Assembly } from "../.tsc/System/Reflection/Assembly";
 import { UTF8Encoding } from "../.tsc/System/Text/UTF8Encoding";
 import { ParameterInfo } from "../.tsc/System/Reflection/ParameterInfo";
-import {stringUtils} from "../.tsc/Cangjie/TypeSharp/System/stringUtils";
+import { stringUtils } from "../.tsc/Cangjie/TypeSharp/System/stringUtils";
 const typeAlias = {
     "Int32": "number",
     "Int64": "number",
@@ -184,8 +184,7 @@ let getDictionaryTypeAlias = (fullName: FullName) => {
 let isEnumarableAndImplicitFromJson = (fullName: FullName) => {
     try {
         let type = reflection.getTypeByFullName(fullName);
-        if(type==null){
-            console.log(`${fullName.ToFullString()} not found`);
+        if (type == null) {
             return false;
         }
         if (reflection.isImplicitFromJson(type) == false) {
@@ -224,7 +223,6 @@ let getEnumarableTypeAlias = (fullName: FullName) => {
     };
 };
 getTypeAlias = (typeFullName: string) => {
-    console.log(`getTypeAlias: ${typeFullName}`);
     let debug = false;
     if (typeFullName.includes("&") || typeFullName.includes("*")) {
         return {
