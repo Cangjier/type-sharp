@@ -5,7 +5,7 @@ export class RecordRuntime {
     public SerializeToJson(db?: Database): Promise<any> {
         return {} as any;
     }
-    public DeserializeFromNewJson(db?: Database, document?: any, isBorrowString?: boolean): Promise<void> {
+    public DeserializeFromNewJson(db?: Database, record?: any, isBorrowString?: boolean): Promise<void> {
         return {} as any;
     }
     public DeserializeFromOldJson(db?: Database, document?: any, isBorrowString?: boolean): Promise<void> {

@@ -8,7 +8,7 @@ export class FieldRuntime {
     public DeserializeFromBuffer(buffer?: number[], offset?: number): number {
         return {} as any;
     }
-    public DeserializeFromJson(db?: Database, element?: any, isBorrowString?: boolean): Promise<void> {
+    public DeserializeFromJson(db?: Database, fieldValue?: any, isBorrowString?: boolean): Promise<void> {
         return {} as any;
     }
     public SerializeToJson(self?: any): void {

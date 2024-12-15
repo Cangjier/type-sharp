@@ -24,4 +24,7 @@ export class stringUtils {
     public static changeEncoding(value?: string, fromCodePage?: number, toCodePage?: number): string {
         return {} as any;
     }
+    public static toString(value?: any): string {
+        return {} as any;
+    }
 }

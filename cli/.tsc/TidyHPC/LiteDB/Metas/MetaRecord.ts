@@ -1,9 +1,10 @@
+import { Database } from "../Database";
 import { Type } from "../../../System/Type";
 export class MetaRecord {
-    public Read(buffer?: number[], offset?: number): void {
+    public Read(buffer?: number[], offset?: number, database?: Database): void {
         return {} as any;
     }
-    public Write(buffer?: number[], offset?: number): void {
+    public Write(buffer?: number[], offset?: number, database?: Database): void {
         return {} as any;
     }
     public Equals(obj?: any): boolean {
