@@ -370,6 +370,14 @@ let exportMembers = (type: Type) => {
             isConstructor: boolean
         }
     };
+    let properties = {} as {
+        [key: string]: {
+            type: string,
+            isStatic: boolean,
+            isGet: boolean,
+            isSet: boolean
+        }
+    };
     members.forEach(member => {
         let types = [] as Type[];
         if (member.MemberType == "Field") {
@@ -408,9 +416,65 @@ let exportMembers = (type: Type) => {
         else if (member.MemberType == "Method") {
             let method = member as MethodInfo;
             if (member.Name.startsWith("get_")) {
+                let propertyName = member.Name.substring(4);
+                if (method.IsStatic) {
+                    if (properties[propertyName]) {
+                        properties[propertyName].isGet = true;
+                    }
+                    else {
+                        let propertyTypeAlias = getTypeAlias(method.ReturnType.FullName);
+                        properties[propertyName] = {
+                            type: (propertyTypeAlias.success ? propertyTypeAlias.data : "any"),
+                            isStatic: true,
+                            isGet: true,
+                            isSet: false
+                        };
+                    }
+                }
+                else {
+                    if (properties[propertyName]) {
+                        properties[propertyName].isGet = true;
+                    }
+                    else {
+                        let propertyTypeAlias = getTypeAlias(method.ReturnType.FullName);
+                        properties[propertyName] = {
+                            type: (propertyTypeAlias.success ? propertyTypeAlias.data : "any"),
+                            isStatic: false,
+                            isGet: true,
+                            isSet: false
+                        };
+                    }
+                }
                 return;
             }
             else if (member.Name.startsWith("set_")) {
+                let propertyName = member.Name.substring(4);
+                if (method.IsStatic) {
+                    if (properties[propertyName]) {
+                        properties[propertyName].isSet = true;
+                    }
+                    else {
+                        properties[propertyName] = {
+                            type: getTypeAlias(method.ReturnType.FullName).data,
+                            isStatic: true,
+                            isGet: false,
+                            isSet: true
+                        };
+                    }
+                }
+                else {
+                    if (properties[propertyName]) {
+                        properties[propertyName].isSet = true;
+                    }
+                    else {
+                        properties[propertyName] = {
+                            type: getTypeAlias(method.ReturnType.FullName).data,
+                            isStatic: false,
+                            isGet: false,
+                            isSet: true
+                        };
+                    }
+                }
                 return;
             }
             else {
@@ -520,6 +584,26 @@ let exportMembers = (type: Type) => {
         }).join(", ");
         let returnTypes = memberCombine.returnTypes.join(" | ");
         lines.push(`export const ${key}:(${parameters}) => ${returnTypes} = 0 as any`);
+    });
+    let propertyKeys = Object.keys(properties);
+    propertyKeys.forEach(key => {
+        let property = properties[key];
+        if (property.isStatic) {
+            if (property.isGet) {
+                lines.push(`export const ${key}: ${property.type} = 0 as any;`);
+            }
+            if (property.isSet) {
+
+            }
+        }
+        else {
+            if (property.isGet) {
+                lines.push(`export const ${key}: ${property.type} = 0 as any;`);
+            }
+            if (property.isSet) {
+                
+            }
+        }
     });
     let importLines = [] as string[];
     toImport.forEach(item => {
@@ -657,7 +741,6 @@ let exportClass = (type: Type) => {
             }
             else if (member.Name.startsWith("set_")) {
                 let propertyName = member.Name.substring(4);
-                // let args = method.GetParameters().map(p => `${p.Name}: ${getTypeAlias(p.ParameterType.FullName).data}`).join(", ");
                 if (method.IsStatic) {
                     if (properties[propertyName]) {
                         properties[propertyName].isSet = true;
