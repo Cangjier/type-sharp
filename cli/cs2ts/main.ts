@@ -1151,7 +1151,7 @@ let main = () => {
             "(System\\.Reflection\\.(Assembly|ConstructorInfo|FieldInfo|MemberInfo|MemberTypes|MethodInfo|ParameterInfo)$)",
             "(Cangjie\\.TypeSharp\\.(System|FullNameScript)\\..*)",
             "(VizGroup\\..*)"
-        ].join("|"), "Cangjie\\.TypeSharp\\.System\\.context");
+        ].join("|"), "Cangjie\\.TypeSharp\\.System\\.(context|staticContext)");
     }
     else if (args.length == 2) {
         let cmd = args[0];
