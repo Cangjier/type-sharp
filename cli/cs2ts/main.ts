@@ -601,7 +601,7 @@ let exportMembers = (type: Type) => {
                 lines.push(`export const ${key}: ${property.type} = 0 as any;`);
             }
             if (property.isSet) {
-                
+
             }
         }
     });
@@ -1151,7 +1151,7 @@ let main = () => {
             "(System\\.Reflection\\.(Assembly|ConstructorInfo|FieldInfo|MemberInfo|MemberTypes|MethodInfo|ParameterInfo)$)",
             "(Cangjie\\.TypeSharp\\.(System|FullNameScript)\\..*)",
             "(VizGroup\\..*)"
-        ].join("|"), "Cangjie\\.TypeSharp\\.System\\.(context|staticContext)");
+        ].join("|"), "Cangjie\\.TypeSharp\\.System\\.(Context|staticContext)");
     }
     else if (args.length == 2) {
         let cmd = args[0];
