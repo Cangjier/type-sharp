@@ -224,7 +224,7 @@ let getEnumarableTypeAlias = (fullName: FullName) => {
 };
 getTypeAlias = (typeFullName: string) => {
     let debug = false;
-    if (typeFullName.includes("&") || typeFullName.includes("*")) {
+    if (typeFullName.includes("&") || typeFullName.includes("*") || typeFullName.includes("+")) {
         return {
             success: false,
             data: typeFullName,
