@@ -15,6 +15,9 @@ export class ioStorageService {
     public exportContentToFilePath(contentMD5?: string, filePath?: string): Promise<void> {
         return {} as any;
     }
+    public getContentArchivePath(contentMD5?: string): string {
+        return {} as any;
+    }
     public exportFileToFilePath(fileMD5?: string, filePath?: string): Promise<void> {
         return {} as any;
     }

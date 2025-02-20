@@ -4,7 +4,6 @@ import { TimeSpan } from "../../TimeSpan";
 import { Match } from "./Match";
 import { MatchCollection } from "./MatchCollection";
 import { MatchEvaluator } from "./MatchEvaluator";
-import { ValueMatchEnumerator } from "./Regex+ValueMatchEnumerator";
 import { Type } from "../../Type";
 export class Regex {
     public ToString(): string {

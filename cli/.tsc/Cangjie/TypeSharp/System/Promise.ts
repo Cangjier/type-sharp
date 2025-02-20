@@ -1,5 +1,5 @@
 import { Type } from "../../../System/Type";
-export class Object {
+export class Promise {
     public GetType(): Type {
         return {} as any;
     }
@@ -14,10 +14,7 @@ export class Object {
     }
     public constructor() {
     }
-    public static keys(value?: any): string[] {
-        return {} as any;
-    }
-    public static values(value?: any): any {
+    public static all(tasks?: any): Promise<any> {
         return {} as any;
     }
 }

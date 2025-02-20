@@ -1,5 +1,5 @@
 import { Type } from "../../../System/Type";
-export class cryptography {
+export class taskUtils {
     public GetType(): Type {
         return {} as any;
     }
@@ -14,16 +14,10 @@ export class cryptography {
     }
     public constructor() {
     }
-    public static computeHmacSha256Hex(key?: any, message?: any): any {
+    public static whenAll(tasks?: any): Promise<void> {
         return {} as any;
     }
-    public static computeHmacSha256(key?: any, message?: any): any {
-        return {} as any;
-    }
-    public static computeSha256Hex(message?: any): any {
-        return {} as any;
-    }
-    public static computeSha256(message?: any): any {
+    public static whenAny(tasks?: any): Promise<void> {
         return {} as any;
     }
 }

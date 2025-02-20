@@ -1,6 +1,7 @@
 import { Server } from '../.tsc/Cangjie/TypeSharp/System/Server';
 import { Session } from '../.tsc/TidyHPC/Routers/Urls/Session';
-import { args, cmd, cmdAsync, copyDirectory, deleteDirectory, execAsync, script_path } from '../.tsc/context';
+import { args, axios, script_path } from '../.tsc/Context';
+import { cmd, cmdAsync, copyDirectory, deleteDirectory, execAsync, } from "../.tsc/staticContext";
 import { Path } from '../.tsc/System/IO/Path';
 import { File } from '../.tsc/System/IO/File';
 import { Directory } from '../.tsc/System/IO/Directory';
@@ -10,7 +11,6 @@ import { Regex } from '../.tsc/System/Text/RegularExpressions/Regex';
 import { Environment } from '../.tsc/System/Environment';
 import { Guid } from '../.tsc/System/Guid';
 import { Xml } from '../.tsc/TidyHPC/LiteXml/Xml';
-import { axios } from '../.tsc/Cangjie/TypeSharp/System/axios';
 import { zip } from '../.tsc/Cangjie/TypeSharp/System/zip';
 import { Version } from '../.tsc/System/Version';
 import { Task } from '../.tsc/System/Threading/Tasks/Task';

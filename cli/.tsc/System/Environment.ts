@@ -1,8 +1,6 @@
 import { Exception } from "./Exception";
 import { EnvironmentVariableTarget } from "./EnvironmentVariableTarget";
 import { IDictionary } from "./Collections/IDictionary";
-import { SpecialFolder } from "./Environment+SpecialFolder";
-import { SpecialFolderOption } from "./Environment+SpecialFolderOption";
 import { OperatingSystem } from "./OperatingSystem";
 import { Version } from "./Version";
 import { Type } from "./Type";
@@ -38,9 +36,6 @@ export class Environment {
         return {} as any;
     }
     public static ExpandEnvironmentVariables(name?: string): string {
-        return {} as any;
-    }
-    public static GetFolderPath(folder?: SpecialFolder, option?: SpecialFolderOption): string {
         return {} as any;
     }
     public static GetLogicalDrives(): string[] {

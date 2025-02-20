@@ -27,4 +27,7 @@ export class stringUtils {
     public static toString(value?: any): string {
         return {} as any;
     }
+    public static lines(value?: any): string[] {
+        return {} as any;
+    }
 }

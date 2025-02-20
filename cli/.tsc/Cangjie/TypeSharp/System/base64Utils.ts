@@ -1,5 +1,5 @@
 import { Type } from "../../../System/Type";
-export class cryptography {
+export class base64Utils {
     public GetType(): Type {
         return {} as any;
     }
@@ -14,16 +14,16 @@ export class cryptography {
     }
     public constructor() {
     }
-    public static computeHmacSha256Hex(key?: any, message?: any): any {
+    public static encodeString(value?: string): string {
         return {} as any;
     }
-    public static computeHmacSha256(key?: any, message?: any): any {
+    public static encode(bytes?: number[]): string {
         return {} as any;
     }
-    public static computeSha256Hex(message?: any): any {
+    public static decodeString(value?: string): string {
         return {} as any;
     }
-    public static computeSha256(message?: any): any {
+    public static decode(value?: string): number[] {
         return {} as any;
     }
 }

@@ -1,5 +1,5 @@
 import { Type } from "../../../System/Type";
-export class cryptography {
+export class pathUtils {
     public GetType(): Type {
         return {} as any;
     }
@@ -14,16 +14,19 @@ export class cryptography {
     }
     public constructor() {
     }
-    public static computeHmacSha256Hex(key?: any, message?: any): any {
+    public static isEquals(path1?: string, path2?: string): boolean {
         return {} as any;
     }
-    public static computeHmacSha256(key?: any, message?: any): any {
+    public static isDigitExtension(path?: string): boolean {
         return {} as any;
     }
-    public static computeSha256Hex(message?: any): any {
+    public static getDigitExtension(path?: string): string {
         return {} as any;
     }
-    public static computeSha256(message?: any): any {
+    public static removeDigitExtension(path?: string): string {
+        return {} as any;
+    }
+    public static format(path?: string): string {
         return {} as any;
     }
 }

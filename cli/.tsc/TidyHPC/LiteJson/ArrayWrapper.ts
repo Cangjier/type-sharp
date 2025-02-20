@@ -12,6 +12,9 @@ export class ArrayWrapper {
     public Contains(value?: any): boolean {
         return {} as any;
     }
+    public RemoveAt(index?: number): void {
+        return {} as any;
+    }
     public Clear(): any[] {
         return {} as any;
     }
@@ -28,6 +31,9 @@ export class ArrayWrapper {
         return {} as any;
     }
     public Reverse(): any[] {
+        return {} as any;
+    }
+    public Concat(items?: any[]): any[] {
         return {} as any;
     }
     public Equals(obj?: any): boolean {

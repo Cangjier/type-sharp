@@ -116,6 +116,12 @@ export class Json {
     public Reverse(): any {
         return {} as any;
     }
+    public Concat(items?: any[]): any {
+        return {} as any;
+    }
+    public RemoveAt(index?: number): void {
+        return {} as any;
+    }
     public Remove(key?: any): void {
         return {} as any;
     }
@@ -156,6 +162,9 @@ export class Json {
         return {} as any;
     }
     public Read(key?: string, defaultValue?: string | number | boolean | Guid | TimeSpan | DateTime): string | number | boolean | Guid | TimeSpan | DateTime {
+        return {} as any;
+    }
+    public ReadWithKeys(keys?: string[], defaultValue?: string): string {
         return {} as any;
     }
     public ContainsKey(key?: string): boolean {
@@ -247,6 +256,9 @@ export class Json {
     public static op_Modulus(left?: any, right?: any): any {
         return {} as any;
     }
+    public static op_LogicalNot(value?: any): boolean {
+        return {} as any;
+    }
     public static Null: any;
     public get Node(): any {
         return {} as any;
@@ -325,10 +337,16 @@ export class Json {
     public get AsFloat(): number {
         return {} as any;
     }
+    public get ToFloat(): number {
+        return {} as any;
+    }
     public get IsDouble(): boolean {
         return {} as any;
     }
     public get AsDouble(): number {
+        return {} as any;
+    }
+    public get ToDouble(): number {
         return {} as any;
     }
     public get IsBoolean(): boolean {
@@ -347,6 +365,18 @@ export class Json {
         return {} as any;
     }
     public get AsGuid(): Guid {
+        return {} as any;
+    }
+    public get IsDateTime(): boolean {
+        return {} as any;
+    }
+    public get AsDateTime(): DateTime {
+        return {} as any;
+    }
+    public get IsTimeSpan(): boolean {
+        return {} as any;
+    }
+    public get AsTimeSpan(): TimeSpan {
         return {} as any;
     }
     public get IsNull(): boolean {

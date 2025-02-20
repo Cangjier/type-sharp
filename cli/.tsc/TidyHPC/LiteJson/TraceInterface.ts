@@ -1,5 +1,4 @@
 import { Exception } from "../../System/Exception";
-import { Levels } from "../Loggers/Logger+Levels";
 import { Type } from "../../System/Type";
 export class TraceInterface {
     public Error(message?: string, exception?: Exception): void {
@@ -9,9 +8,6 @@ export class TraceInterface {
         return {} as any;
     }
     public Update(trace?: TraceInterface, overwrite?: boolean): void {
-        return {} as any;
-    }
-    public Log(level?: Levels, message?: string, exception?: Exception, popOuterFunctionCount?: number, showTrace?: boolean): void {
         return {} as any;
     }
     public Equals(obj?: any): boolean {
