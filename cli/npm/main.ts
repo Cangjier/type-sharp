@@ -1,6 +1,6 @@
-import { cmdAsync, exec, execAsync } from "../.tsc/context";
+import { axios } from "../.tsc/Context";
+import { cmdAsync } from "../.tsc/staticContext";
 import { Environment } from "../.tsc/System/Environment";
-import { axios } from "../.tsc/Cangjie/TypeSharp/System/axios";
 let main = async () => {
     let response = await axios.get("https://mirrors.cloud.tencent.com/nodejs-release/index.json", {
         responseType: "json"
