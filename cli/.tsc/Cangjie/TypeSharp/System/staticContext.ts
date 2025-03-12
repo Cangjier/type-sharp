@@ -43,6 +43,9 @@ export class staticContext {
     public static parseInt(value?: string): number {
         return {} as any;
     }
+    public static isNaN(value?: any): boolean {
+        return {} as any;
+    }
     public static toString(value?: any): string {
         return {} as any;
     }

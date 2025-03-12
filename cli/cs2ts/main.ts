@@ -1,7 +1,7 @@
 import { Path } from "../.tsc/System/IO/Path";
 import { Directory } from "../.tsc/System/IO/Directory";
 import { File } from "../.tsc/System/IO/File";
-import { args } from "../.tsc/context";
+import { args } from "../.tsc/Context";
 import { reflection } from "../.tsc/Cangjie/TypeSharp/System/reflection";
 import { FullName } from "../.tsc/Cangjie/TypeSharp/FullNameScript/FullName";
 import { Type } from "../.tsc/System/Type";
@@ -1137,7 +1137,7 @@ let help = () => {
 };
 
 let main = () => {
-    reflection.loadDependiencies(2);
+    reflection.loadDependiencies(3);
     console.log(`args:${args}`);
     if (args.length == 0) {
         exportInitialTypes([

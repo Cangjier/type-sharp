@@ -18,6 +18,7 @@ export const cmdAsync:(workingDirectory?: string, commandLine?: string, config?:
 export const startCmd:(workingDirectory?: string, commandLine?: string) => void = 0 as any
 export const parseFloat:(value?: string) => number = 0 as any
 export const parseInt:(value?: string) => number = 0 as any
+export const isNaN:(value?: any) => boolean = 0 as any
 export const toString:(value?: any) => string = 0 as any
 export const Number:(value?: any) => any = 0 as any
 export const copyDirectory:(sourceDirectory?: string, destinationDirectory?: string) => void = 0 as any

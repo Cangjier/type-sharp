@@ -286,6 +286,11 @@ export class Json {
     public get SyncRoot(): any {
         return {} as any;
     }
+    public static get ImplicitTo(): ((arg0?:any, arg1?:Type)=>any) {
+        return {} as any;
+    }
+    public static set ImplicitTo(value: ((arg0?:any, arg1?:Type)=>any)) {
+    }
     public get IsObject(): boolean {
         return {} as any;
     }
