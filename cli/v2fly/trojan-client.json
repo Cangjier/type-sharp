@@ -1,0 +1,53 @@
+{
+    "log": {
+        "loglevel": "debug"
+    },
+    "inbounds": [
+        {
+            "port": <in-port>,
+            "listen": "127.0.0.1",
+            "protocol": "http"
+        }
+    ],
+    "outbounds": [
+        {
+            "protocol": "trojan",
+            "settings": {
+                "servers": [
+                    {
+                        "address": "<address>",
+                        "port": <output-port>,
+                        "password": "<password>"
+                    }
+                ]
+            },
+            "streamSettings": {
+                "network": "<network>",
+                "security": "tls",
+                "tlsSettings": {
+                    "allowInsecure": <allowInsecure>
+                }
+            },
+            "tag": "proxy"
+        },
+        {
+            "protocol": "freedom",
+            "tag": "direct"
+        }
+    ],
+    "routing": {
+        "domainStrategy": "IPIfNonMatch",
+        "rules": [
+            {
+                "type": "field",
+                "domains": [
+                    "localhost"
+                ],
+                "ip": [
+                    "127.0.0.1"
+                ],
+                "outboundTag": "direct"
+            }
+        ]
+    }
+}
