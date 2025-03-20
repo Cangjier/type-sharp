@@ -1,4 +1,5 @@
-import { args, cmd, script_path } from "../.tsc/context";
+import { args, script_path } from "../.tsc/Context";
+import { cmd } from "../.tsc/staticContext";
 import { Path } from "../.tsc/System/IO/Path"
 import { Json } from '../.tsc/TidyHPC/LiteJson/Json';
 import { File } from '../.tsc/System/IO/File';

@@ -1,5 +1,5 @@
 import { args, axios, script_path } from "../.tsc/Context";
-import { exec, execAsync, cmd, cmdAsync, start, startCmd, copyDirectory, deleteDirectory, env, kill } from "../.tsc/staticContext";
+import { exec, execAsync, cmd, cmdAsync, start, startCmd, copyDirectory, deleteDirectory, env, kill, md5 } from "../.tsc/staticContext";
 import { Environment } from "../.tsc/System/Environment";
 import { Directory } from "../.tsc/System/IO/Directory";
 import { Path } from "../.tsc/System/IO/Path";
@@ -14,6 +14,8 @@ import { Json } from "../.tsc/TidyHPC/LiteJson/Json";
 import { DateTime } from "../.tsc/System/DateTime";
 import { netUtils } from "../.tsc/Cangjie/TypeSharp/System/netUtils";
 import { pingConfig } from "../.tsc/Cangjie/TypeSharp/System/pingConfig";
+import { Console } from "../.tsc/System/Console";
+import { ArgsRouter } from "../.tsc/TidyHPC/Routers/Args/ArgsRouter";
 let utf8 = new UTF8Encoding(false);
 let script_directory = Path.GetDirectoryName(script_path);
 let v2flyDirectory = Path.Combine(script_directory, ".v2fly");
@@ -37,8 +39,6 @@ for (let i = 0; i < args.length; i++) {
     }
 }
 console.log(`parameters: ${parameters}`);
-let port = parameters.port ?? "8080";
-let vpnUrl = parameters.url;
 
 interface Subscription {
     url: string,
@@ -68,12 +68,14 @@ interface IV2flyManager {
     // 获取当前协议地址
     getCurrentProtocolUrl: () => string,
     // 切换到协议地址
-    switchToProtocolUrl: (protocolUrl: string) => void,
+    switchToProtocolUrl: (protocolUrl: string) => Promise<void>,
     // 获取当前配置
     getConfig: () => VPNConfig,
     // 设置当前配置
     setConfig: (config: VPNConfig) => void,
-    initialize: () => Promise<void>
+    initialize: () => Promise<void>,
+    switchToFastestProtocolUrl: () => Promise<void>,
+    restart: () => Promise<void>
 }
 
 let V2flyConverter = () => {
@@ -105,11 +107,18 @@ let V2flyConverter = () => {
         // url such as trojan://9c008fca-68e1-3ab4-b821-0071ce25ffdb@hky.cloud-services.top:443?allowInsecure=0&type=tcp#%E5%89%A9%E4%BD%99%E6%B5%81%E9%87%8F%EF%BC%9A643.84%20GB
         url = url.substring("trojan://".length);
         let password = url.substring(0, url.indexOf('@'));
-        let address = url.substring(password.length + 1, url.indexOf(':'));
-        let outport = url.substring(address.length + 1, url.indexOf('?'));
+        let addressStart = url.indexOf('@') + 1;
+        let addressEnd = url.indexOf(':', addressStart);
+        let address = url.substring(addressStart, addressEnd);
+        let outportStart = addressEnd + 1;
+        let outportEnd = url.indexOf('?', outportStart);
+        let outport = url.substring(outportStart, outportEnd);
         let dict = {} as { [key: string]: any };
-        let query = url.substring(url.indexOf('?') + 1, url.indexOf('#'));
-        let title = url.substring(url.indexOf('#') + 1);
+        let queryStart = outportEnd + 1;
+        let queryEnd = url.indexOf('#', queryStart);
+        let query = url.substring(queryStart, queryEnd);
+        let titleStart = queryEnd + 1;
+        let title = url.substring(titleStart);
         let pairs = query.split('&');
         for (let pair of pairs) {
             let key = pair.substring(0, pair.indexOf('='));
@@ -117,14 +126,40 @@ let V2flyConverter = () => {
             dict[key] = value;
         }
         let allowInsecure = dict["allowInsecure"] ?? "0";
+        if (allowInsecure == "1") {
+            allowInsecure = "true";
+        }
+        else {
+            allowInsecure = "false";
+        }
         let network = dict["type"] ?? "tcp";
-
+        let sni = dict["sni"] ?? "null";
+        if (sni != "null") {
+            sni = `"${sni}"`;
+        }
+        let peer = dict["peer"] ?? "null";
+        if (peer != "null") {
+            peer = `"${peer}"`;
+        }
+        console.log({
+            title,
+            password,
+            address,
+            port,
+            outport,
+            network,
+            allowInsecure,
+            sni,
+            peer
+        });
         let config = template.replace("<password>", password);
         config = config.replace("<address>", address);
         config = config.replace("<in-port>", port);
-        config = config.replace("<out-port>", outport);
+        config = config.replace("<output-port>", outport);
         config = config.replace("<network>", network);
         config = config.replace("<allowInsecure>", allowInsecure);
+        config = config.replace("<sni>", sni);
+        config = config.replace("<peer>", peer);
         console.log(`config=${config}`);
         File.WriteAllText(configPath, config, utf8);
     }
@@ -150,10 +185,19 @@ let V2flyManager = () => {
     if (Environment.OSVersion.Platform == PlatformID.Win32NT) {
         programPath += ".exe";
     }
+    let v2flyConfigsDirectory = Path.Combine(v2flyDirectory, "configs");
+    if (!Directory.Exists(v2flyConfigsDirectory)) {
+        Directory.CreateDirectory(v2flyConfigsDirectory);
+    }
     let self = {} as IV2flyManager;
-    let vpnConfig = {} as VPNConfig;
+    let vpnConfig = {
+        port: "7897"
+    } as VPNConfig;
     let vpnConfigPath = Path.Combine(v2flyDirectory, "vpn-config.json");
-    let data = {} as {
+    let data = {
+        subscriptions: [],
+        currentProtocolUrl: ""
+    } as {
         currentProtocolUrl: string,
         subscriptions: Subscription[]
     };
@@ -223,15 +267,26 @@ let V2flyManager = () => {
         return processID;
     };
     let startClientByProtocolUrl = async (protocolUrl: string) => {
-        let configGuid = Guid.NewGuid().ToString();
-        let configPath = Path.Combine(v2flyDirectory, `${configGuid}.json`);
+        let configID = md5(protocolUrl);
+        let configPath = Path.Combine(v2flyDirectory, "configs", `${configID}.json`);
         if (protocolUrl.startsWith("vmess://")) {
             v2flyConverter.generateVmessClientConfig(configPath, protocolUrl, vpnConfig.port);
         }
         else if (protocolUrl.startsWith("trojan://")) {
             v2flyConverter.generateTrojanClientConfig(configPath, protocolUrl, vpnConfig.port);
         }
-        return startClient(configPath);
+        return await startClient(configPath);
+    };
+    let startClientByProtocolUrlAndPort = async (protocolUrl: string, port: string) => {
+        let configID = md5(protocolUrl);
+        let configPath = Path.Combine(v2flyDirectory, "configs", `${configID}.json`);
+        if (protocolUrl.startsWith("vmess://")) {
+            v2flyConverter.generateVmessClientConfig(configPath, protocolUrl, port);
+        }
+        else if (protocolUrl.startsWith("trojan://")) {
+            v2flyConverter.generateTrojanClientConfig(configPath, protocolUrl, port);
+        }
+        return await startClient(configPath);
     };
     let stopClient = (processID: number) => {
         try {
@@ -249,18 +304,19 @@ let V2flyManager = () => {
         let proxyProcesses = [] as number[];
         for (let i = 0; i < protocolUrls.length; i++) {
             let proxyPort = proxyPorts[i];
-            proxyProcesses.push(await startClientByProtocolUrl(protocolUrls[i]));
+            proxyProcesses.push(await startClientByProtocolUrlAndPort(protocolUrls[i], proxyPort.toString()));
         }
         // 开始测试速度
         let configs = [] as pingConfig[];
         for (let i = 0; i < protocolUrls.length; i++) {
             configs.push({
-                proxy: `127.0.0.1:${proxyPorts[i]}`,
+                proxy: `http://127.0.0.1:${proxyPorts[i]}/`,
                 timeout: 5000,
-                count: 1
+                count: 3
             });
         }
         let pingsResult = await netUtils.pingsAsync(["http://google.com"], configs);
+        console.log(`stop: ${proxyProcesses}`);
         // 停止代理服务
         for (let processID of proxyProcesses) {
             stopClient(processID);
@@ -326,6 +382,23 @@ let V2flyManager = () => {
             await downloadClient();
         }
     };
+    let switchToFastestProtocolUrl = async () => {
+        let protocolUrls = getSubscribers().map(x => x.protocolUrls).flat();
+        if (protocolUrls.length == 0) {
+            return;
+        }
+        let result = await ping(protocolUrls);
+        result = result.filter(item => item.ping > 0);
+        result.sort((a, b) => a.ping - b.ping);
+        console.log(`switch to fastest protocol url: ${result[0].protocolUrl}, ping: ${result[0].ping}`);
+        await switchToProtocolUrl(result[0].protocolUrl);
+    };
+    let restart = async () => {
+        let protocolUrl = getCurrentProtocolUrl();
+        if (protocolUrl != undefined && protocolUrl != "") {
+            switchToProtocolUrl(protocolUrl);
+        }
+    };
     self = {
         getSubscribers,
         addSubscribers,
@@ -340,12 +413,115 @@ let V2flyManager = () => {
         getCurrentProtocolUrl,
         switchToProtocolUrl,
         initialize,
+        switchToFastestProtocolUrl,
+        restart
     };
     return self;
 };
 
 let v2flyManager = V2flyManager();
 
-let main = async () => {
-
+let main_debug = async () => {
+    await v2flyManager.initialize();
+    while (true) {
+        let line = Console.ReadLine();
+        let lineItems = line.split(" ");
+        if (lineItems.length == 0) {
+            continue;
+        }
+        let command = lineItems[0];
+        if (command == "subscribe") {
+            let url = lineItems[1];
+            v2flyManager.addSubscribers([url]);
+            let updateResult = await v2flyManager.updateSubscribers([url]);
+            console.log(updateResult);
+            console.log('-'.padEnd(32, '-'));
+        }
+        else if (command == "list") {
+            console.log(v2flyManager.getSubscribers());
+            console.log('-'.padEnd(32, '-'));
+        }
+        else if (command == "use") {
+            let url = lineItems[1];
+            await v2flyManager.switchToProtocolUrl(url);
+            console.log('-'.padEnd(32, '-'));
+        }
+        else if (command == "port") {
+            let port = lineItems[1];
+            v2flyManager.setConfig({ ...v2flyManager.getConfig(), port });
+            console.log('-'.padEnd(32, '-'));
+        }
+        else if (command == "ping") {
+            let protocolUrls = v2flyManager.getSubscribers().map(x => x.protocolUrls).flat();
+            let result = await v2flyManager.ping(protocolUrls);
+            console.log(result);
+            console.log('-'.padEnd(32, '-'));
+        }
+        else if (command == "fast") {
+            await v2flyManager.switchToFastestProtocolUrl();
+            console.log('-'.padEnd(32, '-'));
+        }
+    }
 };
+
+const uiDirectory = Path.Combine(v2flyDirectory, "v2fly-ui");
+const uiDistDirectory = Path.Combine(uiDirectory, "dist");
+let initializeUI = async () => {
+    let uiGitDirectory = Path.Combine(uiDirectory, ".git");
+    // 获取最新的UI代码
+    if (Directory.Exists(uiGitDirectory) == false) {
+        await cmdAsync(v2flyDirectory, "git clone https://github.com/Cangjier/v2fly-ui.git --depth=1");
+    }
+    else {
+        await cmdAsync(uiDirectory, "git pull");
+    }
+    // npm 安装
+    await cmdAsync(uiDirectory, "npm install");
+    // 构建UI代码
+    await cmdAsync(uiDirectory, "npm run build");
+};
+
+let main = async () => {
+    await v2flyManager.initialize();
+    let server = new Server();
+    server.use("/api/v1/get_subscribers", async () => {
+        return v2flyManager.getSubscribers();
+    });
+    server.use("/api/v1/add_subscribers", async (subscribers: string[]) => {
+        v2flyManager.addSubscribers(subscribers);
+    });
+    server.use("/api/v1/remove_subscribers", async (subscribers: string[]) => {
+        v2flyManager.removeSubscribers(subscribers);
+    });
+    server.use("/api/v1/update_subscribers", async (subscribers: string[]) => {
+        return await v2flyManager.updateSubscribers(subscribers);
+    });
+    server.use("/api/v1/switch_to_protocol_url", async (protocolUrl: string) => {
+        await v2flyManager.switchToProtocolUrl(protocolUrl);
+    });
+    server.use("/api/v1/ping", async (protocolUrls: string[]) => {
+        return await v2flyManager.ping(protocolUrls);
+    });
+    server.use("/api/v1/switch_to_fastest_protocol_url", async () => {
+        await v2flyManager.switchToFastestProtocolUrl();
+    });
+    server.use("/api/v1/get_current_protocol_url", async () => {
+        return v2flyManager.getCurrentProtocolUrl();
+    });
+    server.use("/api/v1/get_config", async () => {
+        return v2flyManager.getConfig();
+    });
+    server.use("/api/v1/set_config", async (value: any) => {
+        v2flyManager.setConfig(value);
+    });
+    server.use("/api/v1/restart", async () => {
+        await v2flyManager.restart();
+    });
+    await initializeUI();
+    server.useStatic(uiDistDirectory);
+
+    let uiPort = parameters["ui-port"] ?? "7898";
+    await server.start(Number(uiPort));
+};
+
+await main();

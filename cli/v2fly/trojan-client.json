@@ -25,8 +25,10 @@
                 "network": "<network>",
                 "security": "tls",
                 "tlsSettings": {
+                    "serverName": <sni>,
                     "allowInsecure": <allowInsecure>
-                }
+                },
+                "peer": <peer>
             },
             "tag": "proxy"
         },
