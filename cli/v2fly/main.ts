@@ -511,8 +511,8 @@ let main = async () => {
     server.use("/api/v1/get_config", async () => {
         return v2flyManager.getConfig();
     });
-    server.use("/api/v1/set_config", async (value: any) => {
-        v2flyManager.setConfig(value);
+    server.use("/api/v1/set_config", async (config: any) => {
+        v2flyManager.setConfig(config);
     });
     server.use("/api/v1/restart", async () => {
         await v2flyManager.restart();
