@@ -16,6 +16,7 @@ import { netUtils } from "../.tsc/Cangjie/TypeSharp/System/netUtils";
 import { pingConfig } from "../.tsc/Cangjie/TypeSharp/System/pingConfig";
 import { Console } from "../.tsc/System/Console";
 import { ArgsRouter } from "../.tsc/TidyHPC/Routers/Args/ArgsRouter";
+import { Task } from "../.tsc/System/Threading/Tasks/Task";
 let utf8 = new UTF8Encoding(false);
 let script_directory = Path.GetDirectoryName(script_path);
 let v2flyDirectory = Path.Combine(script_directory, ".v2fly");
@@ -306,6 +307,8 @@ let V2flyManager = () => {
             let proxyPort = proxyPorts[i];
             proxyProcesses.push(await startClientByProtocolUrlAndPort(protocolUrls[i], proxyPort.toString()));
         }
+        // 等待服务启动
+        await Task.Delay(1000);
         // 开始测试速度
         let configs = [] as pingConfig[];
         for (let i = 0; i < protocolUrls.length; i++) {
