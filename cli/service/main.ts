@@ -9,7 +9,7 @@ import { Environment } from "../.tsc/System/Environment";
 
 let main = async () => {
     console.log(`args: ${args}`);
-    if (args.length < 2) {
+    if (args.length < 1) {
         console.log("Usage: tscl service <cli-name> ...");
         return;
     }
@@ -17,7 +17,6 @@ let main = async () => {
     let utf8 = new UTF8Encoding(false);
     let cliName = args[0];
     let serviceName = cliName;
-   
     let description = cliName;
     let script_directory = Path.GetDirectoryName(script_path);
     let systemdPath = "/etc/systemd/system";
