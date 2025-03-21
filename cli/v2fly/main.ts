@@ -315,7 +315,9 @@ let V2flyManager = () => {
                 count: 3
             });
         }
+        console.log(`ping configs: ${configs}`)
         let pingsResult = await netUtils.pingsAsync(["http://google.com"], configs);
+        console.log(`pingsResult: ${pingsResult}`);
         console.log(`stop: ${proxyProcesses}`);
         // 停止代理服务
         for (let processID of proxyProcesses) {
