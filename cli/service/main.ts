@@ -10,7 +10,7 @@ import { Environment } from "../.tsc/System/Environment";
 let main = async () => {
     console.log(`args: ${args}`);
     if (args.length < 2) {
-        console.log("Usage: tscl run service <cli-name> ...");
+        console.log("Usage: tscl service <cli-name> ...");
         return;
     }
 
