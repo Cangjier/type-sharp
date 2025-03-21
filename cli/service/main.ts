@@ -3,7 +3,8 @@ import { File } from "../.tsc/System/IO/File";
 import { Console } from "../.tsc/System/Console";
 import { Directory } from "../.tsc/System/IO/Directory";
 import { Path } from "../.tsc/System/IO/Path";
-import { args, cmdAsync, script_path, setLoggerPath } from "../.tsc/context";
+import { args, script_path, setLoggerPath } from "../.tsc/Context";
+import { cmdAsync } from "../.tsc/staticContext";
 import { Environment } from "../.tsc/System/Environment";
 
 let main = async () => {
@@ -16,7 +17,7 @@ let main = async () => {
     let utf8 = new UTF8Encoding(false);
     let cliName = args[0];
     let serviceName = cliName;
-    let execStart = `${Environment.ProcessPath} run ${args.join(" ")}`;
+   
     let description = cliName;
     let script_directory = Path.GetDirectoryName(script_path);
     let systemdPath = "/etc/systemd/system";
@@ -26,9 +27,24 @@ let main = async () => {
         return;
     }
     let homeTempDirectory = Path.Combine(homeDirectory, "tmp");
+    let homeServiceNameDirectory = Path.Combine(homeDirectory, `.${serviceName}`);
+    let homeServiceNameBinDirectory = Path.Combine(homeServiceNameDirectory, "bin");
     if (!Directory.Exists(homeTempDirectory)) {
         Directory.CreateDirectory(homeTempDirectory);
     }
+    if (!Directory.Exists(homeServiceNameDirectory)) {
+        Directory.CreateDirectory(homeServiceNameDirectory);
+    }
+    if (!Directory.Exists(homeServiceNameBinDirectory)) {
+        Directory.CreateDirectory(homeServiceNameBinDirectory);
+    }
+    // 将tscl拷贝到.cliName/bin 目录
+    let homeServiceNameBinProgramPath = Path.Combine(homeServiceNameBinDirectory, Path.GetFileName(Environment.ProcessPath));
+    File.Copy(Environment.ProcessPath, homeServiceNameBinProgramPath, true);
+
+    let execStart = `${homeServiceNameBinProgramPath} run ${args.join(" ")}`;
+
+    // 创建服务
     let serviceFilePath = Path.Combine(homeTempDirectory, `${serviceName}.service`);
     // 排查是否服务 {name} 服务是否已启动，如果启动则停止
     let detectScript = `SERVICE="${serviceName}.service"
