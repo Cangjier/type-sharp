@@ -3,7 +3,7 @@ Description=<Description>
 After=network.target
 
 [Service]
-WorkingDirectory=/home/ubuntu
+WorkingDirectory=<WorkingDirectory>
 EnvironmentFile=<EnvironmentFile>
 ExecStart=<ExecStart>
 Restart=always
