@@ -39,6 +39,8 @@ let main = async () => {
     if (url == undefined) {
         throw `url is required`;
     }
+    console.log(`Share server url prefix: ${url}`);
+    console.log(`Application start...`);
     await app.start(url);
 };
 
