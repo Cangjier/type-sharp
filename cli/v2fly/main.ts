@@ -242,7 +242,7 @@ let V2flyManager = () => {
             throw `Failed to get protocol urls from ${url}`;
         }
         let base64 = response.data;
-        let lines = utf8.GetString(Convert.FromBase64String(base64)).replace('\r', '').split('\n');
+        let lines = utf8.GetString(Convert.FromBase64String(base64)).replace('\r', '').split('\n').filter(s => s.trim() != "");
         return lines;
     };
     let updateSubscribers = async (urls: string[]) => {
