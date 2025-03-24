@@ -386,6 +386,9 @@ let V2flyManager = () => {
         if (isProgramExists() == false) {
             await downloadClient();
         }
+        if (vpnConfig.port != undefined && vpnConfig.port != "" && data.currentProtocolUrl && data.currentProtocolUrl != "") {
+            await switchToProtocolUrl(data.currentProtocolUrl);
+        }
     };
     let switchToFastestProtocolUrl = async () => {
         let protocolUrls = getSubscribers().map(x => x.protocolUrls).flat();
