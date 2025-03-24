@@ -20,12 +20,16 @@ fi
 
 echo "Stop all tscl services"
 
+# 创建一个数组来记录被停止的服务
+stopped_services=()
+
 # 停止所有包含 'tscl' 的服务
 for service in $(systemctl list-units --type=service --no-legend --plain | awk '{print $1}'); do
     # 检查该服务的ExecStart是否包含'tscl'
     if systemctl show "$service" -p ExecStart | grep -q 'tscl'; then
         sudo systemctl stop "$service"
         echo "Stopped service: $service"
+        stopped_services+=("$service")  # 记录停止的服务
     fi
 done
 
@@ -59,13 +63,11 @@ sudo mv "$download_path" ${HOME}/.tscl/bin
 # 添加可执行权限
 sudo chmod +x ${HOME}/.tscl/bin/tscl
 
-echo "Start all tscl services"
-# 启动所有包含 'tscl' 的服务
-for service in $(systemctl list-units --type=service --no-legend --plain | awk '{print $1}'); do
-    if systemctl show "$service" -p ExecStart | grep -q 'tscl'; then
-        sudo systemctl start "$service"
-        echo "Started service: $service"
-    fi
+echo "Start previously stopped tscl services"
+# 启动之前停止的服务
+for service in "${stopped_services[@]}"; do
+    sudo systemctl start "$service"
+    echo "Started service: $service"
 done
 
 # 在.bashrc中添加环境变量，如果不存在则添加
@@ -74,5 +76,6 @@ if ! grep -q 'export PATH=$PATH:${HOME}/.tscl/bin' ~/.bashrc; then
     echo "Added ${HOME}/.tscl/bin to PATH in .bashrc"
 fi
 source ~/.bashrc
+
 # 退出
 exit
