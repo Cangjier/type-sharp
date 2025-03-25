@@ -4,7 +4,7 @@ import { Console } from "../.tsc/System/Console";
 import { Directory } from "../.tsc/System/IO/Directory";
 import { Path } from "../.tsc/System/IO/Path";
 import { args, script_path, setLoggerPath } from "../.tsc/Context";
-import { cmdAsync } from "../.tsc/staticContext";
+import { cmdAsync, env } from "../.tsc/staticContext";
 import { Environment } from "../.tsc/System/Environment";
 
 let main = async () => {
@@ -21,6 +21,9 @@ let main = async () => {
     let script_directory = Path.GetDirectoryName(script_path);
     let systemdPath = "/etc/systemd/system";
     let homeDirectory = Environment.GetEnvironmentVariable("HOME");
+    if (homeDirectory == null || homeDirectory == "") {
+        homeDirectory = env("userprofile");
+    }
     if (homeDirectory == null) {
         Console.WriteLine("The environment variable HOME is not set.");
         return;
@@ -71,7 +74,7 @@ fi`;
         Console.WriteLine("Export env failed.");
         return;
     }
-    
+
     let serviceFileContent = template
         .replace("<Description>", description)
         .replace("<EnvironmentFile>", `${serviceFilePath}.env`)

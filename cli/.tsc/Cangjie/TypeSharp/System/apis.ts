@@ -1,6 +1,22 @@
+import { Context } from "./Context";
 import { String } from "../../../System/String";
 import { Type } from "../../../System/Type";
-export class apis {
+export class Apis {
+    public runAsync2(apiName?: string, args?: any): Promise<any> {
+        return {} as any;
+    }
+    public runAsync(apiName?: string, args?: any): Promise<any> {
+        return {} as any;
+    }
+    public runAsyncWithAlias(apiName?: string, alias?: string, args?: any): Promise<any> {
+        return {} as any;
+    }
+    public list(): string[] {
+        return {} as any;
+    }
+    public Dispose(): void {
+        return {} as any;
+    }
     public GetType(): Type {
         return {} as any;
     }
@@ -13,17 +29,14 @@ export class apis {
     public GetHashCode(): number {
         return {} as any;
     }
-    public constructor() {
+    public constructor(context?: Context) {
     }
-    public static runAsync(apiName?: string, args?: any): Promise<any> {
+    public get context(): Context {
         return {} as any;
     }
-    public static list(): string[] {
+    public get directory(): string {
         return {} as any;
     }
-    public static get directory(): string {
-        return {} as any;
-    }
-    public static set directory(value: string) {
+    public set directory(value: string) {
     }
 }
