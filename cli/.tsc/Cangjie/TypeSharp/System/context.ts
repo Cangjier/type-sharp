@@ -1,8 +1,30 @@
-import { processResult } from "./processResult";
-import { processConfig } from "./processConfig";
-import { Guid } from "../../../System/Guid";
+import { Apis } from "./Apis";
+import { Consoles } from "./Consoles";
+import { Axios } from "./Axios";
+import { LoggerFile } from "../../../TidyHPC/Loggers/LoggerFile";
 import { Type } from "../../../System/Type";
-export class context {
+export class Context {
+    public getContext(): any {
+        return {} as any;
+    }
+    public setContext(context?: any): void {
+        return {} as any;
+    }
+    public locate(path?: string): string {
+        return {} as any;
+    }
+    public eval(script?: string): any {
+        return {} as any;
+    }
+    public setLoggerPath(path?: string): void {
+        return {} as any;
+    }
+    public getLoggerPath(): string {
+        return {} as any;
+    }
+    public Dispose(): void {
+        return {} as any;
+    }
     public GetType(): Type {
         return {} as any;
     }
@@ -15,81 +37,34 @@ export class context {
     public GetHashCode(): number {
         return {} as any;
     }
-    public static exec(config?: processConfig): processResult {
+    public constructor(reference?: Context) {
+    }
+    public script_path: string;
+    public get context(): any {
         return {} as any;
     }
-    public static execAsync(config?: processConfig): Promise<processResult> {
+    public get apis(): Apis {
         return {} as any;
     }
-    public static start(config?: processConfig): number {
+    public get console(): Consoles {
         return {} as any;
     }
-    public static kill(pid?: number): void {
+    public get axios(): Axios {
         return {} as any;
     }
-    public static cmd(workingDirectory?: string, commandLine?: string, config?: processConfig): processResult {
+    public get Logger(): LoggerFile {
         return {} as any;
     }
-    public static cmdAsync(workingDirectory?: string, commandLine?: string, config?: processConfig): Promise<processResult> {
+    public set Logger(value: LoggerFile) {
+    }
+    public get args(): string[] {
         return {} as any;
     }
-    public static startCmd(workingDirectory?: string, commandLine?: string): void {
+    public set args(value: string[]) {
+    }
+    public get manifest(): any {
         return {} as any;
     }
-    public static parseFloat(value?: string): number {
-        return {} as any;
+    public set manifest(value: any) {
     }
-    public static parseInt(value?: string): number {
-        return {} as any;
-    }
-    public static toString(value?: any): string {
-        return {} as any;
-    }
-    public static Number(value?: any): any {
-        return {} as any;
-    }
-    public static copyDirectory(sourceDirectory?: string, destinationDirectory?: string): void {
-        return {} as any;
-    }
-    public static deleteFile(sourcePath?: string): void {
-        return {} as any;
-    }
-    public static deleteDirectory(sourceDirectory?: string): void {
-        return {} as any;
-    }
-    public static setLoggerPath(path?: string): void {
-        return {} as any;
-    }
-    public static getLoggerPath(): string {
-        return {} as any;
-    }
-    public static locate(searchDirectory_or_path?: string, path?: string): string {
-        return {} as any;
-    }
-    public static lock(id?: Guid): void {
-        return {} as any;
-    }
-    public static lockAsync(id?: Guid): Promise<void> {
-        return {} as any;
-    }
-    public static unlock(id?: Guid): void {
-        return {} as any;
-    }
-    public static lockFile(filePath?: string): boolean {
-        return {} as any;
-    }
-    public static unlockFile(filePath?: string): boolean {
-        return {} as any;
-    }
-    public static env(environmentVariable?: string): string {
-        return {} as any;
-    }
-    public static md5(value?: any): string {
-        return {} as any;
-    }
-    public static args: string[];
-    public static manifest: any;
-    public static script_path: string;
-    public static null: any;
-    public static undefined: any;
 }

@@ -99,10 +99,7 @@ export class Environment {
     public static get SystemPageSize(): number {
         return {} as any;
     }
-    public static get UserInteractive(): boolean {
-        return {} as any;
-    }
-    public static get SystemDirectory(): string {
+    public static get UserName(): string {
         return {} as any;
     }
     public static get UserDomainName(): string {
@@ -111,7 +108,10 @@ export class Environment {
     public static get MachineName(): string {
         return {} as any;
     }
-    public static get UserName(): string {
+    public static get SystemDirectory(): string {
+        return {} as any;
+    }
+    public static get UserInteractive(): boolean {
         return {} as any;
     }
     public static get WorkingSet(): number {
