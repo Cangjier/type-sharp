@@ -32,7 +32,7 @@ const utf8 = new UTF8Encoding(false);
 const injectWindowHtml = (setupDirectory: string) => {
     const windowHtmlPath = `${setupDirectory}/resources/window.html`;
     const windowHtmlContent = File.ReadAllText(windowHtmlPath, utf8);
-    let headIndex = windowHtmlContent.indexOf("<head>");
+    let headIndex = windowHtmlContent.indexOf("<head>") + 6;
     let injectContent = `<style>
 body>div[role="button"] {
     visibility: hidden;
