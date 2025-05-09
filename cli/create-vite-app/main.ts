@@ -57,13 +57,14 @@ let main = async () => {
     let mainTsPath = Path.Combine(projectDirectory, "src", "main.tsx");
     let mainTsTemplatePath = Path.Combine(templateDirectory, "main.tsx");
     File.Copy(mainTsTemplatePath, mainTsPath, true);
-
+    // "types": ["vite-plugin-svgr/client"]
     let tsconfigAppPath = Path.Combine(projectDirectory, "tsconfig.app.json");
     let tsconfigApp = Json.Load(tsconfigAppPath);
     tsconfigApp["compilerOptions"]["noUnusedLocals"] = false;
     tsconfigApp["compilerOptions"]["noUnusedParameters"] = false;
     tsconfigApp["compilerOptions"]["erasableSyntaxOnly"] = undefined;
     tsconfigApp["compilerOptions"]["verbatimModuleSyntax"] = undefined;
+    tsconfigApp["compilerOptions"]["types"] = ["vite-plugin-svgr/client"];
     (tsconfigApp as Json).Save(tsconfigAppPath);
 
     let tsconfigNodePath = Path.Combine(projectDirectory, "tsconfig.node.json");
@@ -72,6 +73,7 @@ let main = async () => {
     tsconfigNode["compilerOptions"]["noUnusedParameters"] = false;
     tsconfigNode["compilerOptions"]["erasableSyntaxOnly"] = undefined;
     tsconfigNode["compilerOptions"]["verbatimModuleSyntax"] = undefined;
+    tsconfigNode["compilerOptions"]["types"] = ["vite-plugin-svgr/client"];
     (tsconfigNode as Json).Save(tsconfigNodePath);
 
     let srcDirectory = Path.Combine(projectDirectory, "src");
