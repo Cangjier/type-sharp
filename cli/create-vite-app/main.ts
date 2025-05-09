@@ -18,6 +18,13 @@ let main = async () => {
     if (Directory.Exists(projectDirectory) == false) {
         Directory.CreateDirectory(projectDirectory);
     }
+    let tempProjectFiles = Directory.GetFiles(templateDirectory);
+    let tempProjectDirectories = Directory.GetDirectories(templateDirectory).filter(item => Path.GetFileName(item) != ".git");
+    if (tempProjectFiles.length > 0 || tempProjectDirectories.length > 0) {
+        console.log("Please remove files from project directory before running this script.");
+        return;
+    }
+
     let cmds = [
         "npm install create-vite@latest --global",
         `create-vite . --template react-ts --force`,
