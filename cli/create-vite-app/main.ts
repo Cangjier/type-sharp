@@ -56,6 +56,7 @@ let main = async () => {
     tsconfigApp["compilerOptions"]["noUnusedLocals"] = false;
     tsconfigApp["compilerOptions"]["noUnusedParameters"] = false;
     tsconfigApp["compilerOptions"]["erasableSyntaxOnly"] = undefined;
+    tsconfigApp["compilerOptions"]["verbatimModuleSyntax"] = undefined;
     (tsconfigApp as Json).Save(tsconfigAppPath);
 
     let srcDirectory = Path.Combine(projectDirectory, "src");
