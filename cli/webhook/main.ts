@@ -220,8 +220,8 @@ let GitManager = () => {
         }
         Directory.CreateDirectory(tempDirectory);
         console.log(`Working Directory : ${tempDirectory}, Existing: ${Directory.Exists(tempDirectory)}`);
-        console.log(`git clone ${gitUrl} .`);
-        if ((await cmdAsync(tempDirectory, `git clone ${gitUrl} .`)).exitCode != 0) {
+        console.log(`git clone --recurse-submodules ${gitUrl} .`);
+        if ((await cmdAsync(tempDirectory, `git clone --recurse-submodules ${gitUrl} .`)).exitCode != 0) {
             console.log(`git clone ${gitUrl} failed, delete temp directory: ${tempDirectory}`);
             deleteDirectory(tempDirectory);
             return false;
