@@ -43,6 +43,20 @@ let main = async () => {
     let mainTsPath = Path.Combine(projectDirectory, "src", "main.tsx");
     let mainTsTemplatePath = Path.Combine(templateDirectory, "main.tsx");
     File.Copy(mainTsTemplatePath, mainTsPath, true);
+
+    let tsconfigAppPath = Path.Combine(projectDirectory, "tsconfig.app.json");
+    let tsconfigApp = Json.Load(tsconfigAppPath);
+    tsconfigApp["compilerOptions"]["noUnusedLocals"] = false;
+    tsconfigApp["compilerOptions"]["noUnusedParameters"] = false;
+    tsconfigApp["compilerOptions"]["erasableSyntaxOnly"] = undefined;
+    (tsconfigApp as Json).Save(tsconfigAppPath);
+
+    let srcDirectory = Path.Combine(projectDirectory, "src");
+    cmd(srcDirectory, "git clone https://github.com/Cangjier/natived.git");
+
+    let appTsxPath = Path.Combine(srcDirectory, "App.tsx");
+    let appTsxTemplatePath = Path.Combine(templateDirectory, "App.tsx");
+    File.Copy(appTsxTemplatePath, appTsxPath, true);
 };
 
 await main();
