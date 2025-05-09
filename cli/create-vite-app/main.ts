@@ -66,6 +66,14 @@ let main = async () => {
     tsconfigApp["compilerOptions"]["verbatimModuleSyntax"] = undefined;
     (tsconfigApp as Json).Save(tsconfigAppPath);
 
+    let tsconfigNodePath = Path.Combine(projectDirectory, "tsconfig.node.json");
+    let tsconfigNode = Json.Load(tsconfigNodePath);
+    tsconfigNode["compilerOptions"]["noUnusedLocals"] = false;
+    tsconfigNode["compilerOptions"]["noUnusedParameters"] = false;
+    tsconfigNode["compilerOptions"]["erasableSyntaxOnly"] = undefined;
+    tsconfigNode["compilerOptions"]["verbatimModuleSyntax"] = undefined;
+    (tsconfigNode as Json).Save(tsconfigNodePath);
+
     let srcDirectory = Path.Combine(projectDirectory, "src");
     cmd(srcDirectory, "git clone https://github.com/Cangjier/natived.git");
 
@@ -75,6 +83,10 @@ let main = async () => {
 
     let svgsDirectory = Path.Combine(srcDirectory, "svgs");
     Directory.CreateDirectory(svgsDirectory);
+
+    let viteConfigTSPath = Path.Combine(projectDirectory, "vite.config.ts");
+    let viteConfigTSTemplatePath = Path.Combine(templateDirectory, "vite.config.ts");
+    File.Copy(viteConfigTSTemplatePath, viteConfigTSPath, true);
 };
 
 await main();
