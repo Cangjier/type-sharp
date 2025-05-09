@@ -18,8 +18,8 @@ let main = async () => {
     if (Directory.Exists(projectDirectory) == false) {
         Directory.CreateDirectory(projectDirectory);
     }
-    let tempProjectFiles = Directory.GetFiles(templateDirectory);
-    let tempProjectDirectories = Directory.GetDirectories(templateDirectory).filter(item => Path.GetFileName(item) != ".git");
+    let tempProjectFiles = Directory.GetFiles(projectDirectory);
+    let tempProjectDirectories = Directory.GetDirectories(projectDirectory).filter(item => Path.GetFileName(item) != ".git");
     if (tempProjectFiles.length > 0 || tempProjectDirectories.length > 0) {
         console.log("Please remove files from project directory before running this script.");
         tempProjectFiles.forEach(item => {
