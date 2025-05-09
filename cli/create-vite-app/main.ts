@@ -22,6 +22,12 @@ let main = async () => {
     let tempProjectDirectories = Directory.GetDirectories(templateDirectory).filter(item => Path.GetFileName(item) != ".git");
     if (tempProjectFiles.length > 0 || tempProjectDirectories.length > 0) {
         console.log("Please remove files from project directory before running this script.");
+        tempProjectFiles.forEach(item => {
+            console.log(item);
+        });
+        tempProjectDirectories.forEach(item => {
+            console.log(item);
+        });
         return;
     }
 
@@ -32,7 +38,8 @@ let main = async () => {
         "npm install @ant-design/icons --save",
         "npm install axios --save",
         "npm install react-router-dom --save",
-        "npm i --save-dev @types/node"
+        "npm i --save-dev @types/node",
+        "npm install vite-plugin-svgr --save"
     ];
     for (let i = 0; i < cmds.length; i++) {
         let item = cmds[i];
@@ -65,6 +72,9 @@ let main = async () => {
     let appTsxPath = Path.Combine(srcDirectory, "App.tsx");
     let appTsxTemplatePath = Path.Combine(templateDirectory, "App.tsx");
     File.Copy(appTsxTemplatePath, appTsxPath, true);
+
+    let svgsDirectory = Path.Combine(srcDirectory, "svgs");
+    Directory.CreateDirectory(svgsDirectory);
 };
 
 await main();
