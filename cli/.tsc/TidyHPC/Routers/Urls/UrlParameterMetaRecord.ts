@@ -16,7 +16,7 @@ export class UrlParameterMetaRecord {
     public GetType(): Type {
         return {} as any;
     }
-    public constructor(Parameter?: ParameterInfo, Aliases?: string[], IsOptional?: boolean) {
+    public constructor(Parameter?: ParameterInfo, Aliases?: string[], IsOptional?: boolean, TypeScriptInterface?: string) {
     }
     public static op_Inequality(left?: UrlParameterMetaRecord, right?: UrlParameterMetaRecord): boolean {
         return {} as any;
@@ -38,5 +38,10 @@ export class UrlParameterMetaRecord {
         return {} as any;
     }
     public set IsOptional(value: boolean) {
+    }
+    public get TypeScriptInterface(): string {
+        return {} as any;
+    }
+    public set TypeScriptInterface(value: string) {
     }
 }

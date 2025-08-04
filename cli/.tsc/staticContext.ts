@@ -24,6 +24,7 @@ export const Number:(value?: any) => any = 0 as any
 export const copyDirectory:(sourceDirectory?: string, destinationDirectory?: string) => void = 0 as any
 export const deleteFile:(sourcePath?: string) => void = 0 as any
 export const deleteDirectory:(sourceDirectory?: string) => void = 0 as any
+export const clearDirectory:(sourceDirectory?: string) => void = 0 as any
 export const locate:(searchDirectory?: string, path?: string) => string = 0 as any
 export const lock:(id?: Guid) => void = 0 as any
 export const lockAsync:(id?: Guid) => Promise<void> = 0 as any

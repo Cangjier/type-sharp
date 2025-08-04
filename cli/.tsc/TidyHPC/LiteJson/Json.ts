@@ -164,7 +164,7 @@ export class Json {
     public Read(key?: string, defaultValue?: string | number | boolean | Guid | TimeSpan | DateTime): string | number | boolean | Guid | TimeSpan | DateTime {
         return {} as any;
     }
-    public ReadWithKeys(keys?: string[], defaultValue?: string): string {
+    public ReadWithKeys(keys?: string[], defaultValue?: string | number): string | number {
         return {} as any;
     }
     public ContainsKey(key?: string): boolean {
@@ -188,6 +188,9 @@ export class Json {
         return {} as any;
     }
     public static Load(path?: string): any {
+        return {} as any;
+    }
+    public static LoadUntilTimeout(path?: string): Promise<any> {
         return {} as any;
     }
     public static LoadAsync(path?: string): Promise<any> {

@@ -61,6 +61,9 @@ export class staticContext {
     public static deleteDirectory(sourceDirectory?: string): void {
         return {} as any;
     }
+    public static clearDirectory(sourceDirectory?: string): void {
+        return {} as any;
+    }
     public static locate(searchDirectory?: string, path?: string): string {
         return {} as any;
     }
