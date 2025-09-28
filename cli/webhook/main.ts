@@ -489,14 +489,14 @@ let DotNetManager = () => {
             return false;
         }
         if (pubxmlFiles.length == 0) {
-            let csproj = Xml.Load(csprojPath);
+            let csproj = Xml.Load(csprojPath).Root;
             let targetFrameworks: string[] = [];
-            let propertyGroup = csproj.GetOrCreateElementByName("PropertyGroup");
+            let propertyGroup = csproj.GetElementByName("PropertyGroup");
             if (propertyGroup.ContainsElementByName("TargetFrameworks")) {
-                targetFrameworks = propertyGroup.GetOrCreateElementByName("TargetFrameworks").InnerText.split(';');
+                targetFrameworks = propertyGroup.GetElementByName("TargetFrameworks").InnerText.split(';');
             }
             else if (propertyGroup.ContainsElementByName("TargetFramework")) {
-                targetFrameworks = propertyGroup.GetOrCreateElementByName("TargetFramework").InnerText.split(';');
+                targetFrameworks = propertyGroup.GetElementByName("TargetFramework").InnerText.split(';');
             }
             else {
                 targetFrameworks = ["net8.0"];
