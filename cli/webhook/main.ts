@@ -493,10 +493,10 @@ let DotNetManager = () => {
             let targetFrameworks: string[] = [];
             let propertyGroup = csproj.GetElementByName("PropertyGroup");
             if (propertyGroup.ContainsElementByName("TargetFrameworks")) {
-                targetFrameworks = propertyGroup.GetElementByName("TargetFrameworks").InnerText.split(';');
+                targetFrameworks = propertyGroup.GetElementByName("TargetFrameworks").InnerText.split(';').filter(item => item.trim() != "");
             }
             else if (propertyGroup.ContainsElementByName("TargetFramework")) {
-                targetFrameworks = propertyGroup.GetElementByName("TargetFramework").InnerText.split(';');
+                targetFrameworks = propertyGroup.GetElementByName("TargetFramework").InnerText.split(';').filter(item => item.trim() != "");
             }
             else {
                 targetFrameworks = ["net8.0"];
