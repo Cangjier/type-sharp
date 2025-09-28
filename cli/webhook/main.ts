@@ -489,13 +489,23 @@ let DotNetManager = () => {
             return false;
         }
         if (pubxmlFiles.length == 0) {
-            let cmd = `dotnet publish -c Release -f net8.0`;
-            console.log(cmd);
-            let publishResult = await cmdAsync(currentDirectory, cmd);
-            console.log(`dotnet publish result: ${publishResult}`);
-            if (publishResult.exitCode != 0) {
-                console.log(`dotnet publish failed`);
-                return false;
+            let csproj = Xml.Load(csprojPath);
+            let targetFrameworks: string[] = [];
+            let propertyGroup = csproj.GetOrCreateElementByName("PropertyGroup");
+            if (propertyGroup.ContainsElementByName("TargetFrameworks")) {
+                targetFrameworks = propertyGroup.GetOrCreateElementByName("TargetFrameworks").InnerText.split(';');
+            }
+            else if (propertyGroup.ContainsElementByName("TargetFramework")) {
+                targetFrameworks = propertyGroup.GetOrCreateElementByName("TargetFramework").InnerText.split(';');
+            }
+            else {
+                targetFrameworks = ["net8.0"];
+            }
+            for (let targetFramework of targetFrameworks) {
+                let cmd = `dotnet publish -c Release -f ${targetFramework}`;
+                console.log(cmd);
+                let publishResult = await cmdAsync(currentDirectory, cmd);
+                console.log(`dotnet publish result: ${publishResult}`);
             }
         }
         else {
