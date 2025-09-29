@@ -64,6 +64,8 @@ interface IV2flyManager {
     removeSubscribers: (urls: string[]) => void,
     // 更新订阅地址
     updateSubscribers: (urls: string[]) => Promise<Subscription[]>,
+    // 更新订阅地址的base64内容
+    updateSubscriberByBase64Content: (url: string, base64Content: string) => Promise<void>,
     // 测试协议地址的延迟
     ping: (protocolUrls: string[]) => Promise<PingResult[]>,
     // 获取当前协议地址
@@ -253,6 +255,13 @@ let V2flyManager = () => {
         saveData();
         return subscriptions;
     };
+    let updateSubscriberByBase64Content = async (url: string, base64Content: string) => {
+        let subscription = data.subscriptions.find(s => s.url == url);
+        if (subscription) {
+            subscription.protocolUrls = utf8.GetString(Convert.FromBase64String(base64Content)).replace('\r', '').split('\n').filter(s => s.trim() != "");
+        }
+        saveData();
+    };
     let startClient = async (configPath: string) => {
         if (Environment.OSVersion.Platform == PlatformID.Win32NT) {
 
@@ -412,6 +421,7 @@ let V2flyManager = () => {
         addSubscribers,
         removeSubscribers,
         updateSubscribers,
+        updateSubscriberByBase64Content,
         getConfig: () => vpnConfig,
         setConfig: (value) => {
             vpnConfig = value;
@@ -504,6 +514,9 @@ let main = async () => {
     server.use("/api/v1/update_subscribers", async (subscribers: string[]) => {
         return await v2flyManager.updateSubscribers(subscribers);
     });
+    server.use("/api/v1/update_subscriber_by_base64_content", async (url: string, base64Content: string) => {
+        await v2flyManager.updateSubscriberByBase64Content(url, base64Content);
+    });
     server.use("/api/v1/switch_to_protocol_url", async (protocolUrl: string) => {
         await v2flyManager.switchToProtocolUrl(protocolUrl);
     });
@@ -530,6 +543,7 @@ let main = async () => {
 
     let uiPort = parameters["ui-port"] ?? "7898";
     await server.start(Number(uiPort));
+    console.log(`v2fly-ui started on port ${uiPort}`);
 };
 
 await main();
