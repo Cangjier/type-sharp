@@ -500,7 +500,9 @@ let initializeUI = async () => {
 };
 
 let main = async () => {
+    console.log(`initializing v2fly`);
     await v2flyManager.initialize();
+    console.log(`initializing server`);
     let server = new Server();
     server.use("/api/v1/get_subscribers", async () => {
         return v2flyManager.getSubscribers();
@@ -538,12 +540,13 @@ let main = async () => {
     server.use("/api/v1/restart", async () => {
         await v2flyManager.restart();
     });
+    console.log(`initializing v2fly-ui`);
     await initializeUI();
     server.useStatic(uiDistDirectory);
 
     let uiPort = parameters["ui-port"] ?? "7898";
-    await server.start(Number(uiPort));
     console.log(`v2fly-ui started on port ${uiPort}`);
+    await server.start(Number(uiPort));
 };
 
 await main();
