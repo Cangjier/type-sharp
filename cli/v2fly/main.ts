@@ -240,7 +240,7 @@ let V2flyManager = () => {
         let response = await axios.get(url, {
             responseType: "text",
             headers: {
-                "User-Agent": "clash"
+                "User-Agent": "v2ray"
             }
         });
         if (response.status != 200) {
