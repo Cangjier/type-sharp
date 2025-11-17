@@ -1147,7 +1147,7 @@ let main = () => {
             "(System\\.Text\\.(UTF8Encoding|Encoding)$)",
             "(System\\.Text\\.RegularExpressions\\.(Regex|RegexOptions|Match|MatchCollection|GroupCollection|Group)$)",
             "(System\\.(Console|Type|Environment|OperatingSystem|PlatformID|Version|Convert|EnvironmentVariableTarget)$)",
-            "(TidyHPC\\.(LiteJson|LiteXml|Routers|LiteDB)\\..*)",
+            "(TidyHPC\\.(LiteJson|LiteXml|Routers|LiteDB|Terminal)\\..*)",
             "(System\\.Reflection\\.(Assembly|ConstructorInfo|FieldInfo|MemberInfo|MemberTypes|MethodInfo|ParameterInfo)$)",
             "(Cangjie\\.TypeSharp\\.(System|FullNameScript)\\..*)",
             "(VizGroup\\..*)"
