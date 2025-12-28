@@ -1,4 +1,4 @@
-import { args, axios, script_path } from "../.tsc/Context";
+import { args, axios, script_path } from "../.tsc/context";
 import { exec, execAsync, cmd, cmdAsync, start, startCmd, copyDirectory, deleteDirectory, env, kill, md5 } from "../.tsc/staticContext";
 import { Environment } from "../.tsc/System/Environment";
 import { Directory } from "../.tsc/System/IO/Directory";

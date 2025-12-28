@@ -1,5 +1,5 @@
-import { axios } from "../.tsc/Cangjie/TypeSharp/System/axios";
-import { args, cmdAsync } from "../.tsc/context";
+import { args, axios } from "../.tsc/context";
+import { cmdAsync } from "../.tsc/staticContext";
 import { Environment } from "../.tsc/System/Environment";
 import { Path } from "../.tsc/System/IO/Path";
 

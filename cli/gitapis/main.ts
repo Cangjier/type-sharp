@@ -1,7 +1,6 @@
 // 将git的apis以命令行进行实现
-
-import { axios } from "../.tsc/Cangjie/TypeSharp/System/axios";
-import { args, cmdAsync } from "../.tsc/context";
+import { args, axios } from "../.tsc/context";
+import { cmdAsync } from "../.tsc/staticContext";
 import { Environment } from "../.tsc/System/Environment";
 import { File } from "../.tsc/System/IO/File";
 import { Path } from "../.tsc/System/IO/Path";

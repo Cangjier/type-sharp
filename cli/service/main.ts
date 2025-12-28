@@ -3,7 +3,7 @@ import { File } from "../.tsc/System/IO/File";
 import { Console } from "../.tsc/System/Console";
 import { Directory } from "../.tsc/System/IO/Directory";
 import { Path } from "../.tsc/System/IO/Path";
-import { args, script_path, setLoggerPath } from "../.tsc/Context";
+import { args, script_path, setLoggerPath } from "../.tsc/context";
 import { cmdAsync, env } from "../.tsc/staticContext";
 import { Environment } from "../.tsc/System/Environment";
 

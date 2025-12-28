@@ -1,4 +1,4 @@
-import { exec, execAsync } from "../.tsc/context";
+import { execAsync } from "../.tsc/staticContext";
 import { Environment } from "../.tsc/System/Environment";
 import { Directory } from "../.tsc/System/IO/Directory";
 import { Path } from "../.tsc/System/IO/Path";

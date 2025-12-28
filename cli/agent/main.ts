@@ -1,5 +1,5 @@
 import { AgentApplication } from "../.tsc/Cangjie/TypeSharp/System/AgentApplication";
-import { args, script_path } from "../.tsc/Context";
+import { args, script_path } from "../.tsc/context";
 import { Directory } from "../.tsc/System/IO/Directory";
 import { Path } from "../.tsc/System/IO/Path";
 
