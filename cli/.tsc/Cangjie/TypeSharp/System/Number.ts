@@ -1,5 +1,5 @@
 import { Type } from "../../../System/Type";
-export class base64Utils {
+export class Number {
     public GetType(): Type {
         return {} as any;
     }
@@ -14,16 +14,10 @@ export class base64Utils {
     }
     public constructor() {
     }
-    public static encodeString(value?: string): string {
+    public static isInteger(value?: any): boolean {
         return {} as any;
     }
-    public static encode(bytes?: number[], offset?: number, length?: number): string {
-        return {} as any;
-    }
-    public static decodeString(value?: string): string {
-        return {} as any;
-    }
-    public static decode(value?: string): number[] {
+    public static isNaN(value?: any): boolean {
         return {} as any;
     }
 }

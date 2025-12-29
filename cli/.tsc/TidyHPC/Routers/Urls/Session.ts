@@ -1,5 +1,6 @@
 import { IRequest } from "./Interfaces/IRequest";
 import { IResponse } from "./Interfaces/IResponse";
+import { IWebsocketResponse } from "./Interfaces/IWebsocketResponse";
 import { SessionCache } from "./SessionCache";
 import { SessionSetter } from "./SessionSetter";
 import { Task } from "../../../System/Threading/Tasks/Task";
@@ -29,6 +30,12 @@ export class Session {
         return {} as any;
     }
     public get Response(): IResponse {
+        return {} as any;
+    }
+    public get IsWebSocket(): boolean {
+        return {} as any;
+    }
+    public get WebSocketResponse(): IWebsocketResponse {
         return {} as any;
     }
     public get Cache(): SessionCache {

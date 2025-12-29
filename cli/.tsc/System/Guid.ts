@@ -1,3 +1,4 @@
+import { DateTimeOffset } from "./DateTimeOffset";
 import { IFormatProvider } from "./IFormatProvider";
 import { Type } from "./Type";
 import { UInt16 } from "./UInt16";
@@ -22,6 +23,9 @@ export class Guid {
         return {} as any;
     }
     public constructor(b_or_a_or_g?: number[] | number | string, b?: UInt16 | Int16, c?: UInt16 | Int16, d?: number | number[], e?: number, f?: number, g?: number, h?: number, i?: number, j?: number, k?: number) {
+    }
+    public static CreateVersion7(timestamp?: DateTimeOffset): Guid {
+        return {} as any;
     }
     public static Parse(input_or_s?: string, provider?: IFormatProvider): Guid {
         return {} as any;
@@ -51,4 +55,13 @@ export class Guid {
         return {} as any;
     }
     public static Empty: Guid;
+    public static get AllBitsSet(): Guid {
+        return {} as any;
+    }
+    public get Variant(): number {
+        return {} as any;
+    }
+    public get Version(): number {
+        return {} as any;
+    }
 }

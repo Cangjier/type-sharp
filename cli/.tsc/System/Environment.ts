@@ -49,12 +49,6 @@ export class Environment {
     }
     public static set ExitCode(value: number) {
     }
-    public static get TickCount(): number {
-        return {} as any;
-    }
-    public static get TickCount64(): number {
-        return {} as any;
-    }
     public static get ProcessorCount(): number {
         return {} as any;
     }
@@ -90,13 +84,13 @@ export class Environment {
     public static get OSVersion(): OperatingSystem {
         return {} as any;
     }
-    public static get Version(): Version {
-        return {} as any;
-    }
     public static get StackTrace(): string {
         return {} as any;
     }
     public static get SystemPageSize(): number {
+        return {} as any;
+    }
+    public static get TickCount(): number {
         return {} as any;
     }
     public static get UserName(): string {
@@ -115,6 +109,12 @@ export class Environment {
         return {} as any;
     }
     public static get WorkingSet(): number {
+        return {} as any;
+    }
+    public static get TickCount64(): number {
+        return {} as any;
+    }
+    public static get Version(): Version {
         return {} as any;
     }
 }

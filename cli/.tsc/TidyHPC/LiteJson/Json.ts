@@ -190,6 +190,9 @@ export class Json {
     public static Load(path?: string): any {
         return {} as any;
     }
+    public static Repair(raw?: string): string {
+        return {} as any;
+    }
     public static LoadUntilTimeout(path?: string): Promise<any> {
         return {} as any;
     }

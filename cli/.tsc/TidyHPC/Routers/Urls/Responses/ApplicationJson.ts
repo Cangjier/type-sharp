@@ -17,7 +17,7 @@ export class ApplicationJson {
     public GetType(): Type {
         return {} as any;
     }
-    public constructor(Content?: any) {
+    public constructor(Content_or_content?: any, ContentEncoding?: string) {
     }
     public static op_Implicit(content?: any | NetMessageInterface): ApplicationJson {
         return {} as any;
@@ -32,5 +32,10 @@ export class ApplicationJson {
         return {} as any;
     }
     public set Content(value: any) {
+    }
+    public get ContentEncoding(): string {
+        return {} as any;
+    }
+    public set ContentEncoding(value: string) {
     }
 }

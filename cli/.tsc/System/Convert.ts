@@ -6,6 +6,7 @@ import { Int16 } from "./Int16";
 import { UInt16 } from "./UInt16";
 import { DateTime } from "./DateTime";
 import { Base64FormattingOptions } from "./Base64FormattingOptions";
+import { OperationStatus } from "./Buffers/OperationStatus";
 export class Convert {
     public GetType(): Type {
         return {} as any;
@@ -89,6 +90,9 @@ export class Convert {
         return {} as any;
     }
     public static ToHexString(inArray?: number[], offset?: number, length?: number): string {
+        return {} as any;
+    }
+    public static ToHexStringLower(inArray?: number[], offset?: number, length?: number): string {
         return {} as any;
     }
     public static DBNull: any;

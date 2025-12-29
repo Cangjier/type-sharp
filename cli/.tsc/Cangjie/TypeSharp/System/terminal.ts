@@ -1,5 +1,8 @@
+import { terminalWrapper } from "./terminalWrapper";
+import { terminalOptions } from "./terminalOptions";
+import { Guid } from "../../../System/Guid";
 import { Type } from "../../../System/Type";
-export class base64Utils {
+export class terminal {
     public GetType(): Type {
         return {} as any;
     }
@@ -14,16 +17,16 @@ export class base64Utils {
     }
     public constructor() {
     }
-    public static encodeString(value?: string): string {
+    public static create(options?: terminalOptions): terminalWrapper {
         return {} as any;
     }
-    public static encode(bytes?: number[], offset?: number, length?: number): string {
+    public static close(id?: Guid): void {
         return {} as any;
     }
-    public static decodeString(value?: string): string {
+    public static get(id?: Guid): terminalWrapper {
         return {} as any;
     }
-    public static decode(value?: string): number[] {
+    public static list(): Guid[] {
         return {} as any;
     }
 }

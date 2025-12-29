@@ -40,25 +40,25 @@ export class TimeSpan {
     public static Compare(t1?: TimeSpan, t2?: TimeSpan): number {
         return {} as any;
     }
-    public static FromDays(value?: number): TimeSpan {
+    public static FromDays(value_or_days?: number, hours?: number, minutes?: number, seconds?: number, milliseconds?: number, microseconds?: number): TimeSpan {
         return {} as any;
     }
     public static Equals(t1?: TimeSpan, t2?: TimeSpan): boolean {
         return {} as any;
     }
-    public static FromHours(value?: number): TimeSpan {
+    public static FromHours(hours_or_value?: number, minutes?: number, seconds?: number, milliseconds?: number, microseconds?: number): TimeSpan {
         return {} as any;
     }
-    public static FromMilliseconds(value?: number): TimeSpan {
+    public static FromMinutes(minutes_or_value?: number, seconds?: number, milliseconds?: number, microseconds?: number): TimeSpan {
         return {} as any;
     }
-    public static FromMicroseconds(value?: number): TimeSpan {
+    public static FromSeconds(seconds_or_value?: number, milliseconds?: number, microseconds?: number): TimeSpan {
         return {} as any;
     }
-    public static FromMinutes(value?: number): TimeSpan {
+    public static FromMilliseconds(milliseconds_or_value?: number, microseconds?: number): TimeSpan {
         return {} as any;
     }
-    public static FromSeconds(value?: number): TimeSpan {
+    public static FromMicroseconds(microseconds_or_value?: number): TimeSpan {
         return {} as any;
     }
     public static FromTicks(value?: number): TimeSpan {
@@ -116,6 +116,21 @@ export class TimeSpan {
     public static TicksPerMinute: number;
     public static TicksPerHour: number;
     public static TicksPerDay: number;
+    public static MicrosecondsPerMillisecond: number;
+    public static MicrosecondsPerSecond: number;
+    public static MicrosecondsPerMinute: number;
+    public static MicrosecondsPerHour: number;
+    public static MicrosecondsPerDay: number;
+    public static MillisecondsPerSecond: number;
+    public static MillisecondsPerMinute: number;
+    public static MillisecondsPerHour: number;
+    public static MillisecondsPerDay: number;
+    public static SecondsPerMinute: number;
+    public static SecondsPerHour: number;
+    public static SecondsPerDay: number;
+    public static MinutesPerHour: number;
+    public static MinutesPerDay: number;
+    public static HoursPerDay: number;
     public get Ticks(): number {
         return {} as any;
     }

@@ -120,6 +120,12 @@ export class File {
     public static WriteAllBytes(path?: string, bytes?: number[]): void {
         return {} as any;
     }
+    public static AppendAllBytes(path?: string, bytes?: number[]): void {
+        return {} as any;
+    }
+    public static AppendAllBytesAsync(path?: string, bytes?: number[], cancellationToken?: CancellationToken): Promise<void> {
+        return {} as any;
+    }
     public static ReadAllLines(path?: string, encoding?: Encoding): string[] {
         return {} as any;
     }

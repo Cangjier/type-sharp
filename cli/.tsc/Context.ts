@@ -8,6 +8,7 @@ export const getContext:()=> any = 0 as any
 export const setContext:(context?: any)=> void = 0 as any
 export const locate:(path?: string)=> string = 0 as any
 export const eval:(script?: string)=> any = 0 as any
+export const evalAsync:(script?: string)=> Promise<any> = 0 as any
 export const setLoggerPath:(path?: string)=> void = 0 as any
 export const getLoggerPath:()=> string = 0 as any
 export const Dispose:()=> void = 0 as any

@@ -83,6 +83,9 @@ export class Task {
     public static WhenAny(tasks_or_task1?: Promise<void> | null, task2?: Promise<void> | null): Promise<Promise<void>> | null {
         return {} as any;
     }
+    public static WhenEach(tasks?: null): null {
+        return {} as any;
+    }
     public get Id(): number {
         return {} as any;
     }

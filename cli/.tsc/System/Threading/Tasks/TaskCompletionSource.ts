@@ -21,6 +21,12 @@ export class TaskCompletionSource {
     public TrySetCanceled(cancellationToken?: CancellationToken): boolean {
         return {} as any;
     }
+    public SetFromTask(completedTask?: Promise<void>): void {
+        return {} as any;
+    }
+    public TrySetFromTask(completedTask?: Promise<void>): boolean {
+        return {} as any;
+    }
     public GetType(): Type {
         return {} as any;
     }

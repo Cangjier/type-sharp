@@ -1,15 +1,9 @@
-import { Application } from "../../../VizGroup/V1/Application";
-import { ApplicationConfig } from "../../../VizGroup/V1/ApplicationConfig";
-import { database } from "./database";
-import { ServiceScope } from "../../../VizGroup/V1/ServiceScope";
-import { ioStorageService } from "./ioStorageService";
+import { Application } from "../Server/Application";
+import { ApplicationConfig } from "../Server/ApplicationConfig";
 import { TaskCompletionSource } from "../../../System/Threading/Tasks/TaskCompletionSource";
 import { Delegate } from "../../../System/Delegate";
 import { Type } from "../../../System/Type";
 export class Server {
-    public getDatabase(): database {
-        return {} as any;
-    }
     public start(port?: number): Promise<void> {
         return {} as any;
     }
@@ -17,6 +11,9 @@ export class Server {
         return {} as any;
     }
     public useStatic(directory?: string): void {
+        return {} as any;
+    }
+    public usePlugins(directory?: string, enable?: boolean): void {
         return {} as any;
     }
     public GetType(): Type {
@@ -31,21 +28,12 @@ export class Server {
     public GetHashCode(): number {
         return {} as any;
     }
-    public constructor() {
+    public constructor(application?: Application) {
     }
     public get Application(): Application {
         return {} as any;
     }
     public get ApplicationConfig(): ApplicationConfig {
-        return {} as any;
-    }
-    public get serviceScope(): ServiceScope {
-        return {} as any;
-    }
-    public get storageService(): ioStorageService {
-        return {} as any;
-    }
-    public get onDatabaseSetupCompleted(): TaskCompletionSource {
         return {} as any;
     }
     public get onConfigCompleted(): TaskCompletionSource {

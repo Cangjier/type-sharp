@@ -16,7 +16,7 @@ export class TextHtml {
     public GetType(): Type {
         return {} as any;
     }
-    public constructor(Content?: string) {
+    public constructor(Content_or_content?: string, ContentEncoding?: string) {
     }
     public static op_Inequality(left?: TextHtml, right?: TextHtml): boolean {
         return {} as any;
@@ -28,5 +28,10 @@ export class TextHtml {
         return {} as any;
     }
     public set Content(value: string) {
+    }
+    public get ContentEncoding(): string {
+        return {} as any;
+    }
+    public set ContentEncoding(value: string) {
     }
 }

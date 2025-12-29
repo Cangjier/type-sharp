@@ -17,7 +17,7 @@ export class Attachment {
     public GetType(): Type {
         return {} as any;
     }
-    public constructor(FilePath?: string, FileName?: string, RelativeFilePath?: string) {
+    public constructor(FilePath?: string, FileName?: string, RelativeFilePath?: string, ContentEncoding?: string) {
     }
     public static op_Inequality(left?: Attachment, right?: Attachment): boolean {
         return {} as any;

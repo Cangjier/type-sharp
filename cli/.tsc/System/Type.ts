@@ -229,9 +229,6 @@ export class Type {
     public static FilterAttribute: MemberFilter;
     public static FilterName: MemberFilter;
     public static FilterNameIgnoreCase: MemberFilter;
-    public get IsInterface(): boolean {
-        return {} as any;
-    }
     public get MemberType(): MemberTypes {
         return {} as any;
     }
@@ -248,6 +245,9 @@ export class Type {
         return {} as any;
     }
     public get Module(): Module {
+        return {} as any;
+    }
+    public get IsInterface(): boolean {
         return {} as any;
     }
     public get IsNested(): boolean {

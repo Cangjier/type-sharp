@@ -2,6 +2,7 @@ import { UrlFilter } from "./UrlFilter";
 import { UrlRouterEvents } from "./UrlRouterEvents";
 import { Session } from "./Session";
 import { IServer } from "./Interfaces/IServer";
+import { CancellationToken } from "../../../System/Threading/CancellationToken";
 import { MethodInfo } from "../../../System/Reflection/MethodInfo";
 import { String } from "../../../System/String";
 import { Object } from "../../../System/Object";
@@ -12,7 +13,7 @@ export class UrlRouter {
     public Route(url?: string, session?: Session): Promise<void> {
         return {} as any;
     }
-    public Listen(server?: IServer): Promise<void> {
+    public Listen(server?: IServer, cancellationToken?: CancellationToken): Promise<void> {
         return {} as any;
     }
     public GetDocument(): UrlDocumentRecord[] {

@@ -14,6 +14,9 @@ export class SessionCache {
     public GetRequstBodyJson(): Promise<any> {
         return {} as any;
     }
+    public GetRequestBodyString(): Promise<string> {
+        return {} as any;
+    }
     public Dispose(): void {
         return {} as any;
     }

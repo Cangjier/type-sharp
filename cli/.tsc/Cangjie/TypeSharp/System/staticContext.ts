@@ -52,6 +52,9 @@ export class staticContext {
     public static Number(value?: any): any {
         return {} as any;
     }
+    public static String(value?: any): string {
+        return {} as any;
+    }
     public static copyDirectory(sourceDirectory?: string, destinationDirectory?: string): void {
         return {} as any;
     }

@@ -1,10 +1,10 @@
-import { AgentApplicationConfig } from "../Server/AgentApplicationConfig";
+import { CancellationToken } from "../../../System/Threading/CancellationToken";
 import { Type } from "../../../System/Type";
-export class AgentApplication {
-    public use(pluginDirectory?: string): void {
+export class PseudoConsole {
+    public Resize(columns?: number, rows?: number, cancellationToken?: CancellationToken): void {
         return {} as any;
     }
-    public start(shareServerUrlPrefix?: string): Promise<void> {
+    public Dispose(): void {
         return {} as any;
     }
     public GetType(): Type {
@@ -19,12 +19,8 @@ export class AgentApplication {
     public GetHashCode(): number {
         return {} as any;
     }
-    public constructor() {
-    }
-    public get Application(): AgentApplication {
-        return {} as any;
-    }
-    public get Config(): AgentApplicationConfig {
+    public static PseudoConsoleThreadAttribute: number;
+    public get Handle(): number {
         return {} as any;
     }
 }

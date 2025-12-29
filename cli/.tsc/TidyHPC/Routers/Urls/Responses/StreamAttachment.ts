@@ -1,30 +1,37 @@
+import { Stream } from "../../../../System/IO/Stream";
+import { MultiplyStreamAttachment } from "./MultiplyStreamAttachment";
 import { MultiplyStreamFile } from "./MultiplyStreamFile";
 import { CacheControlHeaderValue } from "../../../../System/Net/Http/Headers/CacheControlHeaderValue";
 import { UrlResponse } from "./UrlResponse";
 import { Type } from "../../../../System/Type";
-export class MultiplyStreamAttachment {
+export class StreamAttachment {
     public ToString(): string {
         return {} as any;
     }
     public GetHashCode(): number {
         return {} as any;
     }
-    public Equals(obj_or_other?: any | MultiplyStreamFile | MultiplyStreamAttachment | UrlResponse): boolean {
+    public Equals(obj_or_other?: any | MultiplyStreamAttachment | StreamAttachment | MultiplyStreamFile | UrlResponse): boolean {
         return {} as any;
     }
-    public <Clone>$(): MultiplyStreamAttachment | MultiplyStreamFile | UrlResponse {
+    public <Clone>$(): StreamAttachment | MultiplyStreamAttachment | MultiplyStreamFile | UrlResponse {
         return {} as any;
     }
     public GetType(): Type {
         return {} as any;
     }
-    public constructor(Streams?: Stream[], FileName?: string, ContentEncoding_or_CacheControl?: string | CacheControlHeaderValue, CacheControl?: CacheControlHeaderValue) {
+    public constructor(Stream?: Stream, FileName?: string, ContentEncoding?: string) {
     }
-    public static op_Inequality(left?: MultiplyStreamAttachment, right?: MultiplyStreamAttachment): boolean {
+    public static op_Inequality(left?: StreamAttachment, right?: StreamAttachment): boolean {
         return {} as any;
     }
-    public static op_Equality(left?: MultiplyStreamAttachment, right?: MultiplyStreamAttachment): boolean {
+    public static op_Equality(left?: StreamAttachment, right?: StreamAttachment): boolean {
         return {} as any;
+    }
+    public get Stream(): Stream {
+        return {} as any;
+    }
+    public set Stream(value: Stream) {
     }
     public get FileName(): string {
         return {} as any;

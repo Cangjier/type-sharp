@@ -16,6 +16,9 @@ export class Context {
     public eval(script?: string): any {
         return {} as any;
     }
+    public evalAsync(script?: string): Promise<any> {
+        return {} as any;
+    }
     public setLoggerPath(path?: string): void {
         return {} as any;
     }
