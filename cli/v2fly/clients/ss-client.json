@@ -1,0 +1,51 @@
+{
+    "log": {
+        "loglevel": "debug"
+    },
+    "inbounds": [
+        {
+            "port": "<in-port>",
+            "listen": "127.0.0.1",
+            "protocol": "http"
+        }
+    ],
+    "outbounds": [
+        {
+            "protocol": "shadowsocks",
+            "settings": {
+                "servers": [
+                    {
+                        "address": "<address>",
+                        "port": "<out-port>",
+                        "method": "chacha20-ietf-poly1305",
+                        "password": "<password>"
+                    }
+                ]
+            },
+            "streamSettings": {
+                "network": "tcp"
+            },
+            "tag": "proxy"
+        },
+        {
+            "protocol": "freedom",
+            "settings": {},
+            "tag": "direct"
+        }
+    ],
+    "routing": {
+        "domainStrategy": "IPIfNonMatch",
+        "rules": [
+            {
+                "type": "field",
+                "domains": [
+                    "localhost"
+                ],
+                "ip": [
+                    "127.0.0.1"
+                ],
+                "outboundTag": "direct"
+            }
+        ]
+    }
+}

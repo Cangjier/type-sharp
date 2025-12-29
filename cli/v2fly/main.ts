@@ -84,7 +84,7 @@ interface IV2flyManager {
 
 let V2flyConverter = () => {
     let generateVmessClientConfig = (configPath: string, url: string, port: string) => {
-        let templatePath = Path.Combine(script_directory, 'vmess-client.json');
+        let templatePath = Path.Combine(script_directory,"clients", 'vmess-client.json');
         let template = File.ReadAllText(templatePath, utf8);
         console.log(`url: ${url}`);
         console.log(`url.substring(8): ${url.substring(8)}`);
@@ -106,7 +106,7 @@ let V2flyConverter = () => {
     };
 
     let generateTrojanClientConfig = (configPath: string, url: string, port: string) => {
-        let templatePath = Path.Combine(Path.GetDirectoryName(script_path), 'trojan-client.json');
+        let templatePath = Path.Combine(script_directory,"clients", 'trojan-client.json');
         let template = File.ReadAllText(templatePath, utf8);
         // url such as trojan://9c008fca-68e1-3ab4-b821-0071ce25ffdb@hky.cloud-services.top:443?allowInsecure=0&type=tcp#%E5%89%A9%E4%BD%99%E6%B5%81%E9%87%8F%EF%BC%9A643.84%20GB
         url = url.substring("trojan://".length);
@@ -169,7 +169,7 @@ let V2flyConverter = () => {
     };
 
     let generateHysteria2ClientConfig = (configPath: string, url: string, port: string) => {
-        let templatePath = Path.Combine(Path.GetDirectoryName(script_path), 'hysteria2-client.json');
+        let templatePath = Path.Combine(script_directory,"clients", 'hysteria2-client.json');
         let template = File.ReadAllText(templatePath, utf8);
         // url such as hysteria2://9c008fca-68e1-3ab4-b821-0071ce25ffdb@4.189.34.160:443/?insecure=0&sni=jprh.cloud-services.top#%F0%9F%87%AF%F0%9F%87%B5%20%E6%97%A5%E6%9C%AC.H%20%7C%20%E7%9B%B4%E8%BF%9E%20%7C%20Hysteria2
         url = url.substring("hysteria2://".length);
@@ -215,7 +215,7 @@ let V2flyConverter = () => {
     };
 
     let generateVlessClientConfig = (configPath: string, url: string, port: string) => {
-        let templatePath = Path.Combine(Path.GetDirectoryName(script_path), 'vless-client.json');
+        let templatePath = Path.Combine(script_directory,"clients", 'vless-client.json');
         let template = File.ReadAllText(templatePath, utf8);
         // url such as vless://9c008fca-68e1-3ab4-b821-0071ce25ffdb@o8ww0cugspqym2vxtdctmxf5xxugtqpxkru.japaneast.azurecontainer.io:443?type=tcp&encryption=none&host=&path=&headerType=none&quicSecurity=none&serviceName=&security=reality&flow=xtls-rprx-vision&fp=chrome&insecure=0&sni=www.airbnb.jp&pbk=U5hFcZfRCdnmWmEnWvgtmGdtFerzmHSqTxXDVPJ2hUc&sid=b4774abe#%E5%89%A9%E4%BD%99%E6%B5%81%E9%87%8F%EF%BC%9A413.83%20GB
         url = url.substring("vless://".length);
@@ -291,8 +291,37 @@ let V2flyConverter = () => {
         File.WriteAllText(configPath, config, utf8);
     };
 
+    let generateSSClientConfig = (configPath: string, url: string, port: string) => {
+        let templatePath = Path.Combine(script_directory,"clients", 'ss-client.json');
+        let template = File.ReadAllText(templatePath, utf8);
+        // url such as ss://YWVzLTEyOC1nY206OWMwMDhmY2EtNjhlMS0zYWI0LWI4MjEtMDA3MWNlMjVmZmRi@5e8cdac9.cute.sma-dk.huawei-oss.cn:60001#%F0%9F%87%AF%F0%9F%87%B5%20%E6%97%A5%E6%9C%AC%20X1%20%5BSS%5D
+        url = url.substring("ss://".length);
+        let password = url.substring(0, url.indexOf('@'));
+        let addressStart = url.indexOf('@') + 1;
+        let addressEnd = url.indexOf(':', addressStart);
+        let address = url.substring(addressStart, addressEnd);
+        let outportStart = addressEnd + 1;
+        let outportEnd = url.indexOf('#', outportStart);
+        let outport = stringUtils.trimEnd(url.substring(outportStart, outportEnd), "/");
+        let titleStart = outportEnd + 1;
+        let title = url.substring(titleStart);
+        console.log({
+            title,
+            id: password,
+            address,
+            port,
+            outport
+        });
+        let config = template.replace("<id>", password);
+        config = config.replace("<address>", address);
+        config = config.replace("\"<in-port>\"", port);
+        config = config.replace("\"<out-port>\"", outport);
+        console.log(`config=${config}`);
+        File.WriteAllText(configPath, config, utf8);
+    };
+
     let generateVmessServerConfig = (configPath: string, port: string) => {
-        let templatePath = Path.Combine(Path.GetDirectoryName(script_path), 'vmess-server.json');
+        let templatePath = Path.Combine(script_directory,"servers", 'vmess-server.json');
         let template = File.ReadAllText(templatePath, utf8);
         let config = template.replace("<port>", port);
         File.WriteAllText(configPath, config, utf8);
@@ -303,8 +332,8 @@ let V2flyConverter = () => {
         generateTrojanClientConfig,
         generateHysteria2ClientConfig,
         generateVlessClientConfig,
+        generateSSClientConfig,
         generateVmessServerConfig,
-       
     };
 };
 
@@ -421,6 +450,9 @@ let V2flyManager = () => {
         else if (protocolUrl.startsWith("vless://")) {
             v2flyConverter.generateVlessClientConfig(configPath, protocolUrl, vpnConfig.port);
         }
+        else if (protocolUrl.startsWith("ss://")) {
+            v2flyConverter.generateSSClientConfig(configPath, protocolUrl, vpnConfig.port);
+        }
         return await startClient(configPath);
     };
     let startClientByProtocolUrlAndPort = async (protocolUrl: string, port: string) => {
@@ -437,6 +469,9 @@ let V2flyManager = () => {
         }
         else if (protocolUrl.startsWith("vless://")) {
             v2flyConverter.generateVlessClientConfig(configPath, protocolUrl, port);
+        }
+        else if (protocolUrl.startsWith("ss://")) {
+            v2flyConverter.generateSSClientConfig(configPath, protocolUrl, port);
         }
         return await startClient(configPath);
     };
