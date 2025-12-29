@@ -214,6 +214,83 @@ let V2flyConverter = () => {
         File.WriteAllText(configPath, config, utf8);
     };
 
+    let generateVlessClientConfig = (configPath: string, url: string, port: string) => {
+        let templatePath = Path.Combine(Path.GetDirectoryName(script_path), 'hysteria2-client.json');
+        let template = File.ReadAllText(templatePath, utf8);
+        // url such as vless://9c008fca-68e1-3ab4-b821-0071ce25ffdb@o8ww0cugspqym2vxtdctmxf5xxugtqpxkru.japaneast.azurecontainer.io:443?type=tcp&encryption=none&host=&path=&headerType=none&quicSecurity=none&serviceName=&security=reality&flow=xtls-rprx-vision&fp=chrome&insecure=0&sni=www.airbnb.jp&pbk=U5hFcZfRCdnmWmEnWvgtmGdtFerzmHSqTxXDVPJ2hUc&sid=b4774abe#%E5%89%A9%E4%BD%99%E6%B5%81%E9%87%8F%EF%BC%9A413.83%20GB
+        url = url.substring("vless://".length);
+        let id = url.substring(0, url.indexOf('@'));
+        let addressStart = url.indexOf('@') + 1;
+        let addressEnd = url.indexOf(':', addressStart);
+        let address = url.substring(addressStart, addressEnd);
+        let outportStart = addressEnd + 1;
+        let outportEnd = url.indexOf('?', outportStart);
+        let outport = stringUtils.trimEnd(url.substring(outportStart, outportEnd), "/");
+        let dict = {} as { [key: string]: any };
+        let queryStart = outportEnd + 1;
+        let queryEnd = url.indexOf('#', queryStart);
+        let query = url.substring(queryStart, queryEnd);
+        let titleStart = queryEnd + 1;
+        let title = url.substring(titleStart);
+        let pairs = query.split('&');
+        for (let pair of pairs) {
+            let key = pair.substring(0, pair.indexOf('='));
+            let value = pair.substring(pair.indexOf('=') + 1);
+            dict[key] = value;
+        }
+        let type = dict["type"] ?? "tcp";
+        let encryption = dict["encryption"] ?? "none";
+        let host = dict["host"] ?? "";
+        let path = dict["path"] ?? "";
+        let headerType = dict["headerType"] ?? "none";
+        let quicSecurity = dict["quicSecurity"] ?? "none";
+        let serviceName = dict["serviceName"] ?? "";
+        let security = dict["security"] ?? "reality";
+        let flow = dict["flow"] ?? "xtls-rprx-vision";
+        let fp = dict["fp"] ?? "chrome";
+        let insecure = dict["insecure"] ?? "0";
+        let sni = dict["sni"] ?? "null";
+        let pbk = dict["pbk"] ?? "";
+        let sid = dict["sid"] ?? "";
+        console.log({
+            title,
+            id,
+            address,
+            port,
+            outport,
+            type,
+            encryption,
+            host,
+            path,
+            headerType,
+            quicSecurity,
+            serviceName,
+            security,
+            flow,
+            fp,
+            insecure,
+            sni,
+            pbk,
+            sid
+        });
+        let config = template.replace("<id>", id);
+        config = config.replace("<address>", address);
+        config = config.replace("\"<in-port>\"", port);
+        config = config.replace("\"<output-port>\"", outport);
+        config = config.replace("<flow>", flow);
+        config = config.replace("<encryption>", encryption);
+        config = config.replace("<sni>", sni);
+        config = config.replace("<network>", type);
+        config = config.replace("<security>", security);
+        config = config.replace("<fingerprint>", fp);
+        config = config.replace("<password>", "");
+        config = config.replace("<shortId>", sid);
+        config = config.replace("<mldsa65Verify>", pbk);
+        config = config.replace("<spiderX>", path);
+        console.log(`config=${config}`);
+        File.WriteAllText(configPath, config, utf8);
+    };
+
     let generateVmessServerConfig = (configPath: string, port: string) => {
         let templatePath = Path.Combine(Path.GetDirectoryName(script_path), 'vmess-server.json');
         let template = File.ReadAllText(templatePath, utf8);
@@ -225,7 +302,9 @@ let V2flyConverter = () => {
         generateVmessClientConfig,
         generateTrojanClientConfig,
         generateHysteria2ClientConfig,
-        generateVmessServerConfig
+        generateVlessClientConfig,
+        generateVmessServerConfig,
+       
     };
 };
 
@@ -339,6 +418,9 @@ let V2flyManager = () => {
         else if (protocolUrl.startsWith("hysteria2://")) {
             v2flyConverter.generateHysteria2ClientConfig(configPath, protocolUrl, vpnConfig.port);
         }
+        else if (protocolUrl.startsWith("vless://")) {
+            v2flyConverter.generateVlessClientConfig(configPath, protocolUrl, vpnConfig.port);
+        }
         return await startClient(configPath);
     };
     let startClientByProtocolUrlAndPort = async (protocolUrl: string, port: string) => {
@@ -352,6 +434,9 @@ let V2flyManager = () => {
         }
         else if (protocolUrl.startsWith("hysteria2://")) {
             v2flyConverter.generateHysteria2ClientConfig(configPath, protocolUrl, port);
+        }
+        else if (protocolUrl.startsWith("vless://")) {
+            v2flyConverter.generateVlessClientConfig(configPath, protocolUrl, port);
         }
         return await startClient(configPath);
     };

@@ -1,0 +1,65 @@
+{
+    "log": {
+        "loglevel": "debug"
+    },
+    "inbounds": [
+        {
+            "port": "<in-port>",
+            "listen": "127.0.0.1",
+            "protocol": "http"
+        }
+    ],
+    "outbounds": [
+        {
+            "protocol": "vless",
+            "settings": {
+                "vnext": [
+                    {
+                        "address": "<address>", 
+                        "port": "<out-port>",
+                        "users": [
+                            {
+                                "id": "<id>", 
+                                "flow": "<flow>", 
+                                "encryption": "<encryption>"
+                            }
+                        ]
+                    }
+                ]
+            },
+            "streamSettings": {
+                "network": "<network>",
+                "security": "<security>",
+                "realitySettings": {
+                    "show": false, 
+                    "fingerprint": "<fingerprint>", 
+                    "serverName": "<sni>", 
+                    "password": "<password>", 
+                    "shortId": "<shortId>", 
+                    "mldsa65Verify": "<mldsa65Verify>", 
+                    "spiderX": "<spiderX>" 
+                }
+            }
+        },
+        {
+            "protocol": "freedom",
+            "settings": {},
+            "tag": "direct"
+        }
+    ],
+    "routing": {
+        "domainStrategy": "IPIfNonMatch",
+        "rules": [
+            {
+                "type": "field",
+                "domains": [
+                    "localhost"
+                ],
+                "ip": [
+                    "127.0.0.1"
+                ],
+                "outboundTag": "direct"
+            }
+        ]
+    }
+}
