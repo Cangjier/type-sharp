@@ -215,7 +215,7 @@ let V2flyConverter = () => {
     };
 
     let generateVlessClientConfig = (configPath: string, url: string, port: string) => {
-        let templatePath = Path.Combine(Path.GetDirectoryName(script_path), 'hysteria2-client.json');
+        let templatePath = Path.Combine(Path.GetDirectoryName(script_path), 'vless-client.json');
         let template = File.ReadAllText(templatePath, utf8);
         // url such as vless://9c008fca-68e1-3ab4-b821-0071ce25ffdb@o8ww0cugspqym2vxtdctmxf5xxugtqpxkru.japaneast.azurecontainer.io:443?type=tcp&encryption=none&host=&path=&headerType=none&quicSecurity=none&serviceName=&security=reality&flow=xtls-rprx-vision&fp=chrome&insecure=0&sni=www.airbnb.jp&pbk=U5hFcZfRCdnmWmEnWvgtmGdtFerzmHSqTxXDVPJ2hUc&sid=b4774abe#%E5%89%A9%E4%BD%99%E6%B5%81%E9%87%8F%EF%BC%9A413.83%20GB
         url = url.substring("vless://".length);
