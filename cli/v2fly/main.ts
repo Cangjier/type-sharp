@@ -209,7 +209,7 @@ let V2flyConverter = () => {
         config = config.replace("<address>", address);
         config = config.replace("\"<in-port>\"", port);
         config = config.replace("\"<output-port>\"", outport);
-        config = config.replace("<sni>", sni);
+        config = config.replace("\"<sni>\"", sni);
         console.log(`config=${config}`);
         File.WriteAllText(configPath, config, utf8);
     };
