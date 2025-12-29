@@ -1,0 +1,62 @@
+{
+    "log": {
+        "loglevel": "debug"
+    },
+    "inbounds": [
+        {
+            "port": "<in-port>",
+            "listen": "127.0.0.1",
+            "protocol": "http"
+        }
+    ],
+    "outbounds": [
+        {
+            "protocol": "hysteria2",
+            "settings": {
+                "servers": [
+                    {
+                        "address": "<address>",
+                        "port": "<output-port>"
+                    }
+                ]
+            },
+            "streamSettings": {
+                "network": "hysteria2",
+                "security": "tls",
+                "tlsSettings": {
+                    "serverName": "<sni>",
+                    "allowInsecure": true
+                }
+            },
+            "hy2Settings": {
+                "password": "<password>",
+                "use_udp_extension": true,
+                "congestion": {
+                    "type": "brutal",
+                    "up_mbps": 100,
+                    "down_mbps": 100
+                }
+            },
+            "tag": "proxy"
+        },
+        {
+            "protocol": "freedom",
+            "tag": "direct"
+        }
+    ],
+    "routing": {
+        "domainStrategy": "IPIfNonMatch",
+        "rules": [
+            {
+                "type": "field",
+                "domains": [
+                    "localhost"
+                ],
+                "ip": [
+                    "127.0.0.1"
+                ],
+                "outboundTag": "direct"
+            }
+        ]
+    }
+}

@@ -17,6 +17,7 @@ import { pingConfig } from "../.tsc/Cangjie/TypeSharp/System/pingConfig";
 import { Console } from "../.tsc/System/Console";
 import { ArgsRouter } from "../.tsc/TidyHPC/Routers/Args/ArgsRouter";
 import { Task } from "../.tsc/System/Threading/Tasks/Task";
+import { stringUtils } from "../.tsc/Cangjie/TypeSharp/System/stringUtils";
 let utf8 = new UTF8Encoding(false);
 let script_directory = Path.GetDirectoryName(script_path);
 let v2flyDirectory = Path.Combine(script_directory, ".v2fly");
@@ -165,7 +166,53 @@ let V2flyConverter = () => {
         config = config.replace("<peer>", peer);
         console.log(`config=${config}`);
         File.WriteAllText(configPath, config, utf8);
-    }
+    };
+
+    let generateHysteria2ClientConfig = (configPath: string, url: string, port: string) => {
+        let templatePath = Path.Combine(Path.GetDirectoryName(script_path), 'hysteria2-client.json');
+        let template = File.ReadAllText(templatePath, utf8);
+        // url such as hysteria2://9c008fca-68e1-3ab4-b821-0071ce25ffdb@4.189.34.160:443/?insecure=0&sni=jprh.cloud-services.top#%F0%9F%87%AF%F0%9F%87%B5%20%E6%97%A5%E6%9C%AC.H%20%7C%20%E7%9B%B4%E8%BF%9E%20%7C%20Hysteria2
+        url = url.substring("hysteria2://".length);
+        let password = url.substring(0, url.indexOf('@'));
+        let addressStart = url.indexOf('@') + 1;
+        let addressEnd = url.indexOf(':', addressStart);
+        let address = url.substring(addressStart, addressEnd);
+        let outportStart = addressEnd + 1;
+        let outportEnd = url.indexOf('?', outportStart);
+        let outport = stringUtils.trimEnd(url.substring(outportStart, outportEnd), "/");
+        let dict = {} as { [key: string]: any };
+        let queryStart = outportEnd + 1;
+        let queryEnd = url.indexOf('#', queryStart);
+        let query = url.substring(queryStart, queryEnd);
+        let titleStart = queryEnd + 1;
+        let title = url.substring(titleStart);
+        let pairs = query.split('&');
+        for (let pair of pairs) {
+            let key = pair.substring(0, pair.indexOf('='));
+            let value = pair.substring(pair.indexOf('=') + 1);
+            dict[key] = value;
+        }
+        let sni = dict["sni"] ?? "null";
+        if (sni != "null") {
+            sni = `"${sni}"`;
+        }
+        let insecure = dict["insecure"] ?? "0";
+        console.log({
+            title,
+            password,
+            address,
+            port,
+            outport,
+            sni
+        });
+        let config = template.replace("<password>", password);
+        config = config.replace("<address>", address);
+        config = config.replace("\"<in-port>\"", port);
+        config = config.replace("\"<output-port>\"", outport);
+        config = config.replace("<sni>", sni);
+        console.log(`config=${config}`);
+        File.WriteAllText(configPath, config, utf8);
+    };
 
     let generateVmessServerConfig = (configPath: string, port: string) => {
         let templatePath = Path.Combine(Path.GetDirectoryName(script_path), 'vmess-server.json');
@@ -177,6 +224,7 @@ let V2flyConverter = () => {
     return {
         generateVmessClientConfig,
         generateTrojanClientConfig,
+        generateHysteria2ClientConfig,
         generateVmessServerConfig
     };
 };
@@ -288,6 +336,9 @@ let V2flyManager = () => {
         else if (protocolUrl.startsWith("trojan://")) {
             v2flyConverter.generateTrojanClientConfig(configPath, protocolUrl, vpnConfig.port);
         }
+        else if (protocolUrl.startsWith("hysteria2://")) {
+            v2flyConverter.generateHysteria2ClientConfig(configPath, protocolUrl, vpnConfig.port);
+        }
         return await startClient(configPath);
     };
     let startClientByProtocolUrlAndPort = async (protocolUrl: string, port: string) => {
@@ -298,6 +349,9 @@ let V2flyManager = () => {
         }
         else if (protocolUrl.startsWith("trojan://")) {
             v2flyConverter.generateTrojanClientConfig(configPath, protocolUrl, port);
+        }
+        else if (protocolUrl.startsWith("hysteria2://")) {
+            v2flyConverter.generateHysteria2ClientConfig(configPath, protocolUrl, port);
         }
         return await startClient(configPath);
     };
