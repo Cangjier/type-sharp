@@ -17,7 +17,11 @@ await main();
 # 安装教程
 在Linux下可以通过以下脚本进行安装。
 ``` bash
-wget --no-cache -qO- https://raw.githubusercontent.com/Cangjier/type-sharp/main/install.sh | bash && source ~/.bashrc
+wget --no-cache -O- https://raw.githubusercontent.com/Cangjier/type-sharp/main/install.sh | bash && source ~/.bashrc
+```
+或者使用代理。
+```bash
+wget -e https_proxy=http://127.0.0.1:7897 --no-cache -O- https://raw.githubusercontent.com/Cangjier/type-sharp/main/install.sh | bash && source ~/.bashrc
 ```
 注意的是，TypeSharp基于.Net8进行开发，因此在正式使用前，需要参考 [Linux安装.Net8](https://learn.microsoft.com/zh-cn/dotnet/core/install/linux-scripted-manual#scripted-install) 。
 
