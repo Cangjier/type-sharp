@@ -58,8 +58,8 @@ let main = async () => {
     if (cliName.endsWith(".git")) {
         // xxx.git xxx/index.ts args...
         cmd(homeServiceNameRepositoryDirectory, `git clone ${cliName} .`);
-        let indexPath = Path.Combine(homeServiceNameRepositoryDirectory, args[1]);
-        execStart = `git pull ${cliName} & ${homeServiceNameBinProgramPath} run ${indexPath} ${args.slice(2).join(" ")}`;
+        let indexPath = Path.Combine(homeServiceNameRepositoryDirectory, args[1]).replace("\\", "/");
+        execStart = `${homeServiceNameBinProgramPath} run ${indexPath} ${args.slice(2).join(" ")}`;
     }
 
     // 创建服务
