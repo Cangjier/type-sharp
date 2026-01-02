@@ -3,8 +3,8 @@ import { File } from "../.tsc/System/IO/File";
 import { Console } from "../.tsc/System/Console";
 import { Directory } from "../.tsc/System/IO/Directory";
 import { Path } from "../.tsc/System/IO/Path";
-import { args, script_path, setLoggerPath } from "../.tsc/context";
-import { cmdAsync, env } from "../.tsc/staticContext";
+import { args, script_path, setLoggerPath } from "../.tsc/Context";
+import { cmd, cmdAsync, env } from "../.tsc/staticContext";
 import { Environment } from "../.tsc/System/Environment";
 
 let main = async () => {
@@ -18,6 +18,10 @@ let main = async () => {
     let cliName = args[0];
     let serviceName = cliName;
     let description = cliName;
+    if (cliName.endsWith(".git")) {
+        serviceName = Path.GetFileNameWithoutExtension(cliName);
+        description = serviceName;
+    }
     let script_directory = Path.GetDirectoryName(script_path);
     let systemdPath = "/etc/systemd/system";
     let homeDirectory = Environment.GetEnvironmentVariable("HOME");
@@ -31,6 +35,7 @@ let main = async () => {
     let homeTempDirectory = Path.Combine(homeDirectory, "tmp");
     let homeServiceNameDirectory = Path.Combine(homeDirectory, `.${serviceName}`);
     let homeServiceNameBinDirectory = Path.Combine(homeServiceNameDirectory, "bin");
+    let homeServiceNameRepositoryDirectory = Path.Combine(homeServiceNameDirectory, "repository");
     if (!Directory.Exists(homeTempDirectory)) {
         Directory.CreateDirectory(homeTempDirectory);
     }
@@ -40,11 +45,22 @@ let main = async () => {
     if (!Directory.Exists(homeServiceNameBinDirectory)) {
         Directory.CreateDirectory(homeServiceNameBinDirectory);
     }
-    // 将tscl拷贝到.cliName/bin 目录
+    if (cliName.endsWith(".git")) {
+        if (!Directory.Exists(homeServiceNameRepositoryDirectory)) {
+            Directory.CreateDirectory(homeServiceNameRepositoryDirectory);
+        }
+    }
+    // 将tscl拷贝到.serviceName/bin 目录
     let homeServiceNameBinProgramPath = Path.Combine(homeServiceNameBinDirectory, Path.GetFileName(Environment.ProcessPath));
     File.Copy(Environment.ProcessPath, homeServiceNameBinProgramPath, true);
 
     let execStart = `${homeServiceNameBinProgramPath} run ${args.join(" ")}`;
+    if (cliName.endsWith(".git")) {
+        // xxx.git xxx/index.ts args...
+        cmd(homeServiceNameRepositoryDirectory, `git clone ${cliName} .`);
+        let indexPath = Path.Combine(homeServiceNameRepositoryDirectory, args[1]);
+        execStart = `git pull ${cliName} & ${homeServiceNameBinProgramPath} run ${indexPath} ${args.slice(2).join(" ")}`;
+    }
 
     // 创建服务
     let serviceFilePath = Path.Combine(homeTempDirectory, `${serviceName}.service`);
@@ -75,12 +91,17 @@ fi`;
         return;
     }
 
+    let workingDirectory = homeDirectory;
+    if(cliName.endsWith(".git")) {
+        workingDirectory = homeServiceNameRepositoryDirectory;
+    }
+
     let serviceFileContent = template
         .replace("<Description>", description)
         .replace("<EnvironmentFile>", `${serviceFilePath}.env`)
         .replace("<ExecStart>", execStart)
         .replace("<User>", Environment.UserName)
-        .replace("<WorkingDirectory>", homeDirectory);
+        .replace("<WorkingDirectory>", workingDirectory);
     await File.WriteAllTextAsync(serviceFilePath, serviceFileContent, utf8);
     // 将服务拷贝到 /etc/systemd/system
     await cmdAsync(script_directory, `sudo mv ${serviceFilePath} ${systemdPath}`);
