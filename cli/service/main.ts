@@ -75,7 +75,7 @@ else
     echo "$SERVICE is not starting."
 fi`;
     let detectScriptPath = Path.Combine(homeTempDirectory, `${serviceName}-detect.sh`);
-    await File.WriteAllTextAsync(detectScriptPath, detectScript, utf8);
+    await File.WriteAllTextAsync(detectScriptPath, detectScript.replace("\r", ""), utf8);
     await cmdAsync(script_directory, `sudo chmod +x ${detectScriptPath}`);
     console.log(`正在检查服务 ${serviceName} 是否已启动...`);
     console.log(`sudo bash ${detectScriptPath}`)
