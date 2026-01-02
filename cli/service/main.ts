@@ -55,11 +55,13 @@ let main = async () => {
     File.Copy(Environment.ProcessPath, homeServiceNameBinProgramPath, true);
 
     let execStart = `${homeServiceNameBinProgramPath} run ${args.join(" ")}`;
+    let execStartPre: string[] = [];
     if (cliName.endsWith(".git")) {
         // xxx.git xxx/index.ts args...
         cmd(homeServiceNameRepositoryDirectory, `git clone ${cliName} .`);
         let indexPath = Path.Combine(homeServiceNameRepositoryDirectory, args[1]).replace("\\", "/");
         execStart = `${homeServiceNameBinProgramPath} run ${indexPath} ${args.slice(2).join(" ")}`;
+        execStartPre = [`git pull ${cliName}`];
     }
 
     // 创建服务
@@ -99,6 +101,7 @@ fi`;
     let serviceFileContent = template
         .replace("<Description>", description)
         .replace("<EnvironmentFile>", `${serviceFilePath}.env`)
+        .replace("<ExecStartPre>", execStartPre.join(" && "))
         .replace("<ExecStart>", execStart)
         .replace("<User>", Environment.UserName)
         .replace("<WorkingDirectory>", workingDirectory);
