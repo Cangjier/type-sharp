@@ -60,7 +60,7 @@ let main = async () => {
         // xxx.git xxx/index.ts args...
         cmd(homeServiceNameRepositoryDirectory, `git clone ${cliName} .`);
         let indexPath = Path.Combine(homeServiceNameRepositoryDirectory, args[1]).replace("\\", "/");
-        execStart = `${homeServiceNameBinProgramPath} run ${indexPath} ${args.slice(2).join(" ")}`;
+        execStart = `/usr/bin/sudo ${homeServiceNameBinProgramPath} run ${indexPath} ${args.slice(2).join(" ")}`;
         execStartPre = [`git pull ${cliName}`];
     }
 
