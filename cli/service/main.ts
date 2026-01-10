@@ -61,7 +61,6 @@ let main = async () => {
         cmd(homeServiceNameRepositoryDirectory, `git clone ${cliName} .`);
         let indexPath = Path.Combine(homeServiceNameRepositoryDirectory, args[1]).replace("\\", "/");
         execStart = `/usr/bin/sudo ${homeServiceNameBinProgramPath} run ${indexPath} ${args.slice(2).join(" ")}`;
-        execStartPre = [`git pull ${cliName}`];
     }
 
     // 创建服务
