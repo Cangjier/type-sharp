@@ -619,7 +619,18 @@ let exportClass = (type: Type) => {
     let members = type.GetMembers();
     let lines = [] as string[];
     lines.push(`export class ${type.Name} {`);
+    let enumarables = reflection.getEnumarables(type);
+    
     let toImport = [] as Type[];
+    if (enumarables.length > 0) {
+        let firstEnumarable = enumarables[0];
+        let typeAlias = getTypeAlias(firstEnumarable.FullName);
+        lines.push(`    [Symbol.iterator](): Iterator<${typeAlias.data}> {`);
+        lines.push(`        return {} as any;`);
+        lines.push(`    }`);
+        lines.push(`    [index: number]: ${typeAlias.data};`);
+        toImport.push(firstEnumarable);
+    }
     let staticMemberCombines = {} as {
         [key: string]: {
             parameters: {
