@@ -159,6 +159,7 @@ let getListTypeAlias = (fullName: FullName) => {
 let isDicttionary = (fullName: FullName) => {
     return fullName.TypeName == "Dictionary" && fullName.GenericTypes.length == 2;
 };
+
 let getDictionaryTypeAlias = (fullName: FullName) => {
     let toImport = [] as Type[];
     let genericTypeFullNames = fullName.GenericTypes;
@@ -219,6 +220,19 @@ let getEnumarableTypeAlias = (fullName: FullName) => {
     let enumarable = enumarables[0];
     return {
         data: `${getTypeAlias(stringUtils.toString(enumarable)).data}[]`,
+        toImport: toImport
+    };
+};
+let isKeyValuePair = (fullName: FullName) => {
+    return fullName.TypeName == "KeyValuePair" && fullName.GenericTypes.length == 2;
+};
+let getKeyValuePairTypeAlias = (fullName: FullName) => {
+    let toImport = [] as Type[];
+    let genericTypeFullNames = fullName.GenericTypes;
+    let keyTypeAlias = getTypeAlias(genericTypeFullNames[0].ToFullString());
+    let valueTypeAlias = getTypeAlias(genericTypeFullNames[1].ToFullString());
+    return {
+        data: `{ Key: ${keyTypeAlias.data}, Value: ${valueTypeAlias.data} }`,
         toImport: toImport
     };
 };
@@ -292,6 +306,16 @@ getTypeAlias = (typeFullName: string) => {
     else if (isEnumarableAndImplicitFromJson(fullName)) {
         if (debug) console.log("isEnumarableAndImplicitFromJson", fullName);
         let subTypeAlias = getEnumarableTypeAlias(fullName);
+        return {
+            success: true,
+            data: subTypeAlias.data,
+            containsAlias: true,
+            toImport: subTypeAlias.toImport
+        };
+    }
+    else if (isKeyValuePair(fullName)) {
+        if (debug) console.log("isKeyValuePair", fullName);
+        let subTypeAlias = getKeyValuePairTypeAlias(fullName);
         return {
             success: true,
             data: subTypeAlias.data,
@@ -620,7 +644,7 @@ let exportClass = (type: Type) => {
     let lines = [] as string[];
     lines.push(`export class ${type.Name} {`);
     let enumarables = reflection.getEnumarables(type);
-    
+
     let toImport = [] as Type[];
     if (enumarables.length > 0) {
         let firstEnumarable = enumarables[0];
