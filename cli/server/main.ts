@@ -24,7 +24,7 @@ let main = async () => {
     if (Directory.Exists(pluginsDirectory) == false) {
         Directory.CreateDirectory(pluginsDirectory);
     }
-    server.usePlugins(pluginsDirectory);
+    server.usePlugins(pluginsDirectory,true);
     await server.start([8080]);
 };
 
