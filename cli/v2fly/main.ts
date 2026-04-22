@@ -1,4 +1,4 @@
-import { args, axios, script_path } from "../.tsc/context";
+import { args, axios, script_path } from "../.tsc/Context";
 import { exec, execAsync, cmd, cmdAsync, start, startCmd, copyDirectory, deleteDirectory, env, kill, md5 } from "../.tsc/staticContext";
 import { Environment } from "../.tsc/System/Environment";
 import { Directory } from "../.tsc/System/IO/Directory";
@@ -505,7 +505,7 @@ let V2flyManager = () => {
             });
         }
         console.log(`ping configs: ${configs}`)
-        let pingsResult = await netUtils.pingsAsync(["http://google.com"], configs);
+        let pingsResult = await netUtils.pingsAsync(["https://api2.cursor.sh:443"], configs);
         console.log(`pingsResult: ${pingsResult}`);
         console.log(`stop: ${proxyProcesses}`);
         // 停止代理服务
