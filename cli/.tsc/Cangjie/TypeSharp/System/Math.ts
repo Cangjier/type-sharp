@@ -71,4 +71,5 @@ export class Math {
     public static min(x?: any, y?: any): any {
         return {} as any;
     }
+    public static PI: number;
 }

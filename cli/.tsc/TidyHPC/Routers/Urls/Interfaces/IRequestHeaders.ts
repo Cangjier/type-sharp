@@ -1,9 +1,14 @@
+import { KeyValuePair`2 } from "../../../../System/Collections/Generic/KeyValuePair`2[[System/String, System/Private/CoreLib, Version=10/0/0/0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System/String, System/Private/CoreLib, Version=10/0/0/0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]";
 import { ContentType } from "../Headers/ContentType";
 import { ContentDispositionHeaderValue } from "../../../../System/Net/Http/Headers/ContentDispositionHeaderValue";
 import { CacheControlHeaderValue } from "../../../../System/Net/Http/Headers/CacheControlHeaderValue";
 import { AuthenticationHeaderValue } from "../../../../System/Net/Http/Headers/AuthenticationHeaderValue";
 import { ContentRangeHeaderValue } from "../../../../System/Net/Http/Headers/ContentRangeHeaderValue";
 export class IRequestHeaders {
+    [Symbol.iterator](): Iterator<{ Key: string, Value: string }> {
+        return {} as any;
+    }
+    [index: number]: { Key: string, Value: string };
     public GetHeader(key?: string): string {
         return {} as any;
     }
@@ -34,5 +39,10 @@ export class IRequestHeaders {
         return {} as any;
     }
     public set ContentRange(value: ContentRangeHeaderValue) {
+    }
+    public get ContentLength(): number {
+        return {} as any;
+    }
+    public set ContentLength(value: number) {
     }
 }

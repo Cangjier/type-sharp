@@ -1,7 +1,14 @@
 import { JsonIndex } from "./JsonIndex";
 import { Type } from "../../System/Type";
 export class JsonPath {
+    [Symbol.iterator](): Iterator<JsonIndex> {
+        return {} as any;
+    }
+    [index: number]: JsonIndex;
     public Next(index?: JsonIndex): JsonPath {
+        return {} as any;
+    }
+    public ToJson(): any {
         return {} as any;
     }
     public Equals(obj?: any): boolean {

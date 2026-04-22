@@ -6,7 +6,10 @@ import { SessionSetter } from "./SessionSetter";
 import { Task } from "../../../System/Threading/Tasks/Task";
 import { Type } from "../../../System/Type";
 export class Session {
-    public Complete(onComplete?: (()=>Promise<void>) | (()=>void)): Promise<void> | void {
+    public CompleteAsync(onComplete?: (()=>Promise<void>)): Promise<void> {
+        return {} as any;
+    }
+    public Complete(onComplete?: (()=>void)): void {
         return {} as any;
     }
     public Dispose(): void {

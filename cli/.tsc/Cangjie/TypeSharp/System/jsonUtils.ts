@@ -18,4 +18,7 @@ export class jsonUtils {
     public static replaceValue(value?: any, onValue?: ((arg0?:any)=>any)): void {
         return {} as any;
     }
+    public static replaceKeyValue(value?: any, onKeyValue?: ((arg0?:any, arg1?:any)=>any)): void {
+        return {} as any;
+    }
 }

@@ -1,5 +1,11 @@
-import { Type } from "../../System/Type";
-export class Apis {
+import { Type } from "../../../System/Type";
+export class schedular {
+    public setTimeout(action?: (()=>void), delay?: number): string {
+        return {} as any;
+    }
+    public clearTimeout(timeoutId?: string): void {
+        return {} as any;
+    }
     public GetType(): Type {
         return {} as any;
     }

@@ -1,5 +1,10 @@
+import { KeyValuePair`2 } from "../../System/Collections/Generic/KeyValuePair`2[[System/String, System/Private/CoreLib, Version=10/0/0/0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System/Object, System/Private/CoreLib, Version=10/0/0/0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]";
 import { Type } from "../../System/Type";
 export class ObjectWrapper {
+    [Symbol.iterator](): Iterator<{ Key: string, Value: any }> {
+        return {} as any;
+    }
+    [index: number]: { Key: string, Value: any };
     public ContainsKey(key?: string): boolean {
         return {} as any;
     }

@@ -1,7 +1,9 @@
 import { GroupCollection } from "../../../System/Text/RegularExpressions/GroupCollection";
+import { JsonDeserializeTypeMode } from "../../LiteJson/JsonDeserializeTypeMode";
+import { Exception } from "../../../System/Exception";
+import { Json } from "../../LiteJson/Json";
 import { UrlFilterStatus } from "./Responses/UrlFilterStatus";
-import { String } from "../../../System/String";
-import { Object } from "../../../System/Object";
+import { SessionCacheData } from "./SessionCacheData";
 import { Type } from "../../../System/Type";
 import { Session } from "./Session";
 export class SessionCache {
@@ -11,7 +13,7 @@ export class SessionCache {
     public SetUrlRegexMatchGroups(groupCollection?: GroupCollection): void {
         return {} as any;
     }
-    public GetRequstBodyJson(): Promise<any> {
+    public GetRequstBodyJson(jsonDeserializeTypeMode?: JsonDeserializeTypeMode, exceptionHandler?: ((arg0?:Exception)=>any)): Promise<any> {
         return {} as any;
     }
     public GetRequestBodyString(): Promise<string> {
@@ -47,7 +49,7 @@ export class SessionCache {
     }
     public set FilterStatus(value: UrlFilterStatus) {
     }
-    public get Data(): { [key: string]: any } {
+    public get Data(): SessionCacheData {
         return {} as any;
     }
 }

@@ -15,10 +15,10 @@ export class registry {
     }
     public constructor() {
     }
-    public static get(registryPath?: string): registryValue {
+    public static get(registryPath?: string, key?: string): registryValue {
         return {} as any;
     }
-    public static set(registryPath?: string, value?: registryValue): void {
+    public static set(registryPath?: string, key_or_value?: string | registryValue, value?: registryValue): void {
         return {} as any;
     }
 }

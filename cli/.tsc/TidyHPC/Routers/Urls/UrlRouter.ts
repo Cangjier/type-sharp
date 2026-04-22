@@ -1,5 +1,6 @@
 import { UrlFilter } from "./UrlFilter";
 import { UrlRouterEvents } from "./UrlRouterEvents";
+import { JsonDeserializeTypeMode } from "../../LiteJson/JsonDeserializeTypeMode";
 import { Session } from "./Session";
 import { IServer } from "./Interfaces/IServer";
 import { CancellationToken } from "../../../System/Threading/CancellationToken";
@@ -41,5 +42,10 @@ export class UrlRouter {
     }
     public get Events(): UrlRouterEvents {
         return {} as any;
+    }
+    public get RequestBodyJsonDeserializeTypeMode(): JsonDeserializeTypeMode {
+        return {} as any;
+    }
+    public set RequestBodyJsonDeserializeTypeMode(value: JsonDeserializeTypeMode) {
     }
 }

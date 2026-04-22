@@ -96,4 +96,7 @@ export class staticContext {
     }
     public static null: any;
     public static undefined: any;
+    public static get programContext(): any {
+        return {} as any;
+    }
 }

@@ -2,6 +2,10 @@ import { Match } from "./Match";
 import { IEnumerator } from "../../Collections/IEnumerator";
 import { Type } from "../../Type";
 export class MatchCollection {
+    [Symbol.iterator](): Iterator<Match> {
+        return {} as any;
+    }
+    [index: number]: Match;
     public GetEnumerator(): IEnumerator {
         return {} as any;
     }

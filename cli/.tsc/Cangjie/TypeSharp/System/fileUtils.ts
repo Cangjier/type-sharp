@@ -20,6 +20,9 @@ export class fileUtils {
     public static size(path?: string): number {
         return {} as any;
     }
+    public static stringLength(path?: string): number {
+        return {} as any;
+    }
     public static md5(path?: string): string {
         return {} as any;
     }

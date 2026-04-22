@@ -3,6 +3,10 @@ import { Json } from "./Json";
 import { Int32 } from "../../System/Int32";
 import { Type } from "../../System/Type";
 export class ArrayWrapper {
+    [Symbol.iterator](): Iterator<any> {
+        return {} as any;
+    }
+    [index: number]: any;
     public Add(value?: any): any[] {
         return {} as any;
     }

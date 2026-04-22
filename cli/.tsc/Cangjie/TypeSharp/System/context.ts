@@ -40,7 +40,7 @@ export class Context {
     public GetHashCode(): number {
         return {} as any;
     }
-    public constructor(reference?: Context) {
+    public constructor(reference_or_logger?: Context | LoggerFile) {
     }
     public script_path: string;
     public get context(): any {

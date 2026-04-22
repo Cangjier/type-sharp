@@ -2,6 +2,10 @@ import { Group } from "./Group";
 import { IEnumerator } from "../../Collections/IEnumerator";
 import { Type } from "../../Type";
 export class GroupCollection {
+    [Symbol.iterator](): Iterator<Group> {
+        return {} as any;
+    }
+    [index: number]: Group;
     public GetEnumerator(): IEnumerator {
         return {} as any;
     }

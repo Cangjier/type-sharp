@@ -1,10 +1,13 @@
 import { JsonValueKind } from "../../System/Text/Json/JsonValueKind";
+import { JsonDeserializeTypeMode } from "./JsonDeserializeTypeMode";
 import { Stream } from "../../System/IO/Stream";
+import { Task } from "../../System/Threading/Tasks/Task";
 import { ObjectWrapper } from "./ObjectWrapper";
 import { ArrayWrapper } from "./ArrayWrapper";
 import { Int32 } from "../../System/Int32";
 import { Boolean } from "../../System/Boolean";
 import { String } from "../../System/String";
+import { Type } from "../../System/Type";
 import { JsonNode } from "../../System/Text/Json/Nodes/JsonNode";
 import { Object } from "../../System/Object";
 import { JsonElement } from "../../System/Text/Json/JsonElement";
@@ -14,9 +17,12 @@ import { UInt16 } from "../../System/UInt16";
 import { DateTime } from "../../System/DateTime";
 import { TimeSpan } from "../../System/TimeSpan";
 import { Guid } from "../../System/Guid";
-import { Type } from "../../System/Type";
 import { Exception } from "../../System/Exception";
 export class Json {
+    [Symbol.iterator](): Iterator<any> {
+        return {} as any;
+    }
+    [index: number]: any;
     public GetValueKind(): JsonValueKind {
         return {} as any;
     }
@@ -35,7 +41,16 @@ export class Json {
     public Save(path_or_stream?: string | Stream, indented?: boolean): void {
         return {} as any;
     }
+    public With(onWith?: ((arg0?:any)=>void) | ((arg0?:any)=>any)): any {
+        return {} as any;
+    }
+    public WithAsync(onWithAsync?: ((arg0?:any)=>Promise<void>) | ((arg0?:any)=>Promise<any>)): Promise<any> {
+        return {} as any;
+    }
     public WriteTo(stream?: Stream): void {
+        return {} as any;
+    }
+    public WriteToAsync(stream?: Stream): Promise<void> {
         return {} as any;
     }
     public AssertObject(onObject?: ((arg0?:ObjectWrapper)=>void)): void {
@@ -66,6 +81,9 @@ export class Json {
         return {} as any;
     }
     public GetHashCode(): number {
+        return {} as any;
+    }
+    public Deserialize(type?: Type): null | any {
         return {} as any;
     }
     public Get(index_or_key?: number | string, defaultValue?: any): any {
@@ -181,13 +199,13 @@ export class Json {
     public static NewArray(): any {
         return {} as any;
     }
-    public static Parse(value_or_stream_or_bytes?: string | Stream | number[]): any {
+    public static Parse(value_or_stream_or_bytes?: string | Stream | number[], deserializeTypeMode?: JsonDeserializeTypeMode): any {
         return {} as any;
     }
-    public static ParseAsync(stream?: Stream): Promise<any> {
+    public static ParseAsync(stream?: Stream, deserializeTypeMode?: JsonDeserializeTypeMode): Promise<any> {
         return {} as any;
     }
-    public static Load(path?: string): any {
+    public static Load(path?: string, deserializeTypeMode?: JsonDeserializeTypeMode): any {
         return {} as any;
     }
     public static Repair(raw?: string): string {

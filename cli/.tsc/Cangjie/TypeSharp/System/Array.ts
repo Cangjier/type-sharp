@@ -1,6 +1,10 @@
 import { Object } from "../../../System/Object";
 import { Type } from "../../../System/Type";
 export class Array {
+    [Symbol.iterator](): Iterator<any> {
+        return {} as any;
+    }
+    [index: number]: any;
     public Add(item?: any): void {
         return {} as any;
     }

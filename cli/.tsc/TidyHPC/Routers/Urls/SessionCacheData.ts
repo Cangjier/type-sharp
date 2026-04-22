@@ -1,20 +1,21 @@
-import { Json } from "../../../TidyHPC/LiteJson/Json";
 import { Type } from "../../../System/Type";
-export class Set {
-    [Symbol.iterator](): Iterator<any> {
+export class SessionCacheData {
+    public Dispose(): void {
         return {} as any;
     }
-    [index: number]: any;
-    public add(item?: any): Set {
+    public GetOrThrow(key?: string): null {
         return {} as any;
     }
-    public has(item?: any): boolean {
+    public TryGet(value?: null): boolean {
         return {} as any;
     }
-    public delete(item?: any): boolean {
+    public Set(key_or_value?: string | null, value?: null): void {
         return {} as any;
     }
-    public clear(): void {
+    public Remove(key?: string): void {
+        return {} as any;
+    }
+    public Clear(): void {
         return {} as any;
     }
     public GetType(): Type {
@@ -29,9 +30,6 @@ export class Set {
     public GetHashCode(): number {
         return {} as any;
     }
-    public constructor(items?: any[]) {
-    }
-    public get size(): number {
-        return {} as any;
+    public constructor() {
     }
 }

@@ -1,5 +1,5 @@
-import { Type } from "../System/Type";
-export class HttpUtils {
+import { Type } from "../../System/Type";
+export class JsonRepair {
     public GetType(): Type {
         return {} as any;
     }
@@ -12,12 +12,10 @@ export class HttpUtils {
     public GetHashCode(): number {
         return {} as any;
     }
-    public constructor() {
-    }
-    public static GetAttachmentAsync(url?: string, downloadDirectory?: string): Promise<string> {
+    public static RepairQuote(raw?: string): string {
         return {} as any;
     }
-    public static GetJsonAsync(url?: string): Promise<any> {
+    public static RepairIndent(raw?: string): string {
         return {} as any;
     }
 }

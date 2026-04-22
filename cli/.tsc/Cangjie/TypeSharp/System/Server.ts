@@ -4,7 +4,7 @@ import { TaskCompletionSource } from "../../../System/Threading/Tasks/TaskComple
 import { Delegate } from "../../../System/Delegate";
 import { Type } from "../../../System/Type";
 export class Server {
-    public start(port?: number): Promise<void> {
+    public start(ports?: any): Promise<void> {
         return {} as any;
     }
     public use(pattern?: string, delegate?: Delegate): void {
@@ -14,6 +14,15 @@ export class Server {
         return {} as any;
     }
     public usePlugins(directory?: string, enable?: boolean): void {
+        return {} as any;
+    }
+    public listen(ports?: any): void {
+        return {} as any;
+    }
+    public useSSL(port?: number, certificatePath?: string, certificateKeyPath?: string): void {
+        return {} as any;
+    }
+    public useHttpsRedirect(): void {
         return {} as any;
     }
     public GetType(): Type {

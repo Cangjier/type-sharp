@@ -17,6 +17,10 @@ import { XmlWhitespace } from "../../System/Xml/XmlWhitespace";
 import { XmlSignificantWhitespace } from "../../System/Xml/XmlSignificantWhitespace";
 import { Type } from "../../System/Type";
 export class Xml {
+    [Symbol.iterator](): Iterator<Xml> {
+        return {} as any;
+    }
+    [index: number]: Xml;
     public IsElementPredicate(onPredicate?: ((arg0?:Xml)=>boolean)): boolean {
         return {} as any;
     }

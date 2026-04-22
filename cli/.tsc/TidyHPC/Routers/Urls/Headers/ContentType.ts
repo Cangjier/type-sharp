@@ -18,6 +18,11 @@ export class ContentType {
     public static Parse(contentType?: string): ContentType {
         return {} as any;
     }
+    public static ApplicationJson: ContentType;
+    public static ApplicationFormUrlencoded: ContentType;
+    public static MultipartFormData: ContentType;
+    public static TextPlain: ContentType;
+    public static TextHtml: ContentType;
     public get Boundary(): string {
         return {} as any;
     }
