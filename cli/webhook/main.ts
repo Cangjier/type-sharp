@@ -482,7 +482,10 @@ let DotNetManager = () => {
             [];
         let restoreCmd = `dotnet restore --no-cache`;
         console.log(restoreCmd);
-        let restoreResult = await cmdAsync(currentDirectory, restoreCmd);
+        let restoreResult = await cmdAsync(currentDirectory, restoreCmd, {
+            redirect: true,
+            useShellExecute: false
+        });
         console.log(`dotnet restore result: ${restoreResult}`);
         if (restoreResult.exitCode != 0) {
             console.log(`dotnet restore failed`);
@@ -504,7 +507,10 @@ let DotNetManager = () => {
             for (let targetFramework of targetFrameworks) {
                 let cmd = `dotnet publish -c Release -f ${targetFramework}`;
                 console.log(cmd);
-                let publishResult = await cmdAsync(currentDirectory, cmd);
+                let publishResult = await cmdAsync(currentDirectory, cmd, {
+                    redirect: true,
+                    useShellExecute: false
+                });
                 console.log(`dotnet publish result: ${publishResult}`);
             }
         }
@@ -517,7 +523,10 @@ let DotNetManager = () => {
                 console.log(`Publish Profile: ${File.ReadAllText(pubxmlFile, utf8)}`);
                 let cmd = `dotnet publish -c Release -p:PublishProfile=${Path.GetFileNameWithoutExtension(pubxmlFile)}`;
                 console.log(cmd);
-                let publishResult = await cmdAsync(currentDirectory, cmd);
+                let publishResult = await cmdAsync(currentDirectory, cmd, {
+                    redirect: true,
+                    useShellExecute: false
+                });
                 console.log(`dotnet publish result: ${publishResult}`);
                 if (publishResult.exitCode != 0) {
                     console.log(`dotnet publish failed`);
@@ -542,7 +551,10 @@ let DotNetManager = () => {
         // 通过dotnet上传nuget包
         let cmd = `dotnet nuget push ${Path.GetFileName(nugetPackagePath)} --api-key ${nugetSecret} --source https://api.nuget.org/v3/index.json`;
         console.log(cmd);
-        let cmdResult = await cmdAsync(Path.GetDirectoryName(nugetPackagePath), cmd);
+        let cmdResult = await cmdAsync(Path.GetDirectoryName(nugetPackagePath), cmd, {
+            redirect: true,
+            useShellExecute: false
+        });
         console.log(`dotnet nuget push result: ${cmdResult}`);
         if (cmdResult.exitCode != 0) {
             console.log(`dotnet nuget push failed`);
