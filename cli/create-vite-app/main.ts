@@ -94,6 +94,10 @@ let main = async () => {
     const globalDTSTemplatePath = Path.Combine(templateDirectory, "vite-env.d.ts");
     File.Copy(globalDTSTemplatePath, globalDTSPath, true);
 
+    const utilsTSPath = Path.Combine(srcDirectory, "utils.ts");
+    const utilsTSTemplatePath = Path.Combine(templateDirectory, "utils.ts");
+    File.Copy(utilsTSTemplatePath, utilsTSPath, true);
+
 };
 
 await main();
