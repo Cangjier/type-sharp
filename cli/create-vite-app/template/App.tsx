@@ -1,26 +1,26 @@
 import { useState } from 'react'
 import './App.css'
-import { Flex } from './natived'
 
 function App() {
-  return <Flex direction='column' style={{
+  return <div style={{
+    display: 'flex',
+    flexDirection: 'column',
     width: '100vw',
     height: '100vh',
   }}>
     {/* 顶部 */}
-    <Flex></Flex>
+    <div style={{
+      display: 'flex',
+      flexDirection: 'row',
+    }}>
+      <div></div>
+      <div></div>
+    </div>
     {/* 中间 */}
-    <Flex direction='row'>
-      {/* 左侧 */}
-      <Flex></Flex>
-      {/* Tab */}
-      <Flex></Flex>
-      {/* 右侧 */}
-      <Flex></Flex>
-    </Flex>
+    <div></div>
     {/* 底部 */}
-    <Flex></Flex>
-  </Flex>
+    <div></div>
+  </div>
 }
 
 export default App
