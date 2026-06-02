@@ -33,7 +33,7 @@ let main = async () => {
 
     let cmds = [
         "npm install create-vite@latest --global",
-        `create-vite . --template react-ts`,
+        `create-vite . --template react-ts --no-interactive`,
         "npm install antd --save",
         "npm install @ant-design/icons --save",
         "npm install axios --save",
